@@ -32,7 +32,7 @@ NavigationGrid::NavigationGrid(const std::string&filename) : NavigationGrid() {
 
 	for (int y = 0; y < gridHeight; ++y) {
 		for (int x = 0; x < gridWidth; ++x) {
-			GridNode&n = allNodes[(gridWidth * y) + x];
+			GridNode & n = allNodes[(gridWidth * y) + x];
 			char type = 0;
 			infile >> type;
 			n.type = type;
@@ -170,7 +170,11 @@ GridNode*  NavigationGrid::RemoveBestNode(std::vector<GridNode*>& list) const {
 
 	return bestNode;
 }
-
-float NavigationGrid::Heuristic(GridNode* hNode, GridNode* endNode) const {
-	return (hNode->position - endNode->position).Length();
+//
+//float NavigationGrid::Heuristic(GridNode* hNode, GridNode* endNode) const {
+//	return (hNode->position - endNode->position).Length();
+//}
+float NavigationGrid::Heuristic(GridNode* n1, GridNode* n2) const {
+	 return (n1 -> position - n2 -> position).Length();
+	
 }
