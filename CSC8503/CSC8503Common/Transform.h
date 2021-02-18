@@ -2,6 +2,7 @@
 #include "../../Common/Matrix4.h"
 #include "../../Common/Matrix3.h"
 #include "../../Common/Vector3.h"
+#include "../../Common/Vector4.h"
 #include "../../Common/Quaternion.h"
 
 #include <vector>
