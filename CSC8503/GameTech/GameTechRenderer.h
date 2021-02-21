@@ -6,6 +6,8 @@
 
 #include "../CSC8503Common/GameWorld.h"
 
+#include "DW_UIText.h"
+
 namespace NCL {
 	class Maths::Vector3;
 	class Maths::Vector4;
@@ -50,6 +52,8 @@ namespace NCL {
 			Vector4		lightColour;
 			float		lightRadius;
 			Vector3		lightPosition;
+
+			DW_UIText* m_text;
 		};
 	}
 }

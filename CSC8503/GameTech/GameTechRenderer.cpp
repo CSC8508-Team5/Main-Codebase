@@ -50,6 +50,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	skyboxMesh->UploadToGPU();
 
 	LoadSkybox();
+
+	m_text = new DW_UIText();
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -106,6 +108,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderSkybox();
 	RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+	m_text->Render();
 }
 
 void GameTechRenderer::BuildObjectList() {
