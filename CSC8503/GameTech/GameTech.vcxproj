@@ -142,15 +142,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DW_UIbase.cpp" />
+    <ClCompile Include="DW_UIPanel.cpp" />
+    <ClCompile Include="DW_UIRenderer.cpp" />
     <ClCompile Include="DW_UIText.cpp" />
+    <ClCompile Include="DW_UITextRenderer.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateGameObject.cpp" />
     <ClCompile Include="TutorialGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DW_Singleton.h" />
     <ClInclude Include="DW_UIbase.h" />
+    <ClInclude Include="DW_UIPanel.h" />
+    <ClInclude Include="DW_UIRenderer.h" />
     <ClInclude Include="DW_UIText.h" />
+    <ClInclude Include="DW_UITextRenderer.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="StateGameObject.h" />
     <ClInclude Include="TutorialGame.h" />

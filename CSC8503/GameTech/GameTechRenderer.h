@@ -6,7 +6,10 @@
 
 #include "../CSC8503Common/GameWorld.h"
 
+#include "DW_UITextRenderer.h"
 #include "DW_UIText.h"
+#include "DW_UIPanel.h"
+
 
 namespace NCL {
 	class Maths::Vector3;
@@ -54,6 +57,7 @@ namespace NCL {
 			Vector3		lightPosition;
 
 			DW_UIText* m_text;
+			DW_UIPanel* m_panel;
 		};
 	}
 }
