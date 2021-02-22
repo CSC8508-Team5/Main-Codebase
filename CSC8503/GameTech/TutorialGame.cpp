@@ -248,11 +248,60 @@ void TutorialGame::InitCamera() {
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
-	testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
-	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	InitGameExamples();
-	InitDefaultFloor();
-	BridgeConstraintTest();
+	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
+	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
+	//InitGameExamples();
+	//InitDefaultFloor();
+	LevelTestOne();
+	//BridgeConstraintTest();
+}
+
+void TutorialGame::LevelTestOne() {
+		Vector3 PlatformSize = Vector3(10, 5, 50);
+	Vector3 cubeSize = Vector3(10, 5, 10);
+
+	float invCubeMass = 0; // how heavy the middle pieces are
+	int numStairs = 15;
+	float maxDistance = 30; // constraint distance
+	float cubeDistance = 20; // distance between links
+	
+	Vector3 startPos = Vector3(-150, 5, 0);
+
+	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0)
+		, PlatformSize, 0);
+	GameObject* end = AddCubeToWorld(startPos + Vector3((numStairs + 1) * cubeDistance, (numStairs + 1) * 5, 0), PlatformSize, 0);
+
+	GameObject* previous = start;
+
+	for (int i = 0; i < numStairs; ++i) {
+		if (i % 3 == 0) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
+				cubeDistance, i * 5, -40), cubeSize, invCubeMass);
+			PositionConstraint* constraint = new PositionConstraint(previous,
+				block, maxDistance);
+			world->AddConstraint(constraint);
+			previous = block;
+		}
+		else if (i % 3 == 1) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
+				cubeDistance, i * 5, 0), cubeSize, invCubeMass);
+			PositionConstraint* constraint = new PositionConstraint(previous,
+				block, maxDistance);
+			//world->AddConstraint(constraint);
+			previous = block;
+		}
+		else if(i % 3 == 2) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
+				cubeDistance, i * 5, 40), cubeSize, invCubeMass);
+			PositionConstraint* constraint = new PositionConstraint(previous,
+				block, maxDistance);
+			//world->AddConstraint(constraint);
+			previous = block;
+		}
+	}
+	/*PositionConstraint* constraint = new PositionConstraint(previous,
+		end, maxDistance);*/
+	//world->AddConstraint(constraint);
 }
 
 void TutorialGame::BridgeConstraintTest() {
