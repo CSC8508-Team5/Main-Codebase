@@ -65,6 +65,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	m_panel->AddComponent(t3);
 	m_panel->AddComponent(t4);
 	m_panel->AddComponent(t5);
+
+	DW_UIRenderer::get_instance().AddPanel(m_panel);
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -121,10 +123,8 @@ void GameTechRenderer::RenderFrame() {
 	RenderSkybox();
 	RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
-	m_panel->Render();
-	//m_text->Render();
-	/*DW_UITextRenderer::get_instance().RenderText("(C) LearnOpenGL.com", 0.0f, 0.0f, 1.5f, NCL::Maths::Vector3(0.3, 0.7f, 0.9f));
-	DW_UITextRenderer::get_instance().RenderText("(C) LearnOpenGL.com", 100.0f, 100.0f, 1.5f, NCL::Maths::Vector3(0.3, 0.7f, 0.9f));*/
+
+	DW_UIRenderer::get_instance().Render();//UI SYSTEM render
 }
 
 void GameTechRenderer::BuildObjectList() {

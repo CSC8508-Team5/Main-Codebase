@@ -1,3 +1,9 @@
+/*
+base class of Singleton pattern
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 template<typename T>

@@ -1,3 +1,12 @@
+/*
+Part of UI System code.
+
+renderer of ui text component
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
+
 #pragma once
 
 #include "glad\glad.h"

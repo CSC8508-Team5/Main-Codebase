@@ -1,3 +1,11 @@
+/*
+Part of UI System code.
+
+base class of ui component
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include <iostream>

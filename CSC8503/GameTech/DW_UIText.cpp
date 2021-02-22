@@ -15,6 +15,10 @@ void DW_UIText::Update(const float dt) {
 }
 
 void DW_UIText::Render() {
+	if (!m_isEnable)
+	{
+		return;
+	}
 	DW_UITextRenderer::get_instance().RenderText(m_text, m_position.x, m_position.y, m_scale, m_color);
 }
 

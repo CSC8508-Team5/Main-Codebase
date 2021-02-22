@@ -6,9 +6,10 @@
 
 #include "../CSC8503Common/GameWorld.h"
 
-#include "DW_UITextRenderer.h"
+
 #include "DW_UIText.h"
 #include "DW_UIPanel.h"
+#include "DW_UIRenderer.h"
 
 
 namespace NCL {

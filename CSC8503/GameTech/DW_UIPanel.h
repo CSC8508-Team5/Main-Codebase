@@ -1,3 +1,11 @@
+/*
+Part of UI System code.
+
+A UIPanel can hold many ui component
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include <map>
@@ -21,7 +29,7 @@ public:
 	void Render();
 private:
 	int m_priority;
-
+	bool m_isEnable;
 	std::multimap<int, DW_UIbase*> m_uiComponents;
 	
 };
