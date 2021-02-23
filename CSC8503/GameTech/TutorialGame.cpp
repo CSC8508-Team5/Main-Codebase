@@ -126,7 +126,7 @@ void TutorialGame::UpdateLevelOne() {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 0) {
 			if ((platformtimer >= 0) && (platformtimer < 100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.5));
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8));
 				platformtimer += 0.2;
 				continue;
 			}
@@ -136,7 +136,7 @@ void TutorialGame::UpdateLevelOne() {
 				continue;
 			}
 			else if ((platformtimer <= 0) && (platformtimer > -100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.5));
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8));
 				platformtimer -= 0.2;
 				continue;
 			}
@@ -148,7 +148,7 @@ void TutorialGame::UpdateLevelOne() {
 		}
 		else if (i % 3 == 2) {
 			if ((platformtimer >= 0) && (platformtimer < 100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.5));
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8));
 				platformtimer += 0.2;
 				continue;
 			}
@@ -158,7 +158,7 @@ void TutorialGame::UpdateLevelOne() {
 				continue;
 			}
 			else if ((platformtimer <= 0) && (platformtimer > -100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.5));
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8));
 				platformtimer -= 0.2;
 				continue;
 			}
