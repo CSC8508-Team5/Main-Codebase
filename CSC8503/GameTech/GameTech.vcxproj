@@ -142,6 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DW_UIbase.cpp" />
+    <ClCompile Include="DW_UIImage.cpp" />
+    <ClCompile Include="DW_UIImageRenderer.cpp" />
     <ClCompile Include="DW_UIPanel.cpp" />
     <ClCompile Include="DW_UIRenderer.cpp" />
     <ClCompile Include="DW_UIText.cpp" />
@@ -154,6 +156,8 @@
   <ItemGroup>
     <ClInclude Include="DW_Singleton.h" />
     <ClInclude Include="DW_UIbase.h" />
+    <ClInclude Include="DW_UIImage.h" />
+    <ClInclude Include="DW_UIImageRenderer.h" />
     <ClInclude Include="DW_UIPanel.h" />
     <ClInclude Include="DW_UIRenderer.h" />
     <ClInclude Include="DW_UIText.h" />

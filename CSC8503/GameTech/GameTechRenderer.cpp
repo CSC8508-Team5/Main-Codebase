@@ -60,6 +60,11 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	DW_UIText* t3 = new DW_UIText("33", 0.6f, Vector3{ 150.0f,150.0f,0.0f });
 	DW_UIText* t4 = new DW_UIText("44", 0.4f, Vector3{ 200.0f,200.0f,0.0f });
 	DW_UIText* t5 = new DW_UIText("555", 0.9f, Vector3{ 300.0f,300.0f,0.0f });
+
+	std::string str{ Assets::TEXTUREDIR + "doge.png" };
+
+	m_image = new DW_UIImage(str.c_str(), { 0.4f, 0.2f }, Vector3{ 200.0f,250.0f,0.0f }, Vector3{1.0f,1.0f,0.0f});
+
 	m_panel->AddComponent(t1);
 	m_panel->AddComponent(t2);
 	m_panel->AddComponent(t3);
@@ -124,7 +129,10 @@ void GameTechRenderer::RenderFrame() {
 	RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
+	m_image->Render();
+	
 	DW_UIRenderer::get_instance().Render();//UI SYSTEM render
+	
 }
 
 void GameTechRenderer::BuildObjectList() {

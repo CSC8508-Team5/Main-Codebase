@@ -11,6 +11,8 @@
 #include "DW_UIPanel.h"
 #include "DW_UIRenderer.h"
 
+#include "DW_UIImage.h"
+
 
 namespace NCL {
 	class Maths::Vector3;
@@ -58,6 +60,7 @@ namespace NCL {
 			Vector3		lightPosition;
 
 			DW_UIText* m_text;
+			DW_UIImage* m_image;
 			DW_UIPanel* m_panel;
 		};
 	}

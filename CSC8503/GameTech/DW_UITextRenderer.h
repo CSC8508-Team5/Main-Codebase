@@ -45,6 +45,7 @@ public:
 
 	~DW_UITextRenderer() {
 		std::cout << "DW_UITextRenderer delete!\n";
+		delete m_shader;
 	}
 
 	DW_UITextRenderer(const DW_UITextRenderer&) = delete;
