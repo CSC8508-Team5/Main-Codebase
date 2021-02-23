@@ -5,6 +5,7 @@
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
 #include "../CSC8503Common/PositionConstraint.h"
+#include <list>
 using namespace NCL;
 using namespace CSC8503;
 
@@ -17,6 +18,11 @@ TutorialGame::TutorialGame()	{
 	useGravity		= false;
 	inSelectionMode = false;
 
+	//adding for level design
+	platformtimer = 0.0f;
+	platforms = new GameObject*;
+	//end 
+	
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
@@ -65,6 +71,7 @@ TutorialGame::~TutorialGame()	{
 	delete physics;
 	delete renderer;
 	delete world;
+	delete platforms;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -111,8 +118,59 @@ void TutorialGame::UpdateGame(float dt) {
 	renderer->Update(dt);
 
 	Debug::FlushRenderables(dt);
+	UpdateLevelOne();
 	renderer->Render();
 }
+void TutorialGame::UpdateLevelOne() {
+	for (int i = 0; i < 15; ++i) {
+		Vector3 position = platforms[i]->GetTransform().GetPosition();
+		if (i % 3 == 0) {
+			if ((platformtimer >= 0) && (platformtimer < 100)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.5));
+				platformtimer += 0.2;
+				continue;
+			}
+			else if (platformtimer >= 100) {
+				platformtimer = 0;
+				platformtimer -= 0.1;
+				continue;
+			}
+			else if ((platformtimer <= 0) && (platformtimer > -100)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.5));
+				platformtimer -= 0.2;
+				continue;
+			}
+			else if (platformtimer <= -100) {
+				platformtimer = 0;
+				platformtimer += 0.2;
+				continue;
+			}
+		}
+		else if (i % 3 == 2) {
+			if ((platformtimer >= 0) && (platformtimer < 100)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.5));
+				platformtimer += 0.2;
+				continue;
+			}
+			else if (platformtimer >= 100) {
+				platformtimer = 0;
+				platformtimer -= 0.2;
+				continue;
+			}
+			else if ((platformtimer <= 0) && (platformtimer > -100)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.5));
+				platformtimer -= 0.2;
+				continue;
+			}
+			else if (platformtimer <= -100) {
+				platformtimer = 0;
+				platformtimer += 0.2;
+				continue;
+			}
+		}
+	}
+};
+
 
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
@@ -252,17 +310,17 @@ void TutorialGame::InitWorld() {
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
 	//InitDefaultFloor();
-	LevelTestOne();
+	platforms = LevelTestOne();
 	//BridgeConstraintTest();
 }
 
-void TutorialGame::LevelTestOne() {
-		Vector3 PlatformSize = Vector3(10, 5, 50);
+GameObject** TutorialGame::LevelTestOne() {
+	Vector3 PlatformSize = Vector3(10, 5, 50);
 	Vector3 cubeSize = Vector3(10, 5, 10);
+	Vector3 middlecubeSize = Vector3(10, 5, 20);
 
 	float invCubeMass = 0; // how heavy the middle pieces are
 	int numStairs = 15;
-	float maxDistance = 30; // constraint distance
 	float cubeDistance = 20; // distance between links
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
@@ -272,36 +330,24 @@ void TutorialGame::LevelTestOne() {
 	GameObject* end = AddCubeToWorld(startPos + Vector3((numStairs + 1) * cubeDistance, (numStairs + 1) * 5, 0), PlatformSize, 0);
 
 	GameObject* previous = start;
-
 	for (int i = 0; i < numStairs; ++i) {
 		if (i % 3 == 0) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
-				cubeDistance, i * 5, -40), cubeSize, invCubeMass);
-			PositionConstraint* constraint = new PositionConstraint(previous,
-				block, maxDistance);
-			world->AddConstraint(constraint);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, -40), cubeSize, invCubeMass);
+			platforms[i] = block;
 			previous = block;
 		}
 		else if (i % 3 == 1) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
-				cubeDistance, i * 5, 0), cubeSize, invCubeMass);
-			PositionConstraint* constraint = new PositionConstraint(previous,
-				block, maxDistance);
-			//world->AddConstraint(constraint);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, 0), middlecubeSize, invCubeMass);
+			platforms[i] = block;
 			previous = block;
 		}
 		else if(i % 3 == 2) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) *
-				cubeDistance, i * 5, 40), cubeSize, invCubeMass);
-			PositionConstraint* constraint = new PositionConstraint(previous,
-				block, maxDistance);
-			//world->AddConstraint(constraint);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, 40), cubeSize, invCubeMass);
+			platforms[i] = block;
 			previous = block;
 		}
 	}
-	/*PositionConstraint* constraint = new PositionConstraint(previous,
-		end, maxDistance);*/
-	//world->AddConstraint(constraint);
+	return platforms;
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -433,6 +479,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
 	return cube;
 }
+
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
 	for (int x = 0; x < numCols; ++x) {

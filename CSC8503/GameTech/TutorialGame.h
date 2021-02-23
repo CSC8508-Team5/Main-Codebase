@@ -27,7 +27,8 @@ namespace NCL {
 			void InitDefaultFloor();
 			void BridgeConstraintTest();
 
-			void LevelTestOne();
+			GameObject** LevelTestOne();
+			void UpdateLevelOne();
 	
 			bool SelectObject();
 			void MoveSelectedObject();
@@ -55,6 +56,10 @@ namespace NCL {
 			bool inSelectionMode;
 
 			float		forceMagnitude;
+			//adding for level design
+			float		platformtimer;
+			GameObject** platforms;
+			//end
 
 			GameObject* selectionObject = nullptr;
 
