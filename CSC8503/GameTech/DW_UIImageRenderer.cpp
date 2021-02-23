@@ -69,7 +69,7 @@ GLuint DW_UIImageRenderer::LoadTexture(char const* path) {
 }
 
 void DW_UIImageRenderer::Init() {
-	m_projection = NCL::Maths::Matrix4::Orthographic(-1.0f, 1.0f, 1280.0f, 0.0f, 720.0f, 0.0f);
+	m_projection = NCL::Maths::Matrix4::Orthographic(-1.0f, 100.0f, 1280.0f, 0.0f, 720.0f, 0.0f);
 	m_shader = new NCL::Rendering::OGLShader("imageVert.glsl", "imageFrag.glsl", "imageGeom.glsl");
 	glUseProgram(m_shader->GetProgramID());
 	glUniformMatrix4fv(glGetUniformLocation(m_shader->GetProgramID(), "projection"), 1, false, (float*)&m_projection);

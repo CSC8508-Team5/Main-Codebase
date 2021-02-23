@@ -1,3 +1,11 @@
+/*
+Part of UI System code.
+
+UI Image Component
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include "DW_UIbase.h"

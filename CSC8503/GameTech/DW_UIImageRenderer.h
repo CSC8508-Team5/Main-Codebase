@@ -4,6 +4,14 @@
 
 #include <iostream>
 #include <string>
+/*
+Part of UI System code.
+
+renderer of ui image component
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 
 #include "OGLShader.h"
 

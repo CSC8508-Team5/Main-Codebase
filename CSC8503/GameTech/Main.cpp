@@ -368,6 +368,8 @@ int main() {
 				w->SetWindowPosition(0, 0);
 			}
 
+			std::cout << w->GetMouse()->GetAbsolutePosition() << "\n";
+
 			/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::M)) {
 				std::cout << " Returning to main menu !\n";
 				TestPushdownAutomata(w);

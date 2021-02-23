@@ -6,7 +6,7 @@ void DW_UITextRenderer::Init() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	m_shader = new NCL::Rendering::OGLShader("textVert.glsl", "textFrag.glsl");
-	m_projection = NCL::Maths::Matrix4::Orthographic(-1.0f, 1.0f, 1280.0f, 0.0f, 720.0f, 0.0f);
+	m_projection = NCL::Maths::Matrix4::Orthographic(-1.0f, 100.0f, 1280.0f, 0.0f, 720.0f, 0.0f);
 	glUseProgram(m_shader->GetProgramID());
 	glUniformMatrix4fv(glGetUniformLocation(m_shader->GetProgramID(), "projection"), 1, false, (float*)&m_projection);
 
