@@ -11,7 +11,10 @@ DW_UIText::~DW_UIText() {
 }
 
 void DW_UIText::Update(const float dt) {
-
+	if (!m_isEnable)
+	{
+		return;
+	}
 }
 
 void DW_UIText::Render() {

@@ -20,6 +20,8 @@ TutorialGame::TutorialGame()	{
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
+
+	m_uiExample=new DW_UIPanelExample();
 }
 
 /*
@@ -111,6 +113,9 @@ void TutorialGame::UpdateGame(float dt) {
 	renderer->Update(dt);
 
 	Debug::FlushRenderables(dt);
+
+	DW_UIRenderer::get_instance().Update(dt);
+
 	renderer->Render();
 }
 

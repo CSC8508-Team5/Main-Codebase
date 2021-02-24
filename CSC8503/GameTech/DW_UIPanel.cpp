@@ -10,6 +10,17 @@ DW_UIPanel::~DW_UIPanel() {
 
 }
 
+void DW_UIPanel::Update(const float dt) {
+	if (!m_isEnable)
+	{
+		return;
+	}
+	for (std::multimap<int, DW_UIbase*>::reverse_iterator rit = m_uiComponents.rbegin(); rit != m_uiComponents.rend(); rit++)
+	{
+		rit->second->Update(dt);
+	}
+}
+
 void DW_UIPanel::Render() {
 	if (!m_isEnable)
 	{
@@ -19,6 +30,4 @@ void DW_UIPanel::Render() {
 	{
 		it->second->Render();
 	}
-
-	
 }

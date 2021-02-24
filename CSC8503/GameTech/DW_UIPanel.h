@@ -10,8 +10,8 @@ Comments and queries to: Dawei Wang, Group 5
 
 #include <map>
 
-#include "DW_UIText.h"
-#include "DW_UITextRenderer.h"
+#include "DW_UIbase.h"
+
 
 
 class DW_UIPanel
@@ -25,6 +25,7 @@ public:
 
 	void AddComponent(DW_UIbase* ui) { m_uiComponents.insert(std::pair<int, DW_UIbase*>{ui->GetRenderPriority(),ui}); }
 	
+	void Update(const float dt);
 
 	void Render();
 private:

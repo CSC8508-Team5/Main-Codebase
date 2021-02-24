@@ -2,6 +2,10 @@
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "StateGameObject.h"
+
+#include "DW_UIRenderer.h"
+#include "DW_UIPanelExample.h"
+
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame		{
@@ -75,6 +79,9 @@ namespace NCL {
 				lockedObject = o;
 			}
 
+
+			//DW UI example
+			DW_UIPanelExample* m_uiExample;
 		};
 	}
 }

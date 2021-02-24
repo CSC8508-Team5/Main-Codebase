@@ -53,28 +53,34 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	//m_text = new DW_UIText();
 
-	m_panel = new DW_UIPanel();
+	//m_panel = new DW_UIPanel();
 
-	DW_UIText* t1 = new DW_UIText("11",0.3f ,Vector3{});
-	DW_UIText* t2 = new DW_UIText("22", 0.7f, Vector3{100.0f,100.0f,0.0f});
-	DW_UIText* t3 = new DW_UIText("33", 0.6f, Vector3{ 150.0f,150.0f,0.0f });
-	DW_UIText* t4 = new DW_UIText("44", 0.4f, Vector3{ 200.0f,200.0f,0.0f });
-	DW_UIText* t5 = new DW_UIText("555", 0.9f, Vector3{ 300.0f,300.0f,0.0f });
+	//DW_UIText* t1 = new DW_UIText("11",0.3f ,Vector3{});
+	//DW_UIText* t2 = new DW_UIText("22", 0.7f, Vector3{100.0f,100.0f,0.0f});
+	//DW_UIText* t3 = new DW_UIText("33", 0.6f, Vector3{ 150.0f,150.0f,0.0f });
+	//DW_UIText* t4 = new DW_UIText("44", 0.4f, Vector3{ 200.0f,200.0f,0.0f });
+	//DW_UIText* t5 = new DW_UIText("555", 0.9f, Vector3{ 300.0f,300.0f,0.0f });
 
-	std::string str{ Assets::TEXTUREDIR + "doge.png" };
+	//std::string str{ Assets::TEXTUREDIR + "doge.png" };
+	//m_image = new DW_UIImage(str.c_str(), { 0.5f, 0.5f }, Vector3{ 640.0f,360.0f,0.0f }, Vector3{1.0f,1.0f,0.0f});
+	////m_image->SetRenderPriority(10);
+	//m_image->SetName("BG");
 
-	m_image = new DW_UIImage(str.c_str(), { 0.4f, 0.2f }, Vector3{ 200.0f,250.0f,0.0f }, Vector3{1.0f,1.0f,0.0f});
-	m_image->SetRenderPriority(10);
-	m_panel->AddComponent(m_image);
-	m_panel->AddComponent(t1);
-	m_panel->AddComponent(t2);
-	
-	m_panel->AddComponent(t3);
-	m_panel->AddComponent(t4);
-	m_panel->AddComponent(t5);
-	
+	//str = Assets::TEXTUREDIR + "checkerboard.png";
+	//DW_UIImage* i1= new DW_UIImage(str.c_str(), { 0.2f, 0.2f }, Vector3{ 640.0f,360.0f,0.0f });
+	//i1->SetName("Chess");
 
-	DW_UIRenderer::get_instance().AddPanel(m_panel);
+	//m_panel->AddComponent(m_image);
+	//m_panel->AddComponent(i1);
+	//m_panel->AddComponent(t1);
+	//m_panel->AddComponent(t2);
+	//
+	//m_panel->AddComponent(t3);
+	//m_panel->AddComponent(t4);
+	//m_panel->AddComponent(t5);
+	//
+
+	//DW_UIRenderer::get_instance().AddPanel(m_panel);
 }
 
 GameTechRenderer::~GameTechRenderer()	{

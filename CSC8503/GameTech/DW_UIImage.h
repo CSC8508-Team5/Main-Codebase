@@ -11,6 +11,8 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIbase.h"
 #include "DW_UIImageRenderer.h"
 
+#include "DW_UIEventMgr.h"
+
 class DW_UIImage:public DW_UIbase
 {
 public:
@@ -28,8 +30,11 @@ public:
 
 	virtual void Render();
 
+	
+
 private:
 	Rect m_rect;
 	GLuint m_texture;
+	
 };
 

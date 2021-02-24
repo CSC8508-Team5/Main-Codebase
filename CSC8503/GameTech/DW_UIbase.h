@@ -44,13 +44,14 @@ public:
 		return this->m_renderPriority > ui.m_renderPriority;
 	}
 
-	
+	void SetName(const std::string& name) { m_name = name; }
+	std::string GetName() { return m_name; }
 protected:
 	UIType m_type;
 	int m_renderPriority;
 	bool m_isEnable;
 	NCL::Maths::Vector3 m_position;
 	NCL::Maths::Vector3 m_color;
-
+	std::string m_name;
 };
 

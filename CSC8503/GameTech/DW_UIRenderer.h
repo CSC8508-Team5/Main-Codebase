@@ -13,6 +13,7 @@ Comments and queries to: Dawei Wang, Group 5
 
 #include "DW_Singleton.h"
 #include "DW_UIPanel.h"
+#include "DW_UIEventMgr.h"
 
 class DW_UIRenderer:public DW_Singleton<DW_UIRenderer>
 {
@@ -28,11 +29,15 @@ public:
 	DW_UIRenderer(const DW_UIRenderer&) = delete;
 	DW_UIRenderer& operator =(const DW_UIRenderer&) = delete;
 
+	void Update(const float dt);
+
 	void Render();
 
 	void AddPanel(DW_UIPanel* panel) { m_panels.insert(std::pair<int, DW_UIPanel*>(panel->GetRenderPriority(), panel)); }
 
 protected:
 	std::multimap<int,DW_UIPanel*> m_panels;
+
+	void ClearUpdateState();
 };
 
