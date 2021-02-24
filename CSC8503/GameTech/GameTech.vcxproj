@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\Users\10626\Documents\ncl_teamwork\Main-Codebase\lib;$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;C:\Users\10626\Documents\ncl_teamwork\Main-Codebase\Plugins\FreeType;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\lib;$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

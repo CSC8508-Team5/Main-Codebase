@@ -75,7 +75,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Projects\CSC8508\CSC8508-Team5\Main-Codebase\Plugins\FreeType;$(SolutionDir)\Plugins\Networking-ENet\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
