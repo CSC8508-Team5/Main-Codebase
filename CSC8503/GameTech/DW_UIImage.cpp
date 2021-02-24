@@ -1,8 +1,8 @@
 #include "DW_UIImage.h"
 
 
-DW_UIImage::DW_UIImage(char const* path,const Rect& rect, const NCL::Maths::Vector3& pos, const NCL::Maths::Vector3& color, const int priority)
-	:DW_UIbase{ UIType::IMAGE,pos,color,priority }, m_rect{ rect }
+DW_UIImage::DW_UIImage(const std::string& name, char const* path,const Rect& rect, const NCL::Maths::Vector3& pos, const NCL::Maths::Vector3& color, const int priority)
+	:DW_UIbase{ name, UIType::IMAGE,pos,color,priority }, m_rect{ rect }
 {
 	m_texture = DW_UIImageRenderer::get_instance().LoadTexture(path);
 }
@@ -23,7 +23,7 @@ void DW_UIImage::Update(const float dt) {
 	if (DW_UIEventMgr::get_instance().CheckUIImageClick(m_rect.x,m_rect.y,m_position))
 	{
 		DW_UIEventMgr::get_instance().SetHasFindTarget(true);
-		std::cout << m_name<< "\n";
+		DW_UIEventMgr::get_instance().TriggerUIEvent(m_ParentPanelName,m_name);
 	}
 }
 

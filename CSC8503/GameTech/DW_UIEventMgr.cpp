@@ -22,3 +22,11 @@ bool DW_UIEventMgr::CheckUIImageClick(const float scaleX, const float scaleY, co
 	}
 	return false;
 }
+
+void DW_UIEventMgr::RegisterUIEvent(const std::string& type, const std::function<void(const std::string&)>& func) {
+	m_uiEventDispatcher.appendListener(type, func);
+}
+
+void DW_UIEventMgr::TriggerUIEvent(const std::string& type, const std::string& para) {
+	m_uiEventDispatcher.dispatch(type,para);
+}

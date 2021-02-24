@@ -1,13 +1,18 @@
 #include "DW_UIPanel.h"
 
 
-DW_UIPanel::DW_UIPanel(const int priority) :m_isEnable{true} {
+DW_UIPanel::DW_UIPanel(const std::string& name, const int priority) :m_isEnable{ true }, m_name{name}{
 	
 }
 
 
 DW_UIPanel::~DW_UIPanel() {
 
+}
+
+void DW_UIPanel::AddComponent(DW_UIbase* ui) { 
+	m_uiComponents.insert(std::pair<int, DW_UIbase*>{ui->GetRenderPriority(), ui}); 
+	ui->SetParentPanelName(m_name);
 }
 
 void DW_UIPanel::Update(const float dt) {

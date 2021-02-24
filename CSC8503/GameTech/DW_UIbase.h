@@ -22,7 +22,7 @@ public:
 		IMAGE	,
 		HUD
 	};
-	DW_UIbase(const UIType type, const NCL::Maths::Vector3& pos = NCL::Maths::Vector3{}, const NCL::Maths::Vector3& color = NCL::Maths::Vector3{1.0f,1.0f,1.0f}, const int priority = 0);
+	DW_UIbase(const std::string& name, const UIType type, const NCL::Maths::Vector3& pos = NCL::Maths::Vector3{}, const NCL::Maths::Vector3& color = NCL::Maths::Vector3{1.0f,1.0f,1.0f}, const int priority = 0);
 	virtual ~DW_UIbase();
 
 	virtual void Update(const float dt);
@@ -46,6 +46,9 @@ public:
 
 	void SetName(const std::string& name) { m_name = name; }
 	std::string GetName() { return m_name; }
+
+	void SetParentPanelName(const std::string& name) { m_ParentPanelName = name; }
+	std::string GetParentPanelName() { return m_ParentPanelName; }
 protected:
 	UIType m_type;
 	int m_renderPriority;
@@ -53,5 +56,7 @@ protected:
 	NCL::Maths::Vector3 m_position;
 	NCL::Maths::Vector3 m_color;
 	std::string m_name;
+
+	std::string m_ParentPanelName;
 };
 

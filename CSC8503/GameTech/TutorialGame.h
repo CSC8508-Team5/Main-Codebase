@@ -3,8 +3,8 @@
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "StateGameObject.h"
 
-//#include "DW_UIRenderer.h"
-//#include "DW_UIPanelExample.h"
+#include "DW_UIRenderer.h"
+#include "DW_UIPanelExample.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -81,7 +81,7 @@ namespace NCL {
 
 
 			//DW UI example
-			//DW_UIPanelExample* m_uiExample;
+			DW_UIPanelExample* m_uiExample;
 		};
 	}
 }

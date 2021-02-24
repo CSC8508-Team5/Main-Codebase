@@ -1,6 +1,17 @@
+/*
+Part of UI System code.
+
+deal with capture mouse click and dispatch event
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include <iostream>
+#include <functional>
+
+#include "eventdispatcher.h"
 
 #include "../../Common/Vector2.h"
 #include "../../Common/Vector3.h"
@@ -28,9 +39,17 @@ public:
 	void SetHasFindTarget(const bool flag) { m_hasFindTarget = flag; }
 
 	bool GetHasFindTarget() { return m_hasFindTarget; }
+
+	void RegisterUIEvent(const std::string& type, const std::function<void(const std::string&)>& func);
+
+	void TriggerUIEvent(const std::string& type, const std::string& para);
+
 private:
 	const float m_aspect{ 0.5625f };
 	bool m_hasFindTarget{false};
+
+	//event type is the name of the panel, and function's parameter is the name of the component
+	eventpp::EventDispatcher<std::string, void(std::string)> m_uiEventDispatcher;
 
 };
 

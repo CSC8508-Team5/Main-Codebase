@@ -17,21 +17,29 @@ Comments and queries to: Dawei Wang, Group 5
 class DW_UIPanel
 {
 public:
-	DW_UIPanel(const int priority=0);
+	DW_UIPanel(const std::string& name, const int priority=0);
 	~DW_UIPanel();
 
 	int GetRenderPriority() { return m_priority; }
 	void SetRenderPriority(const int num) { m_priority = num; }
 
-	void AddComponent(DW_UIbase* ui) { m_uiComponents.insert(std::pair<int, DW_UIbase*>{ui->GetRenderPriority(),ui}); }
+	void AddComponent(DW_UIbase* ui);
 	
 	void Update(const float dt);
 
 	void Render();
+
+	std::string GetPanelName() { return m_name; }
+	void SetPanelName(const std::string& name) { m_name = name; }
+
+	bool GetPanelIsEnable() { return m_isEnable; }
+	void SetPanelIsEnable(const bool flag) { m_isEnable = flag; }
 private:
 	int m_priority;
 	bool m_isEnable;
 	std::multimap<int, DW_UIbase*> m_uiComponents;
+
+	std::string m_name;
 	
 };
 

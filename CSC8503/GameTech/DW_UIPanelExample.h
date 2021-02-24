@@ -1,3 +1,11 @@
+/*
+Part of UI System code.
+
+An example of how to create an UIPanel
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include "../../Common/Vector3.h"
@@ -17,6 +25,7 @@ public:
 	DW_UIPanelExample();
 	~DW_UIPanelExample();
 
+	
 private:
 	DW_UIImage* m_bg;
 	DW_UIImage* m_btn;
@@ -24,5 +33,9 @@ private:
 	DW_UIText* m_text;
 
 	DW_UIPanel* m_panel;
+	int m_number{ 0 };
+
+	void ClickFunc(const std::string& str);
+	
 };
 
