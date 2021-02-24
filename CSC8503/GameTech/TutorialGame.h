@@ -1,6 +1,10 @@
 #pragma once
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
+#include "StateGameObject.h"
+
+#include "DW_UIRenderer.h"
+#include "DW_UIPanelExample.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -42,6 +46,9 @@ namespace NCL {
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
+		StateGameObject* AddStateObjectToWorld(const Vector3& position);
+		  StateGameObject * testStateObject = nullptr;
+
 			GameTechRenderer*	renderer;
 			PhysicsSystem*		physics;
 			GameWorld*			world;
@@ -72,6 +79,9 @@ namespace NCL {
 				lockedObject = o;
 			}
 
+
+			//DW UI example
+			DW_UIPanelExample* m_uiExample;
 		};
 	}
 }

@@ -12,7 +12,6 @@ namespace NCL {
 		~AABBVolume() {
 
 		}
-
 		Vector3 GetHalfDimensions() const {
 			return halfSizes;
 		}
