@@ -15,7 +15,7 @@ namespace NCL {
 			void InitialiseAssets();
 
 			void InitCamera();
-			void UpdateKeys();
+			void UpdateKeys(float dt);
 
 			void InitWorld();
 
@@ -33,7 +33,7 @@ namespace NCL {
 			bool SelectObject();
 			void MoveSelectedObject();
 			void DebugObjectMovement();
-			void LockedObjectMovement();
+			void LockedObjectMovement(float dt);
 
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
@@ -56,6 +56,8 @@ namespace NCL {
 			bool inSelectionMode;
 
 			float		forceMagnitude;
+			//player orientation
+			float		YMax;
 
 			//adding for level design
 			float		platformtimer;

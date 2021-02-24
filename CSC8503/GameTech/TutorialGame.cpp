@@ -5,6 +5,8 @@
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
 #include "../CSC8503Common/PositionConstraint.h"
+#include "../CSC8503Common/OrientationConstraints.h"
+
 #include <list>
 using namespace NCL;
 using namespace CSC8503;
@@ -22,7 +24,7 @@ TutorialGame::TutorialGame()	{
 	platformtimer = 0.0f;
 	platforms = new GameObject*;
 	//end 
-	
+	YMax = 0;
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
@@ -79,7 +81,7 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}
 
-	UpdateKeys();
+	UpdateKeys(dt);
 
 	if (useGravity) {
 		Debug::Print("(G)ravity on", Vector2(5, 95));
@@ -172,7 +174,7 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 
-void TutorialGame::UpdateKeys() {
+void TutorialGame::UpdateKeys(float dt) {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
 		InitWorld(); //We can reset the simulation at any time with F1
 		selectionObject = nullptr;
@@ -206,14 +208,14 @@ void TutorialGame::UpdateKeys() {
 	}
 
 	if (lockedObject) {
-		LockedObjectMovement();
+		LockedObjectMovement(dt);
 	}
-	else {
-		DebugObjectMovement();
-	}
+	//else {
+	//	//DebugObjectMovement();
+	//}
 }
 
-void TutorialGame::LockedObjectMovement() {
+void TutorialGame::LockedObjectMovement(float dt) {
 	Matrix4 view		= world->GetMainCamera()->BuildViewMatrix();
 	Matrix4 camWorld	= view.Inverse();
 
@@ -232,70 +234,99 @@ void TutorialGame::LockedObjectMovement() {
 
 	float force = 100.0f;
 
+
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
 		lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
+		if (lockedObject->GetTransform().GetOrientation().ToEuler().y >= -90) {
+			YMax = 90;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
+		}
+		else {
+			YMax = 90;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
+		}
 	}
-
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-		//Vector3 worldPos = selectionObject->GetTransform().GetPosition();
 		lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
+		if (lockedObject->GetTransform().GetOrientation().ToEuler().y >= 90) {
+			YMax = -90;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
+		}
+		else {
+			YMax =-90;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
+		}
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
 		lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
+		if (lockedObject->GetTransform().GetOrientation().ToEuler().y <= 0) {
+			YMax = -5;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, -7, 0));
+		}
+		else {
+			YMax = 5;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, 7, 0));
+		}
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
 		lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
-	}
+		if (lockedObject->GetTransform().GetOrientation().ToEuler().y <= 0) {
+			YMax = -177;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, -7, 0));
+		}
+		else {
+			YMax = 177;
+			lockedObject->GetPhysicsObject()->AddTorque(Vector3(0, 7, 0));
+		}
 
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
-		lockedObject->GetPhysicsObject()->AddForce(Vector3(0,-10,0));
-	}	
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		lockedObject->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
+
+
 	}
+	OrientationConstraints constraint = OrientationConstraints(lockedObject, YMax);
+	constraint.UpdateConstraint(dt);
 }
 
-void TutorialGame::DebugObjectMovement() {
-//If we've selected an object, we can manipulate it with some key presses
-	if (inSelectionMode && selectionObject) {
-		//Twist the selected object!
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(-10, 0, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
-		}
-
-		//if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-		//	selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
-		//}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-		}
-	
-	}
-
-}
+//void TutorialGame::DebugObjectMovement() {
+////If we've selected an object, we can manipulate it with some key presses
+//	if (inSelectionMode && selectionObject) {
+//		//Twist the selected object!
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
+//			selectionObject->GetPhysicsObject()->AddTorque(Vector3(-10, 0, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
+//			selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
+//			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
+//			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
+//		}
+//
+//		//if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
+//		//	selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
+//		//}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
+//			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
+//			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
+//			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
+//		}
+//	
+//	}
+//
+//}
 
 void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetNearPlane(0.1f);
