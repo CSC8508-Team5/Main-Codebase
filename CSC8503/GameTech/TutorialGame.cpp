@@ -102,7 +102,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 		Matrix4 modelMat = temp.Inverse();
 
-		Quaternion q(modelMat);
+		Quaternion q(lockedObject->GetTransform().GetOrientation());
 		Vector3 angles = q.ToEuler(); //nearly there now!
 
 		world->GetMainCamera()->SetPosition(camPos);
@@ -284,6 +284,7 @@ void TutorialGame::LockedObjectMovement(float dt) {
 
 
 	}
+	//world->GetMainCamera()->SetYaw(lockedObject->GetTransform().GetOrientation().y);
 	OrientationConstraints constraint = OrientationConstraints(lockedObject, YMax);
 	constraint.UpdateConstraint(dt);
 }
