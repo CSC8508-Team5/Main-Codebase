@@ -21,7 +21,7 @@ TutorialGame::TutorialGame()	{
 
 	InitialiseAssets();
 
-	m_uiExample=new DW_UIPanelExample();
+//	m_uiExample=new DW_UIPanelExample();
 }
 
 /*
