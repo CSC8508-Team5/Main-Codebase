@@ -15,7 +15,7 @@ Comments and queries to: Dawei Wang, Group 5
 #include <iostream>
 #include <map>
 
-#include "../../Plugins/FreeType/ft2build.h"
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include "OGLShader.h"
