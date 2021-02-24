@@ -71,7 +71,7 @@ TutorialGame::~TutorialGame()	{
 	delete physics;
 	delete renderer;
 	delete world;
-	delete platforms;
+	delete[] platforms;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -237,7 +237,7 @@ void TutorialGame::LockedObjectMovement() {
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-		Vector3 worldPos = selectionObject->GetTransform().GetPosition();
+		//Vector3 worldPos = selectionObject->GetTransform().GetPosition();
 		lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
 	}
 
@@ -251,6 +251,9 @@ void TutorialGame::LockedObjectMovement() {
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
 		lockedObject->GetPhysicsObject()->AddForce(Vector3(0,-10,0));
+	}	
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
+		lockedObject->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
 	}
 }
 
@@ -274,9 +277,9 @@ void TutorialGame::DebugObjectMovement() {
 			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
 		}
 
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
-		}
+		//if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
+		//	selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
+		//}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
 			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
@@ -306,11 +309,13 @@ void TutorialGame::InitCamera() {
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
+	platforms = LevelTestOne();
+	AddPlayerToWorld(Vector3(-150, 15, -10));
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
 	//InitDefaultFloor();
-	platforms = LevelTestOne();
+
 	//BridgeConstraintTest();
 }
 
@@ -554,6 +559,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->InitSphereInertia();
 
 	world->AddGameObject(character);
+	lockedObject = world->getGameObjects().at(world->getGameObjects().size()-1); //Not dangling since charachter will always be added
 
 	//lockedObject = character;
 
@@ -632,7 +638,7 @@ bool TutorialGame::SelectObject() {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 				selectionObject = nullptr;
-				lockedObject	= nullptr;
+				//lockedObject	= nullptr;
 			}
 
 			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());

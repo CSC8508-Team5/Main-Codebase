@@ -56,6 +56,7 @@ namespace NCL {
 			bool inSelectionMode;
 
 			float		forceMagnitude;
+
 			//adding for level design
 			float		platformtimer;
 			GameObject** platforms;
