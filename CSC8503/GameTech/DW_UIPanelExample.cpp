@@ -3,14 +3,14 @@
 
 DW_UIPanelExample::DW_UIPanelExample() {
 	//1.create many ui components if you need! (they must have a name)
-	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	std::string str{ NCL::Assets::TEXTUREDIR + "guiicons/plus_t.png" };
 	m_btn = new DW_UIImage("Button",str.c_str(), { 0.15f, 0.15f }, NCL::Maths::Vector3{ 460.0f,360.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,0.0f });
 
 
 	str = NCL::Assets::TEXTUREDIR + "checkerboard.png";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 0.8f, 0.5f }, NCL::Maths::Vector3{ 640.0f,360.0f,0.0f });
 
-	str = NCL::Assets::TEXTUREDIR + "close.png";
+	str = NCL::Assets::TEXTUREDIR + "guiicons/exit_t.png";
 	m_close_btn = new DW_UIImage("CloseButton", str.c_str(), { 0.1f, 0.1f }, NCL::Maths::Vector3{ 800.0f,480.0f,0.0f });
 
 	m_text = new DW_UIText("text","0", 1.0f, NCL::Maths::Vector3{ 700.0f,360.0f,0.0f }, NCL::Maths::Vector3{ 0.0f,0.0f,1.0f });
