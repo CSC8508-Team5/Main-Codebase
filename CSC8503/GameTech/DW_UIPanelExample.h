@@ -25,6 +25,8 @@ public:
 	DW_UIPanelExample();
 	~DW_UIPanelExample();
 
+	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
+	
 	
 private:
 	DW_UIImage* m_bg;

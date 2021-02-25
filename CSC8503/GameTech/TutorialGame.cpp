@@ -152,6 +152,10 @@ void TutorialGame::UpdateKeys() {
 		world->ShuffleObjects(false);
 	}
 
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
+		m_uiExample->SetPanelActive(true);
+	}
+
 	if (lockedObject) {
 		LockedObjectMovement();
 	}
