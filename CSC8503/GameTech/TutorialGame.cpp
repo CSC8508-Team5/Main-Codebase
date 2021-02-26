@@ -14,6 +14,11 @@ TutorialGame::TutorialGame()	{
 	physics		= new PhysicsSystem(*world);
 	//irrklang audio system
 	audio		= new AudioSystem();
+	audio->PlayAudio("Casual Theme #1 (Looped).ogg");
+	//cant load flac and mp3 yet
+	//audio->PlayAudio("Funky Chill 2 loop.flac");
+	//audio->PlayAudio("keyboardcat.mp3");
+
 	forceMagnitude	= 10.0f;
 	useGravity		= false;
 	inSelectionMode = false;

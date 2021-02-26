@@ -1,5 +1,6 @@
 #include "DW_UIPanelExample.h"
 
+#include "../CSC8503Common/AudioSystem.h"
 
 DW_UIPanelExample::DW_UIPanelExample() {
 	//1.create many ui components if you need! (they must have a name)
@@ -53,8 +54,12 @@ void DW_UIPanelExample::ClickFunc(const std::string& str) {
 	{
 		m_number++;
 		m_text->SetText(std::to_string(m_number));
+		//irrklang sfx
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 	}
 	else if (str == "CloseButton") {
+		//irrklang sfx
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		m_panel->SetPanelIsEnable(false);
 	}
 	std::cout << str << "\n";
