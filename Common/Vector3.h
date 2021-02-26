@@ -10,6 +10,7 @@ https://research.ncl.ac.uk/game/
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include "../Plugins/irrKlang/include/ik_vec3d.h"
 
 namespace NCL {
 	namespace Maths {
@@ -170,6 +171,14 @@ namespace NCL {
 			inline friend std::ostream& operator<<(std::ostream& o, const Vector3& v) {
 				o << "Vector3(" << v.x << "," << v.y << "," << v.z << ")" << std::endl;
 				return o;
+			}
+
+			/// <summary>
+			/// implement class transformation for irrklang
+			/// </summary>
+			operator irrklang::vec3df()
+			{
+				return irrklang::vec3df(x, y, z);
 			}
 		};
 	}
