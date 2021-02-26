@@ -12,7 +12,8 @@ TutorialGame::TutorialGame()	{
 	world		= new GameWorld();
 	renderer	= new GameTechRenderer(*world);
 	physics		= new PhysicsSystem(*world);
-
+	//irrklang audio system
+	audio		= new AudioSystem();
 	forceMagnitude	= 10.0f;
 	useGravity		= false;
 	inSelectionMode = false;
@@ -21,7 +22,7 @@ TutorialGame::TutorialGame()	{
 
 	InitialiseAssets();
 
-	m_uiExample=new DW_UIPanelExample();
+	m_uiExample = new DW_UIPanelExample();
 }
 
 /*
@@ -67,6 +68,7 @@ TutorialGame::~TutorialGame()	{
 	delete physics;
 	delete renderer;
 	delete world;
+	delete audio;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -117,6 +119,8 @@ void TutorialGame::UpdateGame(float dt) {
 	DW_UIRenderer::get_instance().Update(dt);
 
 	renderer->Render();
+	
+	audio->Update(*world->GetMainCamera());
 }
 
 void TutorialGame::UpdateKeys() {
@@ -150,6 +154,9 @@ void TutorialGame::UpdateKeys() {
 	}
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F8)) {
 		world->ShuffleObjects(false);
+	}
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F11)) {
+		AudioSystem::PlaySFX("bell.wav");
 	}
 
 	if (lockedObject) {
