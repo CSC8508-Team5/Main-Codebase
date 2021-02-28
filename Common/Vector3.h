@@ -55,11 +55,11 @@ namespace NCL {
 			}
 
 			float	Length() const {
-				return sqrt((x*x) + (y*y) + (z*z));
+				return sqrt((x * x) + (y * y) + (z * z));
 			}
 
 			constexpr float	LengthSquared() const {
-				return ((x*x) + (y*y) + (z*z));
+				return ((x * x) + (y * y) + (z * z));
 			}
 
 			constexpr float		GetMaxElement() const {
@@ -84,19 +84,19 @@ namespace NCL {
 				return v;
 			}
 
-			static constexpr float	Dot(const Vector3 &a, const Vector3 &b) {
-				return (a.x*b.x) + (a.y*b.y) + (a.z*b.z);
+			static constexpr float	Dot(const Vector3& a, const Vector3& b) {
+				return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 			}
 
-			static Vector3	Cross(const Vector3 &a, const Vector3 &b) {
-				return Vector3((a.y*b.z) - (a.z*b.y), (a.z*b.x) - (a.x*b.z), (a.x*b.y) - (a.y*b.x));
+			static Vector3	Cross(const Vector3& a, const Vector3& b) {
+				return Vector3((a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x));
 			}
 
-			inline Vector3  operator+(const Vector3  &a) const {
+			inline Vector3  operator+(const Vector3& a) const {
 				return Vector3(x + a.x, y + a.y, z + a.z);
 			}
 
-			inline Vector3  operator-(const Vector3  &a) const {
+			inline Vector3  operator-(const Vector3& a) const {
 				return Vector3(x - a.x, y - a.y, z - a.z);
 			}
 
@@ -108,11 +108,11 @@ namespace NCL {
 				return Vector3(x * a, y * a, z * a);
 			}
 
-			inline Vector3  operator*(const Vector3  &a) const {
+			inline Vector3  operator*(const Vector3& a) const {
 				return Vector3(x * a.x, y * a.y, z * a.z);
 			}
 
-			inline Vector3  operator/(const Vector3  &a) const {
+			inline Vector3  operator/(const Vector3& a) const {
 				return Vector3(x / a.x, y / a.y, z / a.z);
 			};
 
@@ -120,26 +120,26 @@ namespace NCL {
 				return Vector3(x / v, y / v, z / v);
 			};
 
-			inline constexpr void operator+=(const Vector3  &a) {
+			inline constexpr void operator+=(const Vector3& a) {
 				x += a.x;
 				y += a.y;
 				z += a.z;
 			}
 
-			inline void operator-=(const Vector3  &a) {
+			inline void operator-=(const Vector3& a) {
 				x -= a.x;
 				y -= a.y;
 				z -= a.z;
 			}
 
 
-			inline void operator*=(const Vector3  &a) {
+			inline void operator*=(const Vector3& a) {
 				x *= a.x;
 				y *= a.y;
 				z *= a.z;
 			}
 
-			inline void operator/=(const Vector3  &a) {
+			inline void operator/=(const Vector3& a) {
 				x /= a.x;
 				y /= a.y;
 				z /= a.z;
@@ -165,8 +165,8 @@ namespace NCL {
 				return array[i];
 			}
 
-			inline bool	operator==(const Vector3 &A)const { return (A.x == x && A.y == y && A.z == z) ? true : false; };
-			inline bool	operator!=(const Vector3 &A)const { return (A.x == x && A.y == y && A.z == z) ? false : true; };
+			inline bool	operator==(const Vector3& A)const { return (A.x == x && A.y == y && A.z == z) ? true : false; };
+			inline bool	operator!=(const Vector3& A)const { return (A.x == x && A.y == y && A.z == z) ? false : true; };
 
 			inline friend std::ostream& operator<<(std::ostream& o, const Vector3& v) {
 				o << "Vector3(" << v.x << "," << v.y << "," << v.z << ")" << std::endl;
@@ -179,6 +179,28 @@ namespace NCL {
 			operator irrklang::vec3df()
 			{
 				return irrklang::vec3df(x, y, z);
+			}
+
+			static Vector3 Zero()
+			{
+				return Vector3(0, 0, 0);
+			}
+
+			static Vector3 One()
+			{
+				return Vector3(1, 1, 1);
+			}
+			static Vector3 Up()
+			{
+				return Vector3(0, 1, 0);
+			}
+			static Vector3 Forward()
+			{
+				return Vector3(0, 0, 1);
+			}
+			static Vector3 Right()
+			{
+				return Vector3(1, 0, 0);
 			}
 		};
 	}
