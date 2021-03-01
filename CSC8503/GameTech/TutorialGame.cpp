@@ -128,46 +128,46 @@ void TutorialGame::UpdateLevelOne() {
 	for (int i = 0; i < 15; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 0) {
-			if ((platformtimer >= 0) && (platformtimer < 100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8));
-				platformtimer += 0.2;
+			if ((platformtimer >= 0) && (platformtimer < 100.0f)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8f));
+				platformtimer += 0.2f;
 				continue;
 			}
-			else if (platformtimer >= 100) {
+			else if (platformtimer >= 100.0f) {
 				platformtimer = 0;
-				platformtimer -= 0.1;
+				platformtimer -= 0.1f;
 				continue;
 			}
-			else if ((platformtimer <= 0) && (platformtimer > -100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8));
-				platformtimer -= 0.2;
+			else if ((platformtimer <= 0) && (platformtimer > -100.0f)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8f));
+				platformtimer -= 0.2f;
 				continue;
 			}
-			else if (platformtimer <= -100) {
+			else if (platformtimer <= -100.0f) {
 				platformtimer = 0;
-				platformtimer += 0.2;
+				platformtimer += 0.2f;
 				continue;
 			}
 		}
 		else if (i % 3 == 2) {
-			if ((platformtimer >= 0) && (platformtimer < 100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8));
-				platformtimer += 0.2;
+			if ((platformtimer >= 0) && (platformtimer < 100.0f)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8f));
+				platformtimer += 0.2f;
 				continue;
 			}
-			else if (platformtimer >= 100) {
+			else if (platformtimer >= 100.0f) {
 				platformtimer = 0;
-				platformtimer -= 0.2;
+				platformtimer -= 0.2f;
 				continue;
 			}
-			else if ((platformtimer <= 0) && (platformtimer > -100)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8));
-				platformtimer -= 0.2;
+			else if ((platformtimer <= 0) && (platformtimer > -100.0f)) {
+				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8f));
+				platformtimer -= 0.2f;
 				continue;
 			}
-			else if (platformtimer <= -100) {
+			else if (platformtimer <= -100.0f) {
 				platformtimer = 0;
-				platformtimer += 0.2;
+				platformtimer += 0.2f;
 				continue;
 			}
 		}
@@ -329,22 +329,22 @@ GameObject** TutorialGame::LevelTestOne() {
 
 	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0)
 		, PlatformSize, 0);
-	GameObject* end = AddCubeToWorld(startPos + Vector3((numStairs + 1) * cubeDistance, (numStairs + 1) * 5, 0), PlatformSize, 0);
+	GameObject* end = AddCubeToWorld(startPos + Vector3((numStairs + 1) * cubeDistance, (numStairs + 1) * 5.0f, 0), PlatformSize, 0);
 
 	GameObject* previous = start;
 	for (int i = 0; i < numStairs; ++i) {
 		if (i % 3 == 0) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, -40), cubeSize, invCubeMass);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
 			platforms[i] = block;
 			previous = block;
 		}
 		else if (i % 3 == 1) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, 0), middlecubeSize, invCubeMass);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
 			platforms[i] = block;
 			previous = block;
 		}
 		else if(i % 3 == 2) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5, 40), cubeSize, invCubeMass);
+			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
 			platforms[i] = block;
 			previous = block;
 		}
