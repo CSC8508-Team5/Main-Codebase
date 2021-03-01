@@ -20,7 +20,7 @@ TutorialGame::TutorialGame()	{
 
 	//adding for level design
 	platformtimer = 0.0f;
-	platforms = new GameObject*;
+	platforms = new GameObject*[15];
 	//end 
 	
 	Debug::SetRenderer(renderer);
