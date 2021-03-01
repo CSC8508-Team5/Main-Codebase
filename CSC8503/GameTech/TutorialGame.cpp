@@ -68,10 +68,12 @@ TutorialGame::~TutorialGame()	{
 	delete basicTex;
 	delete basicShader;
 
+	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
+
 	delete physics;
 	delete renderer;
 	delete world;
-	delete platforms;
+	
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -121,6 +123,7 @@ void TutorialGame::UpdateGame(float dt) {
 	UpdateLevelOne();
 	renderer->Render();
 }
+
 void TutorialGame::UpdateLevelOne() {
 	for (int i = 0; i < 15; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
@@ -170,7 +173,6 @@ void TutorialGame::UpdateLevelOne() {
 		}
 	}
 };
-
 
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {

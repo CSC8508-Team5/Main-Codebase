@@ -337,7 +337,7 @@ int main() {
 	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
 	
 	
-	TestPushdownAutomata(w);
+	//TestPushdownAutomata(w);
 	if (!w->HasInitialised()) {
 		return -1;
 	}	
@@ -348,7 +348,7 @@ int main() {
 	TutorialGame* g = new TutorialGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
-	TestPathfinding();
+	//TestPathfinding();
 	//TestBehaviourTree();
 
 		while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
@@ -376,7 +376,7 @@ int main() {
 			w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
 			
 			g->UpdateGame(dt);
-			DisplayPathfinding();
+			//DisplayPathfinding();
 		}
 
 	
