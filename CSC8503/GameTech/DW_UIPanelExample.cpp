@@ -6,7 +6,7 @@ DW_UIPanelExample::DW_UIPanelExample() {
 	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	m_btn = new DW_UIImage("Button",str.c_str(), { 0.15f, 0.15f }, NCL::Maths::Vector3{ 460.0f,360.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,0.0f });
 
-	str = NCL::Assets::TEXTUREDIR + "checkerboard.png";
+	str = NCL::Assets::TEXTUREDIR + "bg.jpg";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 0.8f, 0.5f }, NCL::Maths::Vector3{ 640.0f,360.0f,0.0f });
 
 	str = NCL::Assets::TEXTUREDIR + "close.png";

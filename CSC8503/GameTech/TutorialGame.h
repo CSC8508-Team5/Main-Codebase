@@ -4,7 +4,11 @@
 #include "StateGameObject.h"
 
 #include "DW_UIRenderer.h"
-#include "DW_UIPanelExample.h"
+
+#include "HM_StartMenu.h"
+#include "HM_PauseMenu.h"
+#include "HM_Win.h"
+#include "HM_Lose.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -81,7 +85,10 @@ namespace NCL {
 
 
 			//DW UI example
-			DW_UIPanelExample* m_uiExample;
+			HM_StartMenu* StartMenu;
+			HM_PauseMenu* PauseMenu;
+			HM_Win* WinScreen;
+			HM_Lose* LoseScreen;
 		};
 	}
 }

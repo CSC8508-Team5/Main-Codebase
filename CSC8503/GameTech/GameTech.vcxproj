@@ -151,6 +151,10 @@
     <ClCompile Include="DW_UIText.cpp" />
     <ClCompile Include="DW_UITextRenderer.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
+    <ClCompile Include="HM_Lose.cpp" />
+    <ClCompile Include="HM_PauseMenu.cpp" />
+    <ClCompile Include="HM_StartMenu.cpp" />
+    <ClCompile Include="HM_Win.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateGameObject.cpp" />
     <ClCompile Include="TutorialGame.cpp" />
@@ -167,6 +171,10 @@
     <ClInclude Include="DW_UIText.h" />
     <ClInclude Include="DW_UITextRenderer.h" />
     <ClInclude Include="GameTechRenderer.h" />
+    <ClInclude Include="HM_Lose.h" />
+    <ClInclude Include="HM_PauseMenu.h" />
+    <ClInclude Include="HM_StartMenu.h" />
+    <ClInclude Include="HM_Win.h" />
     <ClInclude Include="StateGameObject.h" />
     <ClInclude Include="TutorialGame.h" />
   </ItemGroup>

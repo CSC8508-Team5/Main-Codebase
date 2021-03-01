@@ -20,8 +20,14 @@ TutorialGame::TutorialGame()	{
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+	
+	StartMenu =new HM_StartMenu(); // main menu
+	//PauseMenu = new HM_PauseMenu(); // Pause menu
+	//WinScreen = new HM_Win(); // wining screen
+	//LoseScreen = new HM_Lose(); // lose screen
 
-	m_uiExample=new DW_UIPanelExample();
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
 /*
@@ -153,7 +159,7 @@ void TutorialGame::UpdateKeys() {
 	}
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
-		m_uiExample->SetPanelActive(true);
+		PauseMenu->SetPanelActive(true);
 	}
 
 	if (lockedObject) {
