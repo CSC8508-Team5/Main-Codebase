@@ -141,9 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DW_HUDText.cpp" />
+    <ClCompile Include="DW_Quad.cpp" />
     <ClCompile Include="DW_UIbase.cpp" />
     <ClCompile Include="DW_UIEventMgr.cpp" />
+    <ClCompile Include="DW_UIHUD.cpp" />
     <ClCompile Include="DW_UIImage.cpp" />
     <ClCompile Include="DW_UIImageRenderer.cpp" />
     <ClCompile Include="DW_UIPanel.cpp" />
@@ -161,10 +162,11 @@
     <ClCompile Include="TutorialGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DW_HUDText.h" />
+    <ClInclude Include="DW_Quad.h" />
     <ClInclude Include="DW_Singleton.h" />
     <ClInclude Include="DW_UIbase.h" />
     <ClInclude Include="DW_UIEventMgr.h" />
+    <ClInclude Include="DW_UIHUD.h" />
     <ClInclude Include="DW_UIImage.h" />
     <ClInclude Include="DW_UIImageRenderer.h" />
     <ClInclude Include="DW_UIPanel.h" />

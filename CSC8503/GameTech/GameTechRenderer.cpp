@@ -141,8 +141,6 @@ void GameTechRenderer::RenderFrame() {
 	glDisable(GL_DEPTH_TEST);
 	
 	DW_UIRenderer::get_instance().Render();//UI SYSTEM render
-	//m_image->Render();
-	//glDisable(GL_BLEND);
 	
 	glEnable(GL_DEPTH_TEST);
 	
