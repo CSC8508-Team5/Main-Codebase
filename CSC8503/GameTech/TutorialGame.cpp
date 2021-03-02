@@ -22,7 +22,7 @@ TutorialGame::TutorialGame()	{
 	InitialiseAssets();
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 	
-	StartMenu =new HM_StartMenu(); // main menu
+	//StartMenu =new HM_StartMenu(); // main menu
 	//PauseMenu = new HM_PauseMenu(); // Pause menu
 	//WinScreen = new HM_Win(); // wining screen
 	//LoseScreen = new HM_Lose(); // lose screen
