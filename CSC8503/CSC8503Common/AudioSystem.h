@@ -3,7 +3,7 @@
 #include "../../Common/Vector3.h"
 #include "../../Common/Vector4.h"
 #include "../../Common/Camera.h"
-#include "GameObject.h"
+#include "../CSC8503Common/Transform.h"
 #include "../../Common/Assets.h"
 
 #include <irrKlang.h>
@@ -17,8 +17,6 @@ using namespace NCL::Maths;
 using namespace std;
 namespace NCL {
 	namespace CSC8503 {
-
-
 		class AudioSystem
 		{
 		public:
@@ -28,7 +26,7 @@ namespace NCL {
 			void Update(Vector3 listener, Vector3 forward);
 			void Update(vec3df listener, vec3df forward);
 			void Update(Camera camera);
-			void Update(GameObject obj);
+			void Update(Transform trans);
 
 			static void Play(ISoundSource* sound, bool loop = false);
 			static void Play(ISoundSource* sound, Vector3 position, bool loop = false);
@@ -37,13 +35,34 @@ namespace NCL {
 			static void PlaySFX(string filename, bool loop = false);
 			static void PlayAudio(string filename, Vector3 position, bool loop = false);
 			static void PlaySFX(string filename, Vector3 position, bool loop = false);
+			
+			static void PlaySound(string filename, bool loop = false);
+			static void PlaySound(string filename, Vector3 position, bool loop = false);
+			
+			static ISound* AddSound(string filename, bool loop = false, bool pause = false);
+			static ISound* AddSound(string filename, Vector3 position, bool loop = false, bool pause = false);
+
+			static string GetAudioFilename(string filename) { return (Assets::AUDIODIR + filename); }
+			static string GetSFXFilename(string filename) { return (Assets::SFXDIR + filename); }
+
+			//global settings
+			static void SetGlobalVolume(float vol) { engine->setSoundVolume(vol); }
+			static float GetGlobalVolume() { return engine->getSoundVolume(); }
+			
+			static void SetDefaultMinDistance(float d) { engine->setDefault3DSoundMinDistance(d); }
+			static void SetDefaultMaxDistance(float d) { engine->setDefault3DSoundMaxDistance(d); }
+
+			static float GetDefaultMinDistance() { engine->getDefault3DSoundMinDistance(); }
+			static float GetDefaultMaxDistance() { engine->getDefault3DSoundMaxDistance(); }
+
+			static void PauseAll(bool pause = true) { engine->setAllSoundsPaused(pause); }
+			static string GetDevice() { return engine->getDriverName(); }
+			static int GetLoadedSourceCount() { return engine->getSoundSourceCount(); }
+			
+			static ISoundSource* GetSourceExist(string filename) { return engine->getSoundSource(filename.c_str(), false); }
+		
 		private:
 			static ISoundEngine* engine;
-
-			struct SoundSource
-			{
-
-			};
 		};
 	}
 }
