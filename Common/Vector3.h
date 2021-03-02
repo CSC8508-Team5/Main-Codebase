@@ -34,7 +34,7 @@ namespace NCL {
 
 			Vector3(const Vector2& v2, float z = 0.0f);
 			Vector3(const Vector4& v4);
-
+			Vector3(const irrklang::vec3df v3);
 			~Vector3(void) {}
 
 			Vector3 Normalised() const {
