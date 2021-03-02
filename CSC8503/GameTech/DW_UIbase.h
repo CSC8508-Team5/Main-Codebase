@@ -49,6 +49,8 @@ public:
 
 	void SetParentPanelName(const std::string& name) { m_ParentPanelName = name; }
 	std::string GetParentPanelName() { return m_ParentPanelName; }
+
+
 protected:
 	UIType m_type;
 	int m_renderPriority;

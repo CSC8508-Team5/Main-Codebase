@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DW_HUDText.cpp" />
     <ClCompile Include="DW_UIbase.cpp" />
     <ClCompile Include="DW_UIEventMgr.cpp" />
     <ClCompile Include="DW_UIImage.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="TutorialGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DW_HUDText.h" />
     <ClInclude Include="DW_Singleton.h" />
     <ClInclude Include="DW_UIbase.h" />
     <ClInclude Include="DW_UIEventMgr.h" />
