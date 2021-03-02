@@ -160,8 +160,13 @@ void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F8)) {
 		world->ShuffleObjects(false);
 	}
+
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F11)) {
 		AudioSystem::PlaySFX("bell.wav");
+	}
+
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F10)) {
+		audioAgent->GetSoundSource()->Play();
 	}
 
 	if (lockedObject) {
@@ -270,6 +275,11 @@ void TutorialGame::InitWorld() {
 	InitGameExamples();
 	InitDefaultFloor();
 	BridgeConstraintTest();
+
+	audioAgent = AddSphereToWorld(Vector3(0, -5, 0), 1);
+	audioAgent->GetRenderObject()->SetColour(Debug::BLUE);
+	audioAgent->SetSoundSource(new SoundSource(AudioSystem::GetSFXFilename("bell.wav"), false, true));
+	audioAgent->GetSoundSource();
 }
 
 void TutorialGame::BridgeConstraintTest() {
