@@ -30,7 +30,7 @@ namespace NCL {
 				{
 					sound->drop();
 				}
-				sound = AudioSystem::AddSound(filename,Vector3::Zero(), loop, pausedOnInit);
+				sound = AudioSystem::AddSound(filename, Vector3::Zero(), loop, pausedOnInit);
 
 				this->soundFile = filename;
 				this->isLoop = loop;
@@ -54,6 +54,32 @@ namespace NCL {
 			void SetVolume(float vol) { if (vol != volume) sound->setVolume(vol); }
 			void SetIsLoop(bool loop) { if (loop != isLoop) sound->setIsLooped(loop); }
 
+			float GetPlayPos()
+			{
+				if (!sound)
+					return;
+				return sound->getPlayPosition();
+			}
+			void SetPlayPos(float t)
+			{
+				if (!sound)
+					return;
+				sound->setPlayPosition(t);
+			}
+
+			float GetPlaySpeed()
+			{
+				if (!sound)
+					return;
+				return sound->getPlaybackSpeed();
+			}
+			void SetPlaySpeed(float s)
+			{
+				if (!sound)
+					return;
+				sound->setPlaybackSpeed(1.0f);
+			}
+
 			void Update(Vector3 position)
 			{
 				if (!sound)
@@ -76,15 +102,16 @@ namespace NCL {
 				if (!sound)
 					return;
 				sound->setPlayPosition(0);
-				if (sound->isFinished())
+				//if (sound->isFinished())
 				{
-					InitSound(soundFile,isLoop);
-					//AudioSystem::Play(sound->getSoundSource(), Vector3(sound->getPosition()), isLoop);
+					//InitSound(soundFile,isLoop);
+					AudioSystem::Play(sound->getSoundSource(), Vector3(sound->getPosition()), isLoop);
+					UpdateParams();
 				}
-				if (sound->getIsPaused())
+				/*if (sound->getIsPaused())
 				{
 					sound->setIsPaused(false);
-				}
+				}*/
 			}
 
 			void Pause()
@@ -108,8 +135,10 @@ namespace NCL {
 			{
 				if (!sound)
 					return;
-				sound->setPlayPosition(0);
+				InitSound(soundFile, isLoop);
 			}
+
+
 
 			void Stop()
 			{
