@@ -5,6 +5,8 @@
 #include "PhysicsObject.h"
 #include "RenderObject.h"
 
+#include "SoundSource.h"
+
 #include <vector>
 
 using std::vector;
@@ -73,12 +75,23 @@ namespace NCL {
 				return worldID;
 			}
 
+			void SetSoundSource(SoundSource* s) { soundSource = s; soundSource->Update(transform.GetPosition()); }
+			SoundSource* GetSoundSource() { return this->soundSource; }
+
+			virtual void Update(float dt)
+			{
+				if(soundSource)
+					soundSource->Update(transform.GetPosition());
+			}
+
 		protected:
 			Transform			transform;
 
 			CollisionVolume*	boundingVolume;
 			PhysicsObject*		physicsObject;
 			RenderObject*		renderObject;
+
+			SoundSource* soundSource;
 
 			bool	isActive;
 			int		worldID;
