@@ -57,7 +57,7 @@ namespace NCL {
 			float GetPlayPos()
 			{
 				if (!sound)
-					return;
+					return 0.0f;
 				return sound->getPlayPosition();
 			}
 			void SetPlayPos(float t)
@@ -70,7 +70,7 @@ namespace NCL {
 			float GetPlaySpeed()
 			{
 				if (!sound)
-					return;
+					return 0.0f;
 				return sound->getPlaybackSpeed();
 			}
 			void SetPlaySpeed(float s)
