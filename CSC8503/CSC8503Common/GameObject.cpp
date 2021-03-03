@@ -10,12 +10,14 @@ GameObject::GameObject(string objectName)	{
 	boundingVolume	= nullptr;
 	physicsObject	= nullptr;
 	renderObject	= nullptr;
+	m_HUD = nullptr;
 }
 
 GameObject::~GameObject()	{
 	delete boundingVolume;
 	delete physicsObject;
 	delete renderObject;
+	delete m_HUD;
 }
 
 bool GameObject::GetBroadphaseAABB(Vector3&outSize) const {

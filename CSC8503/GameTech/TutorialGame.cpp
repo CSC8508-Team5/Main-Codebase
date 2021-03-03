@@ -451,7 +451,11 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
+	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,5.0f ,0.0f});
+
 	GameObject* character = new GameObject();
+	character->SetHUD(hud);
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 
