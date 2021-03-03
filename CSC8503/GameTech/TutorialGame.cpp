@@ -323,7 +323,6 @@ void TutorialGame::InitWorld() {
 	//InitGameExamples();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
-
 	//platforms = LevelTestOne();
 	spinplat = 	SpinningPlatform();
 }
@@ -366,7 +365,7 @@ GameObject** TutorialGame::LevelTestOne() {
 
 GameObject* TutorialGame::SpinningPlatform() {
 	float radius = 50.0f;
-	float hight = 0.5f;
+	float hight = 2.0f;
 	Vector3 position = Vector3(0, 0, 0);
 	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
 	return spinplat;
@@ -431,17 +430,17 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 
 
 /*
-The cylinder now using the SphereVolume, might need to change 
+The cylinder now using the CapsuleVolume, might need to change 
 */
 GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
 	GameObject* cylinder = new GameObject();
 
 	Vector3 cylinderSize = Vector3(radius, hight, radius);
-	SphereVolume* volume = new SphereVolume(radius);
+	CapsuleVolume* volume = new CapsuleVolume(hight/2, radius);
 	cylinder->SetBoundingVolume((CollisionVolume*)volume);
 
 	cylinder->GetTransform()
-		.SetScale(cylinderSize)
+		.SetScale(Vector3(radius * 2, hight/2, radius * 2))
 		.SetPosition(position);
 
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), spinplatMesh, basicTex, basicShader));
