@@ -21,6 +21,7 @@ TutorialGame::TutorialGame()	{
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject*[15];
+	spinplat = new GameObject;
 	//end 
 	
 	Debug::SetRenderer(renderer);
@@ -50,6 +51,8 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
+	loadFunc("Cylinder.msh", &spinplatMesh);
+
 	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
@@ -64,11 +67,13 @@ TutorialGame::~TutorialGame()	{
 	delete charMeshB;
 	delete enemyMesh;
 	delete bonusMesh;
+	delete spinplatMesh;
 
 	delete basicTex;
 	delete basicShader;
 
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
+	delete spinplat;
 
 	delete physics;
 	delete renderer;
@@ -120,7 +125,8 @@ void TutorialGame::UpdateGame(float dt) {
 	renderer->Update(dt);
 
 	Debug::FlushRenderables(dt);
-	UpdateLevelOne();
+	//UpdateLevelOne();
+	UpdateSpinningPlatform(dt);
 	renderer->Render();
 }
 
@@ -173,6 +179,10 @@ void TutorialGame::UpdateLevelOne() {
 		}
 	}
 };
+
+void TutorialGame::UpdateSpinningPlatform(float dt){
+	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+}
 
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
@@ -312,8 +322,10 @@ void TutorialGame::InitWorld() {
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
 	//InitDefaultFloor();
-	platforms = LevelTestOne();
 	//BridgeConstraintTest();
+
+	//platforms = LevelTestOne();
+	spinplat = 	SpinningPlatform();
 }
 
 GameObject** TutorialGame::LevelTestOne() {
@@ -350,6 +362,14 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 	}
 	return platforms;
+}
+
+GameObject* TutorialGame::SpinningPlatform() {
+	float radius = 50.0f;
+	float hight = 0.5f;
+	Vector3 position = Vector3(0, 0, 0);
+	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
+	return spinplat;
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -409,6 +429,31 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	return floor;
 }
 
+
+/*
+The cylinder now using the SphereVolume, might need to change 
+*/
+GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
+	GameObject* cylinder = new GameObject();
+
+	Vector3 cylinderSize = Vector3(radius, hight, radius);
+	SphereVolume* volume = new SphereVolume(radius);
+	cylinder->SetBoundingVolume((CollisionVolume*)volume);
+
+	cylinder->GetTransform()
+		.SetScale(cylinderSize)
+		.SetPosition(position);
+
+	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), spinplatMesh, basicTex, basicShader));
+	cylinder->SetPhysicsObject(new PhysicsObject(&cylinder->GetTransform(), cylinder->GetBoundingVolume()));
+
+	cylinder->GetPhysicsObject()->SetInverseMass(inverseMass);
+	cylinder->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(cylinder);
+
+	return cylinder;
+}
 /*
 
 Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
@@ -593,7 +638,7 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	SphereVolume* volume = new SphereVolume(0.25f);
 	apple->SetBoundingVolume((CollisionVolume*)volume);
 	apple->GetTransform()
-		.SetScale(Vector3(2.5, 0.25, 0.25))
+		.SetScale(Vector3(0.25, 0.25, 0.25))
 		.SetPosition(position);
 
 	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));

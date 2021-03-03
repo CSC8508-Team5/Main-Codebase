@@ -26,9 +26,6 @@ namespace NCL {
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
 			void InitDefaultFloor();
 			void BridgeConstraintTest();
-
-			GameObject** LevelTestOne();
-			void UpdateLevelOne();
 	
 			bool SelectObject();
 			void MoveSelectedObject();
@@ -45,6 +42,14 @@ namespace NCL {
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
+			//adding for level design
+			GameObject** LevelTestOne();
+			void UpdateLevelOne();
+			GameObject* SpinningPlatform();
+			void UpdateSpinningPlatform(float dt);
+			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			//end
+
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
 		  StateGameObject * testStateObject = nullptr;
 
@@ -59,6 +64,7 @@ namespace NCL {
 			//adding for level design
 			float		platformtimer;
 			GameObject** platforms;
+			GameObject* spinplat;
 			//end
 
 			GameObject* selectionObject = nullptr;
@@ -74,6 +80,10 @@ namespace NCL {
 			OGLMesh*	charMeshB	= nullptr;
 			OGLMesh*	enemyMesh	= nullptr;
 			OGLMesh*	bonusMesh	= nullptr;
+
+			//Teamwork Meshes
+			OGLMesh* spinplatMesh = nullptr;
+			//end
 
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
