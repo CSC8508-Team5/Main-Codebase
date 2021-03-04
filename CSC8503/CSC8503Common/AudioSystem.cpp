@@ -40,12 +40,12 @@ void NCL::CSC8503::AudioSystem::Update(Transform trans)
 
 ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, bool loop, bool trackable)
 {
-	return engine->play2D(sound, loop, false, true, trackable);
+	return engine->play2D(sound, loop, false, trackable, true);
 }
 
 ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, Vector3 position, bool loop, bool trackable)
 {
-	return engine->play3D(sound, position, loop, false, trackable);
+	return engine->play3D(sound, position, loop, false, trackable, true);
 }
 
 ISound* NCL::CSC8503::AudioSystem::Play(string filename, bool loop, bool trackable)

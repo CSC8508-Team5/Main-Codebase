@@ -30,6 +30,7 @@ namespace NCL {
 
 			static ISound* Play(ISoundSource* sound, bool loop = false, bool trackable = true);
 			static ISound* Play(ISoundSource* sound, Vector3 position, bool loop = false, bool trackable = true);
+
 			static ISound* Play(string filename, bool loop = false, bool trackable = false);
 			static ISound* Play(string filename, Vector3 position, bool loop = false, bool trackable = false);
 
