@@ -7,6 +7,8 @@
 
 #include "SoundSource.h"
 
+#include "../GameTech/DW_UIHUD.h"
+
 #include <vector>
 
 using std::vector;
@@ -75,6 +77,9 @@ namespace NCL {
 				return worldID;
 			}
 
+			void SetHUD(DW_UIHUD* hud) { m_HUD = hud; }
+			DW_UIHUD* GetHUD() { return m_HUD; }
+
 			void SetSoundSource(SoundSource* s) { soundSource = s; }
 			SoundSource* GetSoundSource() { return this->soundSource; }
 
@@ -96,6 +101,8 @@ namespace NCL {
 			bool	isActive;
 			int		worldID;
 			string	name;
+
+			DW_UIHUD* m_HUD;
 
 			Vector3 broadphaseAABB;
 		};

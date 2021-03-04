@@ -30,8 +30,14 @@ TutorialGame::TutorialGame()	{
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+	
+	//StartMenu =new HM_StartMenu(); // main menu
+	//PauseMenu = new HM_PauseMenu(); // Pause menu
+	//WinScreen = new HM_Win(); // wining screen
+	//LoseScreen = new HM_Lose(); // lose screen
 
-	m_uiExample = new DW_UIPanelExample();
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
 /*
@@ -176,6 +182,10 @@ void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F6)) {
 		audioAgent->GetSoundSource()->SetMinDistance(5.0f);
 		}
+
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
+		PauseMenu->SetPanelActive(true);
+	}
 
 	if (lockedObject) {
 		LockedObjectMovement();
@@ -462,7 +472,7 @@ void TutorialGame::InitDefaultFloor() {
 }
 
 void TutorialGame::InitGameExamples() {
-	AddPlayerToWorld(Vector3(0, 5, 0));
+	AddPlayerToWorld(Vector3(-5, 5, 0));
 	AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));
 }
@@ -471,7 +481,11 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
+	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});
+
 	GameObject* character = new GameObject();
+	character->SetHUD(hud);
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 

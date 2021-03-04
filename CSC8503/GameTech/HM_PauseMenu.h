@@ -1,3 +1,4 @@
+
 /*
 Part of UI System code.
 
@@ -19,25 +20,32 @@ Comments and queries to: Dawei Wang, Group 5
 
 
 
-class DW_UIPanelExample
+class  HM_PauseMenu
 {
 public:
-	DW_UIPanelExample();
-	~DW_UIPanelExample();
+	HM_PauseMenu();
+	~HM_PauseMenu();
 
 	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
-	
-	
+
+
 private:
 	DW_UIImage* m_bg;
-	DW_UIImage* m_btn;
+	
+	DW_UIImage* Continue_btn;
+	DW_UIImage* Back_btn;
+
 	DW_UIImage* m_close_btn;
-	DW_UIText* m_text;
+	DW_UIText* PauseMenu_text;
+
+	DW_UIText* Continue_text;
+	DW_UIText* Back_text;
+	
 
 	DW_UIPanel* m_panel;
-	int m_number{ 0 };
+
 
 	void ClickFunc(const std::string& str);
-	
+
 };
 

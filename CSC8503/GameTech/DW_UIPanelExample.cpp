@@ -7,8 +7,7 @@ DW_UIPanelExample::DW_UIPanelExample() {
 	std::string str{ NCL::Assets::TEXTUREDIR + "guiicons/plus_t.png" };
 	m_btn = new DW_UIImage("Button",str.c_str(), { 0.15f, 0.15f }, NCL::Maths::Vector3{ 460.0f,360.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,0.0f });
 
-
-	str = NCL::Assets::TEXTUREDIR + "checkerboard.png";
+	str = NCL::Assets::TEXTUREDIR + "bg.jpg";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 0.8f, 0.5f }, NCL::Maths::Vector3{ 640.0f,360.0f,0.0f });
 
 	str = NCL::Assets::TEXTUREDIR + "guiicons/exit_t.png";
@@ -30,9 +29,7 @@ DW_UIPanelExample::DW_UIPanelExample() {
 
 	//4.add callback to this panel, if some of its components be clicked, we can do something here! 
 	//event type is panel's name
-	std::function<void(std::string)> temp = [&](std::string str) {
-		ClickFunc(str);
-	};
+	std::function<void(std::string)> temp = std::bind(&DW_UIPanelExample::ClickFunc, this, std::placeholders::_1);
 	DW_UIEventMgr::get_instance().RegisterUIEvent(m_panel->GetPanelName(),temp);
 
 	//5.add this panel to a panel container, that means we can have many panels at same time!

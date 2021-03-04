@@ -12,6 +12,7 @@
 #include "DW_UIRenderer.h"
 
 #include "DW_UIImage.h"
+#include "DW_Quad.h"
 
 
 namespace NCL {
@@ -40,6 +41,8 @@ namespace NCL {
 			void RenderShadowMap();
 			void RenderCamera(); 
 			void RenderSkybox();
+			void RenderUI();
+			void RenderHUD();
 
 			void LoadSkybox();
 

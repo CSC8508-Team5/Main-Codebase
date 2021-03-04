@@ -25,12 +25,9 @@ public:
 
 	~DW_UIImage();
 
-
 	virtual void Update(const float dt);
 
 	virtual void Render();
-
-	
 
 private:
 	Rect m_rect;

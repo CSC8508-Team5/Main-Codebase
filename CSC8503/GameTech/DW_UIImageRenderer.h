@@ -1,9 +1,3 @@
-#pragma once
-
-#include "glad\glad.h"
-
-#include <iostream>
-#include <string>
 /*
 Part of UI System code.
 
@@ -12,6 +6,12 @@ renderer of ui image component
 Comments and queries to: Dawei Wang, Group 5
 */
 
+#pragma once
+
+#include "glad\glad.h"
+
+#include <iostream>
+#include <string>
 
 #include "OGLShader.h"
 
@@ -24,6 +24,7 @@ Comments and queries to: Dawei Wang, Group 5
 
 #include "../../Common/Assets.h"
 
+#include "DW_Tools.h"
 #include "DW_Singleton.h"
 
 

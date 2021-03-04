@@ -19,25 +19,33 @@ Comments and queries to: Dawei Wang, Group 5
 
 
 
-class DW_UIPanelExample
+class HM_StartMenu
 {
 public:
-	DW_UIPanelExample();
-	~DW_UIPanelExample();
+	HM_StartMenu();
+	~HM_StartMenu();
 
 	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
-	
-	
+
+
 private:
 	DW_UIImage* m_bg;
-	DW_UIImage* m_btn;
+
+	DW_UIImage* Solo_btn;
+	DW_UIImage* Duo_btn;
+	DW_UIImage* Quit_btn;
+
 	DW_UIImage* m_close_btn;
-	DW_UIText* m_text;
+	DW_UIText* GameName_text;
+
+	DW_UIText* Solo_text;
+	DW_UIText* Duo_text;
+	DW_UIText* Quit_text;
 
 	DW_UIPanel* m_panel;
-	int m_number{ 0 };
+	
 
 	void ClickFunc(const std::string& str);
-	
+
 };
 

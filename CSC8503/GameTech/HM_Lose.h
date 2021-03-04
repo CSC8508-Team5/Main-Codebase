@@ -19,25 +19,34 @@ Comments and queries to: Dawei Wang, Group 5
 
 
 
-class DW_UIPanelExample
+class  HM_Lose
 {
 public:
-	DW_UIPanelExample();
-	~DW_UIPanelExample();
+	HM_Lose();
+	~HM_Lose();
 
 	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
-	
-	
+
+
 private:
 	DW_UIImage* m_bg;
-	DW_UIImage* m_btn;
-	DW_UIImage* m_close_btn;
-	DW_UIText* m_text;
+	DW_UIImage* m_lose;
+
+	DW_UIImage* PlayAgain_btn;
+	DW_UIImage* Back_btn;
+
+
+	DW_UIText* LoseScreen_text;
+
+	DW_UIText* PlayAgain_text;
+	DW_UIText* Back_text;
+
+	DW_UIText* Score_text;
 
 	DW_UIPanel* m_panel;
-	int m_number{ 0 };
+
 
 	void ClickFunc(const std::string& str);
-	
+
 };
 

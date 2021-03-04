@@ -14,6 +14,7 @@ Matrix4 biasMatrix = Matrix4::Translation(Vector3(0.5, 0.5, 0.5)) * Matrix4::Sca
 
 GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetWindow()), gameWorld(world)	{
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	shadowShader = new OGLShader("GameTechShadowVert.glsl", "GameTechShadowFrag.glsl");
 
@@ -35,7 +36,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	glDrawBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glClearColor(1, 1, 1, 1);
+	glClearColor(0, 0, 0, 1);
 
 	//Set up the light properties
 	lightColour = Vector4(0.8f, 0.8f, 0.5f, 1.0f);
@@ -50,37 +51,6 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	skyboxMesh->UploadToGPU();
 
 	LoadSkybox();
-
-	//m_text = new DW_UIText();
-
-	//m_panel = new DW_UIPanel();
-
-	//DW_UIText* t1 = new DW_UIText("11",0.3f ,Vector3{});
-	//DW_UIText* t2 = new DW_UIText("22", 0.7f, Vector3{100.0f,100.0f,0.0f});
-	//DW_UIText* t3 = new DW_UIText("33", 0.6f, Vector3{ 150.0f,150.0f,0.0f });
-	//DW_UIText* t4 = new DW_UIText("44", 0.4f, Vector3{ 200.0f,200.0f,0.0f });
-	//DW_UIText* t5 = new DW_UIText("555", 0.9f, Vector3{ 300.0f,300.0f,0.0f });
-
-	//std::string str{ Assets::TEXTUREDIR + "doge.png" };
-	//m_image = new DW_UIImage(str.c_str(), { 0.5f, 0.5f }, Vector3{ 640.0f,360.0f,0.0f }, Vector3{1.0f,1.0f,0.0f});
-	////m_image->SetRenderPriority(10);
-	//m_image->SetName("BG");
-
-	//str = Assets::TEXTUREDIR + "checkerboard.png";
-	//DW_UIImage* i1= new DW_UIImage(str.c_str(), { 0.2f, 0.2f }, Vector3{ 640.0f,360.0f,0.0f });
-	//i1->SetName("Chess");
-
-	//m_panel->AddComponent(m_image);
-	//m_panel->AddComponent(i1);
-	//m_panel->AddComponent(t1);
-	//m_panel->AddComponent(t2);
-	//
-	//m_panel->AddComponent(t3);
-	//m_panel->AddComponent(t4);
-	//m_panel->AddComponent(t5);
-	//
-
-	//DW_UIRenderer::get_instance().AddPanel(m_panel);
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -129,23 +99,38 @@ void GameTechRenderer::LoadSkybox() {
 }
 
 void GameTechRenderer::RenderFrame() {
-	glEnable(GL_CULL_FACE);
-	glClearColor(1, 1, 1, 1);
+	//glEnable(GL_CULL_FACE);
+	glClearColor(0, 0, 0, 1);
 	BuildObjectList();
 	SortObjectList();
 	RenderShadowMap();
 	RenderSkybox();
 	RenderCamera();
-	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+	//glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
+
+	RenderHUD();
+	RenderUI();
+	
+}
+
+void GameTechRenderer::RenderUI() {
 	glDisable(GL_DEPTH_TEST);
-	
 	DW_UIRenderer::get_instance().Render();//UI SYSTEM render
-	//m_image->Render();
-	//glDisable(GL_BLEND);
-	
 	glEnable(GL_DEPTH_TEST);
-	
+}
+
+void GameTechRenderer::RenderHUD() {
+	gameWorld.OperateOnContents(
+		[&](GameObject* o) {
+			if (o->IsActive()&&o->GetHUD()!=nullptr) {
+				float screenAspect = (float)currentWidth / (float)currentHeight;
+				Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+				Matrix4 projMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+				DW_Quad::get_instance().Draw(o->GetHUD()->GetTexture(), viewMatrix, projMatrix, o->GetTransform().GetPosition()+ o->GetHUD()->GetPosOffset(), Vector3{ o->GetHUD()->GetScale().x,o->GetHUD()->GetScale().y,1.0f }, gameWorld.GetMainCamera()->GetRotationMatrix());
+			}
+		}
+	);
 }
 
 void GameTechRenderer::BuildObjectList() {

@@ -12,6 +12,7 @@ GameObject::GameObject(string objectName)	{
 	renderObject	= nullptr;
 
 	soundSource		= nullptr;
+	m_HUD = nullptr;
 }
 
 GameObject::~GameObject()	{
@@ -20,6 +21,7 @@ GameObject::~GameObject()	{
 	delete renderObject;
 	
 	delete soundSource;
+	delete m_HUD;
 }
 
 bool GameObject::GetBroadphaseAABB(Vector3&outSize) const {
