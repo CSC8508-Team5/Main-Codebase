@@ -38,43 +38,43 @@ void NCL::CSC8503::AudioSystem::Update(Transform trans)
 	engine->setListenerPosition(trans.GetPosition(), trans.Forward());
 }
 
-ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, bool loop)
+ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, bool loop, bool trackable)
 {
-	return engine->play2D(sound, loop, false, true, true);
+	return engine->play2D(sound, loop, false, true, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, Vector3 position, bool loop)
+ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, Vector3 position, bool loop, bool trackable)
 {
-	return engine->play3D(sound, position, loop, false, true, true);
+	return engine->play3D(sound, position, loop, false, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::Play(string filename, bool loop)
+ISound* NCL::CSC8503::AudioSystem::Play(string filename, bool loop, bool trackable)
 {
-	return engine->play2D((filename).c_str(), loop, false, true);
+	return engine->play2D((filename).c_str(), loop, false, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::Play(string filename, Vector3 position, bool loop)
+ISound* NCL::CSC8503::AudioSystem::Play(string filename, Vector3 position, bool loop, bool trackable)
 {
-	return engine->play3D((filename).c_str(), position, loop, false, true);
+	return engine->play3D((filename).c_str(), position, loop, false, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, bool loop)
+ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, bool loop, bool trackable)
 {
-	return Play(Assets::AUDIODIR + filename, loop);
+	return Play(Assets::AUDIODIR + filename, loop, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, bool loop)
+ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, bool loop, bool trackable)
 {
-	return Play(Assets::SFXDIR + filename, loop);
+	return Play(Assets::SFXDIR + filename, loop, trackable);
 }
 
-ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, Vector3 position, bool loop)
+ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, Vector3 position, bool loop, bool trackable)
 {
-	return Play(Assets::AUDIODIR + filename, position, loop);
+	return Play(Assets::AUDIODIR + filename, position, loop, trackable);
 }
-ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, Vector3 position, bool loop)
+ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, Vector3 position, bool loop, bool trackable)
 {
-	return Play(Assets::SFXDIR + filename, position, loop);
+	return Play(Assets::SFXDIR + filename, position, loop, trackable);
 }
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSource(string filename)

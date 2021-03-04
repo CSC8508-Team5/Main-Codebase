@@ -28,17 +28,17 @@ namespace NCL {
 			void Update(Camera camera);
 			void Update(Transform trans);
 
-			static ISound* Play(ISoundSource* sound, bool loop = false);
-			static ISound* Play(ISoundSource* sound, Vector3 position, bool loop = false);
-			static ISound* Play(string filename, bool loop = false);
-			static ISound* Play(string filename, Vector3 position, bool loop = false);
+			static ISound* Play(ISoundSource* sound, bool loop = false, bool trackable = true);
+			static ISound* Play(ISoundSource* sound, Vector3 position, bool loop = false, bool trackable = true);
+			static ISound* Play(string filename, bool loop = false, bool trackable = false);
+			static ISound* Play(string filename, Vector3 position, bool loop = false, bool trackable = false);
 
 
-			static ISound* PlayAudio(string filename, bool loop = false);
-			static ISound* PlaySFX(string filename, bool loop = false);
-			static ISound* PlayAudio(string filename, Vector3 position, bool loop = false);
-			static ISound* PlaySFX(string filename, Vector3 position, bool loop = false);
-			
+			static ISound* PlayAudio(string filename, bool loop = false, bool trackable = false);
+			static ISound* PlaySFX(string filename, bool loop = false, bool trackable = false);
+			static ISound* PlayAudio(string filename, Vector3 position, bool loop = false, bool trackable = false);
+			static ISound* PlaySFX(string filename, Vector3 position, bool loop = false, bool trackable = false);
+
 			static ISoundSource* AddSource(string filename);
 			static ISoundSource* AddSourceAudio(string filename);
 			static ISoundSource* AddSourceSFX(string filename);
@@ -50,7 +50,7 @@ namespace NCL {
 			//global settings
 			static void SetGlobalVolume(float vol) { engine->setSoundVolume(vol); }
 			static float GetGlobalVolume() { return engine->getSoundVolume(); }
-			
+
 			static void SetDefaultMinDistance(float d) { engine->setDefault3DSoundMinDistance(d); }
 			static void SetDefaultMaxDistance(float d) { engine->setDefault3DSoundMaxDistance(d); }
 
@@ -60,9 +60,9 @@ namespace NCL {
 			static void PauseAll(bool pause = true) { engine->setAllSoundsPaused(pause); }
 			static string GetDevice() { return engine->getDriverName(); }
 			static int GetLoadedSourceCount() { return engine->getSoundSourceCount(); }
-			
+
 			static ISoundSource* GetSourceExist(string filename) { return engine->getSoundSource(filename.c_str(), false); }
-		
+
 		private:
 			static ISoundEngine* engine;
 			static vector<ISoundSource*> sources;
