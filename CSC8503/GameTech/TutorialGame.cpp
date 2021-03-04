@@ -14,8 +14,11 @@ TutorialGame::TutorialGame()	{
 	physics		= new PhysicsSystem(*world);
 	//irrklang audio system
 	audio		= new AudioSystem();
-	audio->PlayAudio("Casual Theme #1 (Looped).ogg",Vector3(0,0,0));
-	//cant load flac and mp3 yet
+	//global play 2D
+	//audio->PlayAudio("Casual Theme #1 (Looped).ogg");
+	//global play 3D
+	//audio->PlayAudio("Casual Theme #1 (Looped).ogg", Vector3(0, 0, 0));
+	//other format
 	//audio->PlayAudio("Funky Chill 2 loop.flac");
 	//audio->PlayAudio("keyboardcat.mp3");
 
@@ -123,9 +126,9 @@ void TutorialGame::UpdateGame(float dt) {
 
 	DW_UIRenderer::get_instance().Update(dt);
 
-	renderer->Render();
-	
 	audio->Update(*world->GetMainCamera());
+
+	renderer->Render();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -161,13 +164,17 @@ void TutorialGame::UpdateKeys() {
 		world->ShuffleObjects(false);
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F11)) {
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F4)) {
 		AudioSystem::PlaySFX("bell.wav");
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F10)) {
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F5)) {
 		audioAgent->GetSoundSource()->Play();
 	}
+
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F6)) {
+		audioAgent->GetSoundSource()->SetMinDistance(5.0f);
+		}
 
 	if (lockedObject) {
 		LockedObjectMovement();
@@ -276,10 +283,10 @@ void TutorialGame::InitWorld() {
 	InitDefaultFloor();
 	BridgeConstraintTest();
 
-	audioAgent = AddSphereToWorld(Vector3(0, -5, 0), 1);
+	//create audio system agent object 
+	audioAgent = AddSphereToWorld(Vector3(0, 1, 0), 1);
 	audioAgent->GetRenderObject()->SetColour(Debug::BLUE);
-	audioAgent->SetSoundSource(new SoundSource(AudioSystem::GetSFXFilename("bell.wav"), false, true));
-	audioAgent->GetSoundSource();
+	audioAgent->SetSoundSource(new SoundSource(AudioSystem::GetSFXFilename("bell.wav"),audioAgent->GetTransform().GetPosition()));
 }
 
 void TutorialGame::BridgeConstraintTest() {
