@@ -14,8 +14,9 @@ TutorialGame::TutorialGame()	{
 	physics		= new PhysicsSystem(*world);
 	//irrklang audio system
 	audio		= new AudioSystem();
-	//global play 2D
-	//audio->PlayAudio("Casual Theme #1 (Looped).ogg");
+
+	//global play 2D as background music
+	audio->PlayAudio("Casual Theme #1 (Looped).ogg");
 	//global play 3D
 	//audio->PlayAudio("Casual Theme #1 (Looped).ogg", Vector3(0, 0, 0));
 	//other format
