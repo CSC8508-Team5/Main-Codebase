@@ -6,6 +6,10 @@
 #include "../../Common/TextureLoader.h"
 #include "../CSC8503Common/PositionConstraint.h"
 #include <list>
+#include <algorithm>
+#include <math.h>
+#include "../CSC8503Common/Timer.h"
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -15,13 +19,17 @@ TutorialGame::TutorialGame()	{
 	physics		= new PhysicsSystem(*world);
 
 	forceMagnitude	= 10.0f;
-	useGravity		= false;
+	useGravity		= true;
 	inSelectionMode = false;
 
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject*[15];
 	spinplat = new GameObject;
+	player = new GameObject;
+	yaw = 0.0f;
+	pitch = 0.0f;
+	jumptimer = 0;
 	//end 
 	
 	Debug::SetRenderer(renderer);
@@ -55,9 +63,10 @@ void TutorialGame::InitialiseAssets() {
 
 	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
-
-	InitCamera();
+	
 	InitWorld();
+	InitCamera();
+	
 }
 
 TutorialGame::~TutorialGame()	{
@@ -74,6 +83,7 @@ TutorialGame::~TutorialGame()	{
 
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
 	delete spinplat;
+	delete player;
 
 	delete physics;
 	delete renderer;
@@ -82,9 +92,9 @@ TutorialGame::~TutorialGame()	{
 }
 
 void TutorialGame::UpdateGame(float dt) {
-	if (!inSelectionMode) {
+	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
-	}
+	}*/
 
 	UpdateKeys();
 
@@ -126,7 +136,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	//UpdateLevelOne();
-	UpdateSpinningPlatform(dt);
+	UpdatePlayer(dt);
+	//UpdateSpinningPlatform();
 	renderer->Render();
 }
 
@@ -136,7 +147,7 @@ void TutorialGame::UpdateLevelOne() {
 		if (i % 3 == 0) {
 			if ((platformtimer >= 0) && (platformtimer < 100.0f)) {
 				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8f));
-				platformtimer += 0.2f;
+				platformtimer += 0.1f;
 				continue;
 			}
 			else if (platformtimer >= 100.0f) {
@@ -146,12 +157,12 @@ void TutorialGame::UpdateLevelOne() {
 			}
 			else if ((platformtimer <= 0) && (platformtimer > -100.0f)) {
 				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8f));
-				platformtimer -= 0.2f;
+				platformtimer -= 0.1f;
 				continue;
 			}
 			else if (platformtimer <= -100.0f) {
 				platformtimer = 0;
-				platformtimer += 0.2f;
+				platformtimer += 0.1f;
 				continue;
 			}
 		}
@@ -180,8 +191,80 @@ void TutorialGame::UpdateLevelOne() {
 	}
 };
 
-void TutorialGame::UpdateSpinningPlatform(float dt){
+void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+}
+
+void TutorialGame::UpdatePlayer(float dt) {
+	Vector3 playerposition = player->GetTransform().GetPosition();
+	Quaternion playerorientation = player->GetTransform().GetOrientation();
+	pitch -= (Window::GetMouse()->GetRelativePosition().y);
+	yaw -= (Window::GetMouse()->GetRelativePosition().x);
+	
+
+	if (yaw < 0) {
+		yaw += 360.0f;
+	}
+	if (yaw > 360.0f) {
+		yaw -= 360.0f;
+	}
+	if (pitch < -90.0f) {
+		pitch = -90.0f;
+	}
+	if (pitch > 90.0f) {
+		pitch =90.0f;
+	}
+	float frameSpeed = 50 * dt;
+	//player turns head
+	/*Quaternion orientation = player->GetTransform().GetOrientation();
+	orientation = orientation + (Quaternion(0,yaw,0,1));
+	orientation.Normalise();
+	player->GetTransform().SetOrientation(orientation);*/
+
+	//player movement
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
+		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
+		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
+
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
+		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
+		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
+	//jump
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
+		//limit the max jump time
+		/*DWORD maxtime =10;
+		if (jumptimer ==0) {
+			jumptimer = GetTickCount();
+		}
+		if (GetTickCount()- jumptimer < maxtime) {
+			player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
+		}
+		else {
+			player->GetPhysicsObject()->AddForce(Vector3(0, 0, 0));
+			jumptimer = 0;
+		}*/
+		player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
+	}
+
+	// Third person Camera
+	double cosine, sine;
+	cosine = cos((3.1415927 / 2) * (-yaw) * 0.1);
+	sine = sin((3.1415927 / 2) * (-yaw) * 0.1);
+	world->GetMainCamera()->SetPosition(playerposition + Vector3(-15*cosine, 5, -15*sine));
+	world->GetMainCamera()->SetYaw(270+yaw*10);
+	world->GetMainCamera()->SetPitch(pitch);
+
+
 }
 
 void TutorialGame::UpdateKeys() {
@@ -309,22 +392,24 @@ void TutorialGame::DebugObjectMovement() {
 void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetNearPlane(0.1f);
 	world->GetMainCamera()->SetFarPlane(500.0f);
-	world->GetMainCamera()->SetPitch(-15.0f);
-	world->GetMainCamera()->SetYaw(315.0f);
-	world->GetMainCamera()->SetPosition(Vector3(-60, 40, 60));
+	world->GetMainCamera()->SetPitch(-5.0f);
+	world->GetMainCamera()->SetYaw(270.0f);
+	world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition()+Vector3(-15,5,0));
 	lockedObject = nullptr;
 }
 
 void TutorialGame::InitWorld() {
+	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
-	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	//InitGameExamples();
-	//InitDefaultFloor();
+	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
+	InitCharaters();
+	InitDefaultFloor();
 	//BridgeConstraintTest();
 	//platforms = LevelTestOne();
-	spinplat = 	SpinningPlatform();
+	/*Pendulum();
+	spinplat = 	SpinningPlatform();*/
 }
 
 GameObject** TutorialGame::LevelTestOne() {
@@ -365,10 +450,23 @@ GameObject** TutorialGame::LevelTestOne() {
 
 GameObject* TutorialGame::SpinningPlatform() {
 	float radius = 50.0f;
-	float hight = 2.0f;
+	float halfhight = 1.0f;
 	Vector3 position = Vector3(0, 0, 0);
-	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
+	GameObject* spinplat = AddCylinderToWorld(position, radius, halfhight, 0.0f);
 	return spinplat;
+}
+
+void TutorialGame::Pendulum() {
+	float sphereradius = 5.0f;
+	float cylinderhalfhight = 10.0f;
+	Vector3 cylinderposition = Vector3(10, 20, 10);
+	Vector3 sphereposition = cylinderposition - Vector3(0, 10 , 0);
+	GameObject* sphere = AddSphereToWorld(sphereposition, sphereradius, 0.0f);
+	GameObject* cylinder = AddCylinderToWorld(cylinderposition, 0.5f, cylinderhalfhight, 0.0f);
+
+	/*PositionConstraint* constraint = new PositionConstraint(sphere,
+		cylinder, 0.0f);
+	world->AddConstraint(constraint);*/
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -432,15 +530,15 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 /*
 The cylinder now using the CapsuleVolume, might need to change 
 */
-GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
+GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float halfhight, float inverseMass) {
 	GameObject* cylinder = new GameObject();
 
-	Vector3 cylinderSize = Vector3(radius, hight, radius);
-	CapsuleVolume* volume = new CapsuleVolume(hight/2, radius);
+	Vector3 cylinderSize = Vector3(radius, halfhight, radius);
+	CapsuleVolume* volume = new CapsuleVolume(halfhight, radius);
 	cylinder->SetBoundingVolume((CollisionVolume*)volume);
 
 	cylinder->GetTransform()
-		.SetScale(Vector3(radius * 2, hight/2, radius * 2))
+		.SetScale(Vector3(radius * 2, halfhight, radius * 2))
 		.SetPosition(position);
 
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), spinplatMesh, basicTex, basicShader));
@@ -568,10 +666,11 @@ void TutorialGame::InitDefaultFloor() {
 	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
-void TutorialGame::InitGameExamples() {
-	AddPlayerToWorld(Vector3(0, 5, 0));
-	AddEnemyToWorld(Vector3(5, 5, 0));
-	AddBonusToWorld(Vector3(10, 5, 0));
+void TutorialGame::InitCharaters() {
+	player = AddPlayerToWorld(Vector3(-150, 10, 0));
+	player->GetTransform().SetOrientation(Quaternion(0,-0.9,0,1));
+	/*AddEnemyToWorld(Vector3(5, 5, 0));
+	AddBonusToWorld(Vector3(10, 5, 0));*/
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {

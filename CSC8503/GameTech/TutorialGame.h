@@ -2,6 +2,8 @@
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "StateGameObject.h"
+#include "../CSC8503Common/Timer.h"
+
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame		{
@@ -19,7 +21,7 @@ namespace NCL {
 
 			void InitWorld();
 
-			void InitGameExamples();
+			void InitCharaters();
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
@@ -44,10 +46,12 @@ namespace NCL {
 
 			//adding for level design
 			GameObject** LevelTestOne();
-			void UpdateLevelOne();
 			GameObject* SpinningPlatform();
-			void UpdateSpinningPlatform(float dt);
 			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			void Pendulum();
+			void UpdateLevelOne();
+			void UpdateSpinningPlatform();
+			void UpdatePlayer(float dt);
 			//end
 
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
@@ -63,8 +67,12 @@ namespace NCL {
 			float		forceMagnitude;
 			//adding for level design
 			float		platformtimer;
+			float		yaw;
+			float		pitch;
+			DWORD		jumptimer;
 			GameObject** platforms;
 			GameObject* spinplat;
+			GameObject* player;
 			//end
 
 			GameObject* selectionObject = nullptr;
