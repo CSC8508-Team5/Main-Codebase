@@ -80,6 +80,7 @@ namespace NCL {
 				lockedObject = o;
 			}
 
+			GameObject* audioAgent;
 
 			//DW UI example
 			DW_UIPanelExample* m_uiExample;

@@ -150,6 +150,7 @@
     <ClInclude Include="NavigationPath.h" />
     <ClInclude Include="OBBVolume.h" />
     <ClInclude Include="PositionConstraint.h" />
+    <ClInclude Include="SoundSource.h" />
     <ClInclude Include="SphereVolume.h" />
     <ClInclude Include="CollisionVolume.h" />
     <ClInclude Include="CollisionDetection.h" />

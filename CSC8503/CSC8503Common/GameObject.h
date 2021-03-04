@@ -5,6 +5,8 @@
 #include "PhysicsObject.h"
 #include "RenderObject.h"
 
+#include "SoundSource.h"
+
 #include <vector>
 
 using std::vector;
@@ -12,7 +14,7 @@ using std::vector;
 namespace NCL {
 	namespace CSC8503 {
 
-		class GameObject	{
+		class GameObject {
 		public:
 			GameObject(string name = "");
 			~GameObject();
@@ -61,7 +63,7 @@ namespace NCL {
 				//std::cout << "OnCollisionEnd event occured!\n";
 			}
 
-			bool GetBroadphaseAABB(Vector3&outsize) const;
+			bool GetBroadphaseAABB(Vector3& outsize) const;
 
 			void UpdateBroadphaseAABB();
 
@@ -73,12 +75,23 @@ namespace NCL {
 				return worldID;
 			}
 
+			void SetSoundSource(SoundSource* s) { soundSource = s; }
+			SoundSource* GetSoundSource() { return this->soundSource; }
+
+			virtual void Update(float dt)
+			{
+				if (soundSource)
+					soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+			}
+
 		protected:
 			Transform			transform;
 
-			CollisionVolume*	boundingVolume;
-			PhysicsObject*		physicsObject;
-			RenderObject*		renderObject;
+			CollisionVolume* boundingVolume;
+			PhysicsObject* physicsObject;
+			RenderObject* renderObject;
+
+			SoundSource* soundSource;
 
 			bool	isActive;
 			int		worldID;
