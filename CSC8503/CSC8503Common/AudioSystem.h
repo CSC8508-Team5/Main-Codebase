@@ -47,9 +47,6 @@ namespace NCL {
 			static void RemoveSourceAudio(string filename);
 			static void RemoveSourceSFX(string filename);
 
-			static string GetAudioFilename(string filename) { return (Assets::AUDIODIR + filename); }
-			static string GetSFXFilename(string filename) { return (Assets::SFXDIR + filename); }
-
 			//global settings
 			static void SetGlobalVolume(float vol) { engine->setSoundVolume(vol); }
 			static float GetGlobalVolume() { return engine->getSoundVolume(); }

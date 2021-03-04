@@ -50,31 +50,31 @@ ISound* NCL::CSC8503::AudioSystem::Play(ISoundSource* sound, Vector3 position, b
 
 ISound* NCL::CSC8503::AudioSystem::Play(string filename, bool loop)
 {
-	return engine->play2D((filename).c_str(), loop, false, true, ESM_AUTO_DETECT, true);
+	return engine->play2D((filename).c_str(), loop, false, true);
 }
 
 ISound* NCL::CSC8503::AudioSystem::Play(string filename, Vector3 position, bool loop)
 {
-	return engine->play3D((filename).c_str(), position, loop, false, true, ESM_AUTO_DETECT, true);
+	return engine->play3D((filename).c_str(), position, loop, false, true);
 }
 
 ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, bool loop)
 {
-	return Play(GetAudioFilename(filename), loop);
+	return Play(Assets::AUDIODIR + filename, loop);
 }
 
 ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, bool loop)
 {
-	return Play(GetSFXFilename(filename), loop);
+	return Play(Assets::SFXDIR + filename, loop);
 }
 
 ISound* NCL::CSC8503::AudioSystem::PlayAudio(string filename, Vector3 position, bool loop)
 {
-	return Play(GetAudioFilename(filename), position, loop);
+	return Play(Assets::AUDIODIR + filename, position, loop);
 }
 ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, Vector3 position, bool loop)
 {
-	return Play(GetSFXFilename(filename), position, loop);
+	return Play(Assets::SFXDIR + filename, position, loop);
 }
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSource(string filename)
@@ -86,12 +86,12 @@ ISoundSource* NCL::CSC8503::AudioSystem::AddSource(string filename)
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceAudio(string filename)
 {
-	return AddSource(GetAudioFilename(filename));
+	return AddSource(Assets::AUDIODIR + filename);
 }
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceSFX(string filename)
 {
-	return AddSource(GetSFXFilename(filename));
+	return AddSource(Assets::SFXDIR + filename);
 }
 
 void NCL::CSC8503::AudioSystem::RemoveSource(string filename)
@@ -101,10 +101,10 @@ void NCL::CSC8503::AudioSystem::RemoveSource(string filename)
 
 void NCL::CSC8503::AudioSystem::RemoveSourceAudio(string filename)
 {
-	RemoveSource(GetAudioFilename(filename));
+	RemoveSource(Assets::AUDIODIR + filename);
 }
 
 void NCL::CSC8503::AudioSystem::RemoveSourceSFX(string filename)
 {
-	RemoveSource(GetSFXFilename(filename));
+	RemoveSource(Assets::SFXDIR + filename);
 }

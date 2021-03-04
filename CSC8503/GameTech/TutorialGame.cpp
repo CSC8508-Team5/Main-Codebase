@@ -286,7 +286,7 @@ void TutorialGame::InitWorld() {
 	//create audio system agent object 
 	audioAgent = AddSphereToWorld(Vector3(0, 1, 0), 1);
 	audioAgent->GetRenderObject()->SetColour(Debug::BLUE);
-	audioAgent->SetSoundSource(new SoundSource(AudioSystem::GetSFXFilename("bell.wav"),audioAgent->GetTransform().GetPosition()));
+	audioAgent->SetSoundSource(new SoundSource(Assets::SFXDIR + "bell.wav",audioAgent->GetTransform().GetPosition()));
 }
 
 void TutorialGame::BridgeConstraintTest() {
