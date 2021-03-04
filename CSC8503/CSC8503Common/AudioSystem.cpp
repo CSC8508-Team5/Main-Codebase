@@ -79,9 +79,8 @@ ISound* NCL::CSC8503::AudioSystem::PlaySFX(string filename, Vector3 position, bo
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSource(string filename)
 {
-
-	ISoundSource* s = engine->addSoundSourceFromFile(filename.c_str());
-	return s;
+	//return engine->addSoundSourceFromFile(filename.c_str());
+	return engine->getSoundSource(filename.c_str());
 }
 
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceAudio(string filename)
@@ -92,6 +91,11 @@ ISoundSource* NCL::CSC8503::AudioSystem::AddSourceAudio(string filename)
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceSFX(string filename)
 {
 	return AddSource(Assets::SFXDIR + filename);
+}
+
+void NCL::CSC8503::AudioSystem::RemoveSource(ISoundSource* source)
+{
+	engine->removeSoundSource(source);
 }
 
 void NCL::CSC8503::AudioSystem::RemoveSource(string filename)

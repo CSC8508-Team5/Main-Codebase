@@ -1,3 +1,14 @@
+/*
+SoundSource class based on AudioSystem
+
+you can initialize it using SoundSource() or InitSound() with Update()
+SoundSouce can be apply into gameobject using SetSoundSource(source)
+
+position will be updated in GameObject's update function
+or you can Update() it mannually
+
+use Play( isloop ) to play the sound binding on this source.
+*/
 #pragma once
 
 #include "AudioSystem.h"
@@ -28,11 +39,6 @@ namespace NCL {
 				if (!fxControl)
 					return;
 				delete fxControl;
-
-				if (!source)
-					return;
-				source->drop();
-				delete source;
 			}
 
 			void InitSound(string filename)
@@ -40,6 +46,11 @@ namespace NCL {
 				if (source)
 					source->drop();
 				source = AudioSystem::AddSource(filename);
+			}
+			void RemoveSound()
+			{
+				if (source)
+					AudioSystem::RemoveSource(source);
 			}
 
 			ISoundEffectControl* GetSoundFxControl() { return fxControl; }

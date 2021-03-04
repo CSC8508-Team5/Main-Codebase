@@ -1,3 +1,26 @@
+/*
+Audio System driven by irrKlang
+
+use functions here to play sound globally, also parameters set here will affect all sound.
+If you need object to play sound please check SoundSource class.
+
+the work flow should be:
+1.Initialize
+	within construct function
+2.Play sound
+	please note if the second parameter of Play() function is an Vector3, the sound will be played in 3D, otherwise in 2D
+3.Release sound
+	if they are not needed any more use RemoveSource()
+4.Unintialize
+	within deconstruct function
+
+Please not:
+	functions with 'SFX', 'Audio'symbol will be located in SFX and Audio asset foloder.
+
+	min and max distance are not as you imagined
+	for max distance, changing this value is usually not necessary. Use setMinDistance() instead. Don't change this value if you don't know what you are doing: This value causes the sound to stop attenuating after it reaches the max distance. Most people think that this sets the volume of the sound to 0 after this distance, but this is not true. Only change the minimal distance (using for example setMinDistance()) to influence this. The maximum distance for a sound source is the distance beyond which the sound does not get any quieter. The default minimum distance is 1, the default max distance is a huge number like 1000000000.0f.
+	
+*/
 #pragma once
 
 #include "../../Common/Vector3.h"
@@ -34,7 +57,6 @@ namespace NCL {
 			static ISound* Play(string filename, bool loop = false, bool trackable = false);
 			static ISound* Play(string filename, Vector3 position, bool loop = false, bool trackable = false);
 
-
 			static ISound* PlayAudio(string filename, bool loop = false, bool trackable = false);
 			static ISound* PlaySFX(string filename, bool loop = false, bool trackable = false);
 			static ISound* PlayAudio(string filename, Vector3 position, bool loop = false, bool trackable = false);
@@ -44,6 +66,7 @@ namespace NCL {
 			static ISoundSource* AddSourceAudio(string filename);
 			static ISoundSource* AddSourceSFX(string filename);
 
+			static void RemoveSource(ISoundSource* source);
 			static void RemoveSource(string filename);
 			static void RemoveSourceAudio(string filename);
 			static void RemoveSourceSFX(string filename);
