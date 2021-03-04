@@ -28,19 +28,24 @@ namespace NCL {
 			void Update(Camera camera);
 			void Update(Transform trans);
 
-			static void Play(ISoundSource* sound, bool loop = false);
-			static void Play(ISoundSource* sound, Vector3 position, bool loop = false);
+			static ISound* Play(ISoundSource* sound, bool loop = false);
+			static ISound* Play(ISoundSource* sound, Vector3 position, bool loop = false);
+			static ISound* Play(string filename, bool loop = false);
+			static ISound* Play(string filename, Vector3 position, bool loop = false);
 
-			static void PlayAudio(string filename, bool loop = false);
-			static void PlaySFX(string filename, bool loop = false);
-			static void PlayAudio(string filename, Vector3 position, bool loop = false);
-			static void PlaySFX(string filename, Vector3 position, bool loop = false);
+
+			static ISound* PlayAudio(string filename, bool loop = false);
+			static ISound* PlaySFX(string filename, bool loop = false);
+			static ISound* PlayAudio(string filename, Vector3 position, bool loop = false);
+			static ISound* PlaySFX(string filename, Vector3 position, bool loop = false);
 			
-			static void PlaySound(string filename, bool loop = false);
-			static void PlaySound(string filename, Vector3 position, bool loop = false);
-			
-			static ISound* AddSound(string filename, bool loop = false, bool pause = false);
-			static ISound* AddSound(string filename, Vector3 position, bool loop = false, bool pause = false);
+			static ISoundSource* AddSource(string filename);
+			static ISoundSource* AddSourceAudio(string filename);
+			static ISoundSource* AddSourceSFX(string filename);
+
+			static void RemoveSource(string filename);
+			static void RemoveSourceAudio(string filename);
+			static void RemoveSourceSFX(string filename);
 
 			static string GetAudioFilename(string filename) { return (Assets::AUDIODIR + filename); }
 			static string GetSFXFilename(string filename) { return (Assets::SFXDIR + filename); }
@@ -63,6 +68,7 @@ namespace NCL {
 		
 		private:
 			static ISoundEngine* engine;
+			static vector<ISoundSource*> sources;
 		};
 	}
 }
