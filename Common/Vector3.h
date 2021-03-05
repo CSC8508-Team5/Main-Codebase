@@ -10,7 +10,10 @@ https://research.ncl.ac.uk/game/
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+
+//implement for plugins
 #include "../Plugins/irrKlang/include/ik_vec3d.h"
+#include "../Plugins/bullet3/src/LinearMath/btVector3.h"
 
 namespace NCL {
 	namespace Maths {
@@ -34,7 +37,9 @@ namespace NCL {
 
 			Vector3(const Vector2& v2, float z = 0.0f);
 			Vector3(const Vector4& v4);
+
 			Vector3(const irrklang::vec3df v3);
+			Vector3(const btVector3 v3);
 			~Vector3(void) {}
 
 			Vector3 Normalised() const {
@@ -179,6 +184,11 @@ namespace NCL {
 			operator irrklang::vec3df()
 			{
 				return irrklang::vec3df(x, y, z);
+			}
+
+			operator btVector3()
+			{
+				return btVector3(btScalar(x), btScalar(y), btScalar(z));
 			}
 
 			static Vector3 Zero()

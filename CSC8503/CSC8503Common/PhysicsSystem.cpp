@@ -25,9 +25,63 @@ PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g)	{
 	dTOffset		= 0.0f;
 	globalDamping	= 0.995f;
 	SetGravity(Vector3(0.0f, -9.8f, 0.0f));
+
+	InitBullet();
 }
 
 PhysicsSystem::~PhysicsSystem()	{
+}
+
+void NCL::CSC8503::PhysicsSystem::InitBullet()
+{
+	collisionConfiguration = new btDefaultCollisionConfiguration();
+	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	overlappingPairCache = new btDbvtBroadphase();
+	solver = new btSequentialImpulseConstraintSolver;
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+
+	dynamicsWorld->setGravity(Vector3(0, -9.8f, 0));
+}
+
+void NCL::CSC8503::PhysicsSystem::ReleaseBullet()
+{
+	//remove the rigidbodies from the dynamics world and delete them
+	for (int i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+	{
+		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+		btRigidBody* body = btRigidBody::upcast(obj);
+		if (body && body->getMotionState())
+		{
+			delete body->getMotionState();
+		}
+		dynamicsWorld->removeCollisionObject(obj);
+		delete obj;
+	}
+
+	//delete collision shapes
+	for (int j = 0; j < collisionShapes.size(); j++)
+	{
+		btCollisionShape* shape = collisionShapes[j];
+		collisionShapes[j] = 0;
+		delete shape;
+	}
+
+	//delete dynamics world
+	delete dynamicsWorld;
+
+	//delete solver
+	delete solver;
+
+	//delete broadphase
+	delete overlappingPairCache;
+
+	//delete dispatcher
+	delete dispatcher;
+
+	delete collisionConfiguration;
+
+	//next line is optional: it will be cleared by the destructor when the array goes out of scope
+	collisionShapes.clear();
 }
 
 void PhysicsSystem::SetGravity(const Vector3& g) {
@@ -69,7 +123,7 @@ int realHZ		= idealHZ;
 float realDT	= idealDT;
 
 void PhysicsSystem::Update(float dt) {	
-
+	UpdateBullet(dt);
 	//float constraintDt = iterationDt / (float)constraintIterationCount;
 	// for (int i = 0; i < constraintIterationCount; ++i) {
 	//	 UpdateConstraints(constraintDt);
@@ -147,6 +201,29 @@ void PhysicsSystem::Update(float dt) {
 		if (temp != realHZ) {
 			std::cout << "Raising iteration count due to short physics time...(now " << realHZ << ")\n";
 		}
+	}
+}
+
+void NCL::CSC8503::PhysicsSystem::UpdateBullet(float dt, int maxSteps)
+{
+	//dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+	dynamicsWorld->stepSimulation(dt, maxSteps);
+
+	//print positions of all objects
+	for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+	{
+		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
+		btRigidBody* body = btRigidBody::upcast(obj);
+		btTransform trans;
+		if (body && body->getMotionState())
+		{
+			body->getMotionState()->getWorldTransform(trans); \
+		}
+		else
+		{
+			trans = obj->getWorldTransform();
+		}
+		//printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 	}
 }
 
