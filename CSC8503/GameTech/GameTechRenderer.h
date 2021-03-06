@@ -14,6 +14,9 @@
 #include "DW_UIImage.h"
 #include "DW_Quad.h"
 
+#include "DW_Light.h"
+#include "DW_ShadowHelper.h"
+
 
 namespace NCL {
 	class Maths::Vector3;
@@ -45,6 +48,8 @@ namespace NCL {
 			void RenderHUD();
 
 			void LoadSkybox();
+			void InitLight();
+
 
 			vector<const RenderObject*> activeObjects;
 
@@ -57,14 +62,11 @@ namespace NCL {
 			GLuint		shadowTex;
 			GLuint		shadowFBO;
 			Matrix4     shadowMatrix;
+			DW_ShadowHelper* m_shadowHelper;
 
-			Vector4		lightColour;
-			float		lightRadius;
-			Vector3		lightPosition;
+			DW_Light* m_directionalLight;
 
-			DW_UIText* m_text;
-			DW_UIImage* m_image;
-			DW_UIPanel* m_panel;
+
 		};
 	}
 }

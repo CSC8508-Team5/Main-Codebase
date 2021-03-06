@@ -1,9 +1,9 @@
-#version 400 core
+#version 330 core
 
-uniform mat4 modelMatrix 	= mat4(1.0f);
-uniform mat4 viewMatrix 	= mat4(1.0f);
-uniform mat4 projMatrix 	= mat4(1.0f);
-uniform mat4 shadowMatrix 	= mat4(1.0f);
+uniform mat4 modelMatrix 	;
+uniform mat4 viewMatrix 	;
+uniform mat4 projMatrix 	;
+uniform mat4 shadowMatrix 	;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 colour;
@@ -30,6 +30,7 @@ void main(void)
 
 	OUT.shadowProj 	=  shadowMatrix * vec4 ( position,1);
 	OUT.worldPos 	= ( modelMatrix * vec4 ( position ,1)). xyz ;
+	//OUT.shadowProj 	=  shadowMatrix * vec4 ( OUT.worldPos,1);
 	OUT.normal 		= normalize ( normalMatrix * normalize ( normal ));
 	
 	OUT.texCoord	= texCoord;
