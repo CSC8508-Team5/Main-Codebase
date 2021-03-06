@@ -1,3 +1,9 @@
+/*
+do some tasks related to shadow
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include "glad\glad.h"

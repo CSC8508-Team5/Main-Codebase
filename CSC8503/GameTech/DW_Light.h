@@ -1,3 +1,9 @@
+/*
+store light data
+
+Comments and queries to: Dawei Wang, Group 5
+*/
+
 #pragma once
 
 #include "../../Common/Vector3.h"
