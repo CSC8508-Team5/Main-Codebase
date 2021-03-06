@@ -16,14 +16,19 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+	InitLight();
+
+	m_shadowHelper = new DW_ShadowHelper();
 	shadowShader = new OGLShader("GameTechShadowVert.glsl", "GameTechShadowFrag.glsl");
 
 	glGenTextures(1, &shadowTex);
 	glBindTexture(GL_TEXTURE_2D, shadowTex);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
 			     SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	
@@ -38,11 +43,6 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	glClearColor(0, 0, 0, 1);
 
-	//Set up the light properties
-	lightColour = Vector4(0.8f, 0.8f, 0.5f, 1.0f);
-	lightRadius = 1000.0f;
-	lightPosition = Vector3(-200.0f, 60.0f, -200.0f);
-
 	//Skybox!
 	skyboxShader = new OGLShader("skyboxVertex.glsl", "skyboxFragment.glsl");
 	skyboxMesh = new OGLMesh();
@@ -56,6 +56,21 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 GameTechRenderer::~GameTechRenderer()	{
 	glDeleteTextures(1, &shadowTex);
 	glDeleteFramebuffers(1, &shadowFBO);
+
+	delete defaultShader;
+	delete skyboxMesh;
+	delete skyboxShader;
+	delete m_directionalLight;
+	delete m_shadowHelper;
+}
+
+
+void GameTechRenderer::InitLight() {
+	m_directionalLight = new DW_Light(DW_Light::LightType::Directional);
+	m_directionalLight->SetPosition(Vector3(-200.0f, 230.0f, -200.0f));
+	m_directionalLight->SetDirection(Vector3(0, 0, 0) - m_directionalLight->GetPosition());
+	m_directionalLight->SetColor(Vector4(0.6f, 0.6f, 0.6f, 1));
+	m_directionalLight->SetAmbient(0.05f);
 }
 
 void GameTechRenderer::LoadSkybox() {
@@ -163,12 +178,14 @@ void GameTechRenderer::RenderShadowMap() {
 	BindShader(shadowShader);
 	int mvpLocation = glGetUniformLocation(shadowShader->GetProgramID(), "mvpMatrix");
 
-	Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(lightPosition, Vector3(0, 0, 0), Vector3(0,1,0));
-	Matrix4 shadowProjMatrix = Matrix4::Perspective(100.0f, 500.0f, 1, 45.0f);
+	Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(m_directionalLight->GetPosition(), m_directionalLight->GetPosition()+m_directionalLight->GetDirection(), Vector3(0,1,0));
+	//Matrix4 shadowProjMatrix = Matrix4::Perspective(100.0f, 500.0f, 1, 45.0f);
+	Matrix4 shadowProjMatrix = Matrix4::Orthographic(1.0f, 400.0f, 100.0f, -100.0f, 100.0f, -100.0f);//directional light use orth matrix to cast shadow
 
 	Matrix4 mvMatrix = shadowProjMatrix * shadowViewMatrix;
 
-	shadowMatrix = biasMatrix * mvMatrix; //we'll use this one later on
+	//shadowMatrix = biasMatrix * mvMatrix; //we'll use this one later on
+	shadowMatrix =  mvMatrix;
 
 	for (const auto&i : activeObjects) {
 		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
@@ -256,9 +273,6 @@ void GameTechRenderer::RenderCamera() {
 			hasVColLocation = glGetUniformLocation(shader->GetProgramID(), "hasVertexColours");
 			hasTexLocation  = glGetUniformLocation(shader->GetProgramID(), "hasTexture");
 
-			lightPosLocation	= glGetUniformLocation(shader->GetProgramID(), "lightPos");
-			lightColourLocation = glGetUniformLocation(shader->GetProgramID(), "lightColour");
-			lightRadiusLocation = glGetUniformLocation(shader->GetProgramID(), "lightRadius");
 
 			cameraLocation = glGetUniformLocation(shader->GetProgramID(), "cameraPos");
 			glUniform3fv(cameraLocation, 1, (float*)&gameWorld.GetMainCamera()->GetPosition());
@@ -266,9 +280,9 @@ void GameTechRenderer::RenderCamera() {
 			glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
 			glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-			glUniform3fv(lightPosLocation	, 1, (float*)&lightPosition);
-			glUniform4fv(lightColourLocation, 1, (float*)&lightColour);
-			glUniform1f(lightRadiusLocation , lightRadius);
+			glUniform3fv(glGetUniformLocation(shader->GetProgramID(), "directionalLight.direction"), 1, (float*)&m_directionalLight->GetPosition());
+			glUniform4fv(glGetUniformLocation(shader->GetProgramID(), "directionalLight.color"), 1, (float*)&m_directionalLight->GetColor());
+			glUniform1f(glGetUniformLocation(shader->GetProgramID(), "directionalLight.ambient"), m_directionalLight->GetAmbient());
 
 			int shadowTexLocation = glGetUniformLocation(shader->GetProgramID(), "shadowTex");
 			glUniform1i(shadowTexLocation, 1);
