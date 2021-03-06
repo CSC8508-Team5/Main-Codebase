@@ -31,6 +31,9 @@
     <Filter Include="Audio\x64">
       <UniqueIdentifier>{8c35d07b-2e21-4239-bd3a-74f509c69ea3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio\Win32">
+      <UniqueIdentifier>{fadbb27b-e661-4546-8698-fc2990f697e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameWorld.h">
@@ -211,5 +214,16 @@
     <CopyFileToFolders Include="..\..\bin_x64\ikpMP3.dll">
       <Filter>Audio\x64</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\ikpMP3.dll">
+      <Filter>Audio\Win32</Filter>
+    </None>
+    <None Include="..\..\bin\irrKlang.dll">
+      <Filter>Audio\Win32</Filter>
+    </None>
+    <None Include="..\..\bin\ikpFlac.dll">
+      <Filter>Audio\Win32</Filter>
+    </None>
   </ItemGroup>
 </Project>
