@@ -6,6 +6,10 @@ vector<ISoundSource*> NCL::CSC8503::AudioSystem::sources;
 NCL::CSC8503::AudioSystem::AudioSystem()
 {
 	engine = createIrrKlangDevice();
+	if (!engine)
+	{
+		std::cout << "irrKlang audio system init failed\n";
+	}
 	engine->loadPlugins("./ikpMP3.dll");
 	engine->loadPlugins("./ikpFlac.dll");
 	engine->setSoundVolume(1.0f);
