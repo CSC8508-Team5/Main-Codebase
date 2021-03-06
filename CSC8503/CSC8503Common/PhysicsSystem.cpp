@@ -30,6 +30,7 @@ PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g)	{
 }
 
 PhysicsSystem::~PhysicsSystem()	{
+	ReleaseBullet();
 }
 
 void NCL::CSC8503::PhysicsSystem::InitBullet()
@@ -123,7 +124,7 @@ int realHZ		= idealHZ;
 float realDT	= idealDT;
 
 void PhysicsSystem::Update(float dt) {	
-	UpdateBullet(dt);
+	//UpdateBullet(dt);
 	//float constraintDt = iterationDt / (float)constraintIterationCount;
 	// for (int i = 0; i < constraintIterationCount; ++i) {
 	//	 UpdateConstraints(constraintDt);
