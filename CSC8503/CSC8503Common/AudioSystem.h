@@ -31,7 +31,6 @@ Please not:
 
 #include <irrKlang.h>
 #include <string>
-#include <vector>
 
 #pragma comment(lib,"irrKlang.lib")
 
@@ -89,7 +88,6 @@ namespace NCL {
 
 		private:
 			static ISoundEngine* engine;
-			static vector<ISoundSource*> sources;
 		};
 	}
 }

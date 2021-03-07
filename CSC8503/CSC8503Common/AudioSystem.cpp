@@ -1,7 +1,6 @@
 #include "AudioSystem.h"
 
 ISoundEngine* NCL::CSC8503::AudioSystem::engine;
-vector<ISoundSource*> NCL::CSC8503::AudioSystem::sources;
 
 NCL::CSC8503::AudioSystem::AudioSystem()
 {
