@@ -84,6 +84,9 @@
     <ClCompile Include="DW_ShadowHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DW_DeferredRenderingHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -150,6 +153,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DW_ShadowHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_DeferredRenderingHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
