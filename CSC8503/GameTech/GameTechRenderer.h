@@ -16,6 +16,7 @@
 
 #include "DW_Light.h"
 #include "DW_ShadowHelper.h"
+#include "DW_DeferredRenderingHelper.h"
 
 
 namespace NCL {
@@ -65,6 +66,12 @@ namespace NCL {
 			DW_ShadowHelper* m_shadowHelper;
 
 			DW_Light* m_directionalLight;
+
+			//deferred rendering things
+			DW_DeferredRenderingHelper* m_deferredHelper;
+			OGLShader* m_fillBufferShader;
+			OGLShader* m_lightingShader;
+			OGLShader* m_combineShader;
 
 
 		};

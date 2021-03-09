@@ -17,8 +17,15 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	glEnable(GL_CULL_FACE);
 	glClearColor(0, 0, 0, 1);
 
+	//deferred rendering
+	m_deferredHelper = new DW_DeferredRenderingHelper();
+	m_fillBufferShader = new OGLShader("FillBufferVert.glsl", "FillBufferFrag.glsl");
+	m_lightingShader = new OGLShader("LightingVert.glsl", "LightingFrag.glsl");
+	m_combineShader= new OGLShader("CombineVert.glsl", "CombineFrag.glsl");
 	InitLight();
 
+
+	//Shadow
 	m_shadowHelper = new DW_ShadowHelper();
 	shadowShader = new OGLShader("GameTechShadowVert.glsl", "GameTechShadowFrag.glsl");
 
@@ -41,6 +48,9 @@ GameTechRenderer::~GameTechRenderer()	{
 	delete skyboxShader;
 	delete m_directionalLight;
 	delete m_shadowHelper;
+	delete shadowShader;
+	delete m_deferredHelper;
+	delete m_fillBufferShader;
 }
 
 
