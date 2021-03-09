@@ -3,7 +3,7 @@
 #include <set>
 
 //bullet3 physics
-#include <btBulletCollisionCommon.h>
+//#include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
 #pragma comment(lib,"LinearMath.lib")
@@ -14,9 +14,9 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class PhysicsSystem	{
+		class PhysicsSystem {
 		public:
-			PhysicsSystem(GameWorld& g);
+			PhysicsSystem(GameWorld& g, bool useBulletPhysics = false);
 			~PhysicsSystem();
 
 			void InitBullet();
@@ -25,6 +25,7 @@ namespace NCL {
 			void Clear();
 
 			void Update(float dt);
+			void UpdateRaw(float dt);
 			void UpdateBullet(float dt, int maxSteps = 10);
 
 			void UseGravity(bool state) {
@@ -36,6 +37,13 @@ namespace NCL {
 			}
 
 			void SetGravity(const Vector3& g);
+
+			void AddBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body); }
+			void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
+
+			void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
+			void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
+
 		protected:
 			void BasicCollisionDetection();
 			void BroadPhase();
@@ -45,13 +53,15 @@ namespace NCL {
 
 			void IntegrateAccel(float dt);
 			void IntegrateVelocity(float dt);
+			void IntegrateWorldTransform();
+			void IntegrateBullet();
 
 			void UpdateConstraints(float dt);
 
 			void UpdateCollisionList();
 			void UpdateObjectAABBs();
 
-			void ImpulseResolveCollision(GameObject& a , GameObject&b, CollisionDetection::ContactPoint& p) const;
+			void ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const;
 
 			GameWorld& gameWorld;
 
@@ -63,10 +73,11 @@ namespace NCL {
 			std::set<CollisionDetection::CollisionInfo> allCollisions;
 			std::set < CollisionDetection::CollisionInfo > broadphaseCollisions;
 
-			bool useBroadPhase		= true;
-			int numCollisionFrames	= 5;
-			
+			bool useBroadPhase = true;
+			int numCollisionFrames = 5;
+
 			//bullet3 physics
+			bool useBulletPhysics = false;
 			///collision configuration contains default setup for memory, collision setup.
 			btDefaultCollisionConfiguration* collisionConfiguration;// = new btDefaultCollisionConfiguration();
 
@@ -80,7 +91,7 @@ namespace NCL {
 			btSequentialImpulseConstraintSolver* solver;// = new btSequentialImpulseConstraintSolver;
 
 			btDiscreteDynamicsWorld* dynamicsWorld;// = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-			
+
 			//keep track of the shapes, we release memory at exit.
 			//make sure to re-use collision shapes among rigid bodies whenever possible!
 			btAlignedObjectArray<btCollisionShape*> collisionShapes;

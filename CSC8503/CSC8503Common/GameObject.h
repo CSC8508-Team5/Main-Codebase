@@ -9,6 +9,10 @@
 
 #include "../GameTech/DW_UIHUD.h"
 
+//bullet3
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+
 #include <vector>
 
 using std::vector;
@@ -45,12 +49,27 @@ namespace NCL {
 				return physicsObject;
 			}
 
+			btCollisionObject* GetBulletPhysicsObject() {
+				return bulletPhysicsObject;
+			}
+			btRigidBody* GetBulletBody() {
+				return btRigidBody::upcast(bulletPhysicsObject);
+			}
+
 			void SetRenderObject(RenderObject* newObject) {
 				renderObject = newObject;
 			}
 
 			void SetPhysicsObject(PhysicsObject* newObject) {
 				physicsObject = newObject;
+			}
+
+			void SetPhysicsObject(btCollisionObject* newObject) {
+				bulletPhysicsObject = newObject;
+			}
+
+			void SetBulletPhysicsObject(btCollisionObject* newObject) {
+				bulletPhysicsObject = newObject;
 			}
 
 			const string& GetName() const {
@@ -82,11 +101,12 @@ namespace NCL {
 
 			void SetSoundSource(SoundSource* s) { soundSource = s; }
 			SoundSource* GetSoundSource() { return this->soundSource; }
-
+			
 			virtual void Update(float dt)
 			{
-				if (soundSource)
-					soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+				//if (soundSource)
+				//	soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+			
 			}
 
 		protected:
@@ -94,6 +114,7 @@ namespace NCL {
 
 			CollisionVolume* boundingVolume;
 			PhysicsObject* physicsObject;
+			btCollisionObject* bulletPhysicsObject;
 			RenderObject* renderObject;
 
 			SoundSource* soundSource;

@@ -9,6 +9,7 @@ GameObject::GameObject(string objectName)	{
 	isActive		= true;
 	boundingVolume	= nullptr;
 	physicsObject	= nullptr;
+	bulletPhysicsObject = nullptr;
 	renderObject	= nullptr;
 
 	soundSource		= nullptr;
@@ -18,9 +19,19 @@ GameObject::GameObject(string objectName)	{
 GameObject::~GameObject()	{
 	delete boundingVolume;
 	delete physicsObject;
+	delete bulletPhysicsObject;
 	delete renderObject;
 	
-	delete soundSource;
+	if (soundSource)
+	{
+		soundSource->RemoveSound();
+		delete soundSource;
+	}
+	if (bulletPhysicsObject)
+	{
+		delete bulletPhysicsObject->getCollisionShape();
+		delete bulletPhysicsObject;
+	}
 	delete m_HUD;
 }
 
