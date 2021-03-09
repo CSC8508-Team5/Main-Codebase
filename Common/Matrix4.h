@@ -72,6 +72,7 @@ namespace NCL {
 
 			Vector4 GetRow(unsigned int row) const;
 			Vector4 GetColumn(unsigned int column) const;
+			const float* GetData() { return array; }
 
 			//Multiplies 'this' matrix by matrix 'a'. Performs the multiplication in 'OpenGL' order (ie, backwards)
 			inline Matrix4 operator*(const Matrix4& a) const {

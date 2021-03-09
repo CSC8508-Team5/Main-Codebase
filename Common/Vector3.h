@@ -186,7 +186,7 @@ namespace NCL {
 				return irrklang::vec3df(x, y, z);
 			}
 
-			operator btVector3()
+			operator btVector3() const
 			{
 				return btVector3(btScalar(x), btScalar(y), btScalar(z));
 			}
