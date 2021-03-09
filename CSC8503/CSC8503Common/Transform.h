@@ -5,6 +5,8 @@
 #include "../../Common/Vector4.h"
 #include "../../Common/Quaternion.h"
 
+#include <btBulletDynamicsCommon.h>
+
 #include <vector>
 
 using std::vector;
@@ -69,6 +71,19 @@ namespace NCL {
 				return matrix;
 			}
 			void UpdateMatrix();
+
+			operator btTransform()
+			{
+				btScalar data[16] = { 0 };
+				Matrix4 mat = matrix.Inverse();
+				for (int i = 0; i < 16; i++)
+				{
+					data[i] = mat.array[i];
+				}
+				btTransform bT;
+				bT.setFromOpenGLMatrix(data);
+				return bT;
+			}
 		protected:
 			Matrix4		matrix;
 			Quaternion	orientation;
