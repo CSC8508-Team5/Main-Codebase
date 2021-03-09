@@ -1,0 +1,9 @@
+﻿  TutorialGame.cpp
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(95,41): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(99,42): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(114,46): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(118,47): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(751,43): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(755,54): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+C:\Users\apple\Desktop\新建文件夹 (2) - 副本\CSC8503\GameTech\TutorialGame.cpp(848,58): warning C4305: “参数”: 从“double”到“float”截断
+  GameTech.vcxproj -> C:\Users\apple\Desktop\新建文件夹 (2) - 副本\x64\Debug\GameTech.exe
