@@ -1,6 +1,6 @@
 #include "AudioSystem.h"
 
-ISoundEngine* NCL::CSC8503::AudioSystem::engine;
+irrklang::ISoundEngine* NCL::CSC8503::AudioSystem::engine = nullptr;
 
 NCL::CSC8503::AudioSystem::AudioSystem()
 {
@@ -17,6 +17,7 @@ NCL::CSC8503::AudioSystem::AudioSystem()
 
 NCL::CSC8503::AudioSystem::~AudioSystem()
 {
+	engine->removeAllSoundSources();
 	engine->drop();
 	engine = 0;
 }
