@@ -22,6 +22,16 @@ namespace NCL {
 
 		class GameObject {
 		public:
+			enum class Layer {
+				None = 0,
+				Default = 1,
+				Detail = 2,
+				Player = 4,
+				Enemy = 8,
+				Projectile = 16,
+				GUI = 32,
+				All = 256
+			};
 			GameObject(string name = "");
 			~GameObject();
 
@@ -124,6 +134,9 @@ namespace NCL {
 			string	name;
 
 			DW_UIHUD* m_HUD;
+
+			Layer layer;
+			int LayerMask;
 
 			Vector3 broadphaseAABB;
 		};
