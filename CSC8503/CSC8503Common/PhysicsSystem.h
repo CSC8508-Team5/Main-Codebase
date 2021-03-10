@@ -44,6 +44,7 @@ namespace NCL {
 			void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
 			void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
 
+			bool isUseBulletPhysics() const { return useBulletPhysics; }
 		protected:
 			void BasicCollisionDetection();
 			void BroadPhase();
