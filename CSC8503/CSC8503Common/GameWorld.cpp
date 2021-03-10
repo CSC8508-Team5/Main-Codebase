@@ -123,6 +123,20 @@ void GameWorld::RemoveConstraint(Constraint* c, bool andDelete) {
 	}
 }
 
+GameObject* NCL::CSC8503::GameWorld::GetGameObjectByBulletBody(const btCollisionObject* body)
+{
+	for (GameObject* g : gameObjects) {
+		if (g->GetBulletPhysicsObject())
+		{
+			if (body == g->GetBulletPhysicsObject())
+			{
+				return g;
+			}
+		}
+	}
+	return nullptr;
+}
+
 void GameWorld::GetConstraintIterators(
 	std::vector<Constraint*>::const_iterator& first,
 	std::vector<Constraint*>::const_iterator& last) const {

@@ -38,11 +38,32 @@ namespace NCL {
 
 			void SetGravity(const Vector3& g);
 
+			//functions for add/remove [rigidbody] to/from dynamicsWorld of bullet physics engine 
 			static void AddBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body); }
 			static void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
 
+			//functions for add/remove [constraint] to/from dynamicsWorld of bullet physics engine 
 			static void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
 			static void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
+			
+			//function for ray test of dyanmicsWorld
+			static void Raycast(btVector3 startPos, btVector3 endPos, btCollisionWorld::RayResultCallback& resultCallback) { if (dynamicsWorld) dynamicsWorld->rayTest(startPos, endPos, resultCallback); }
+			//static btCollisionWorld::ClosestRayResultCallback Raycast(Ray ray, float maxDistance) { if (dynamicsWorld) dynamicsWorld->rayTest(ray.GetPosition(), ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance, resultCallback); }
+			static bool Raycast(Ray& ray, RayCollision& collision, float maxDistance = 200.0f)
+			{
+				btVector3 from = ray.GetPosition();
+				btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance;
+				btCollisionWorld::ClosestRayResultCallback rcb(from, to);
+				//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
+				PhysicsSystem::Raycast(from, to, rcb);
+
+				collision.node = (void*)rcb.m_collisionObject;
+				collision.collidedAt = rcb.m_hitPointWorld;
+				collision.normal = rcb.m_hitNormalWorld;
+				collision.rayDistance = from.distance(to);
+
+				return rcb.hasHit();
+			}
 
 			bool isUseBulletPhysics() const { return useBulletPhysics; }
 		protected:

@@ -13,7 +13,7 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class TutorialGame		{
+		class TutorialGame {
 		public:
 			TutorialGame();
 			~TutorialGame();
@@ -34,10 +34,10 @@ namespace NCL {
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, bool useBullet = false);
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
 			void InitDefaultFloor(bool useBullet = false);
-			
+
 			void BridgeConstraintTest();
 			void BridgeBulletConstraintTest();
-	
+
 			bool SelectObject();
 			void MoveSelectedObject();
 			void DebugObjectMovement();
@@ -59,13 +59,13 @@ namespace NCL {
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
-		StateGameObject* AddStateObjectToWorld(const Vector3& position);
-		  StateGameObject * testStateObject = nullptr;
+			StateGameObject* AddStateObjectToWorld(const Vector3& position);
+			StateGameObject* testStateObject = nullptr;
 
-			GameTechRenderer*	renderer;
-			PhysicsSystem*		physics;
-			GameWorld*			world;
-			AudioSystem*		audio;
+			GameTechRenderer* renderer;
+			PhysicsSystem* physics;
+			GameWorld* world;
+			AudioSystem* audio;
 			bool useGravity;
 			bool inSelectionMode;
 
@@ -73,22 +73,22 @@ namespace NCL {
 
 			GameObject* selectionObject = nullptr;
 
-			OGLMesh*	capsuleMesh = nullptr;
-			OGLMesh*	cubeMesh	= nullptr;
-			OGLMesh*	sphereMesh	= nullptr;
-			OGLMesh*	cylinderMesh = nullptr;
-			OGLTexture* basicTex	= nullptr;
-			OGLShader*	basicShader = nullptr;
+			OGLMesh* capsuleMesh = nullptr;
+			OGLMesh* cubeMesh = nullptr;
+			OGLMesh* sphereMesh = nullptr;
+			OGLMesh* cylinderMesh = nullptr;
+			OGLTexture* basicTex = nullptr;
+			OGLShader* basicShader = nullptr;
 
 			//Coursework Meshes
-			OGLMesh*	charMeshA	= nullptr;
-			OGLMesh*	charMeshB	= nullptr;
-			OGLMesh*	enemyMesh	= nullptr;
-			OGLMesh*	bonusMesh	= nullptr;
+			OGLMesh* charMeshA = nullptr;
+			OGLMesh* charMeshB = nullptr;
+			OGLMesh* enemyMesh = nullptr;
+			OGLMesh* bonusMesh = nullptr;
 
 			//Coursework Additional functionality	
-			GameObject* lockedObject	= nullptr;
-			Vector3 lockedOffset		= Vector3(0, 14, 20);
+			GameObject* lockedObject = nullptr;
+			Vector3 lockedOffset = Vector3(0, 14, 20);
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;
 			}

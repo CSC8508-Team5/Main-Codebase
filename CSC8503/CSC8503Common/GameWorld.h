@@ -31,6 +31,8 @@ namespace NCL {
 				return mainCamera;
 			}
 
+			GameObject* GetGameObjectByBulletBody(const btCollisionObject* body);
+
 			void ShuffleConstraints(bool state) {
 				shuffleConstraints = state;
 			}

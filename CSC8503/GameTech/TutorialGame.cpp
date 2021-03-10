@@ -13,7 +13,7 @@ TutorialGame::TutorialGame() {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	physics = new PhysicsSystem(*world, true);
- 	//irrklang audio system
+	//irrklang audio system
 	audio = new AudioSystem();
 
 	//global play 2D as background music
@@ -244,35 +244,73 @@ void TutorialGame::DebugObjectMovement() {
 	if (inSelectionMode && selectionObject) {
 		//Twist the selected object!
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(-10, 0, 0));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyCentralForce(Vector3(-10, 0, 0));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyCentralForce(Vector3(10, 0, 0));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddForce(Vector3(10, 0, 0));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyTorque(Vector3(0, 10, 0));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-			selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyTorque(Vector3(0, -10, 0));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, -10));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, 10));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
 		}
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
-			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
+			if (physics->isUseBulletPhysics())
+			{
+				selectionObject->GetBulletBody()->activate();
+				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, -10, 0));
+			}
+			else
+				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
 		}
 
 	}
@@ -345,7 +383,7 @@ void TutorialGame::BridgeConstraintTest() {
 
 void TutorialGame::BridgeBulletConstraintTest() {
 	Vector3 cubeSize = Vector3(8, 8, 8);
-	float invCubeMass = 15; // how heavy the middle pieces are
+	float invCubeMass = 0.1f; // how heavy the middle pieces are
 	int numLinks = 10;
 	float maxDistance = 30; // constraint distance
 	float cubeDistance = 20; // distance between links
@@ -363,9 +401,20 @@ void TutorialGame::BridgeBulletConstraintTest() {
 		GameObject* block = AddBulletCubeToWorld(startPos + Vector3((i + 1) *
 			cubeDistance, 0, 0), cubeSize, invCubeMass);
 
-		btFixedConstraint* constraint = new btFixedConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), previous->GetTransform(), block->GetTransform());
-		constraint->setLinearLowerLimit(btVector3(-1, -1, 0));
-		constraint->setLinearUpperLimit(btVector3(1, 1, 0));
+		btTransform frameInA;
+		btTransform frameInB;
+
+		frameInA.setIdentity();
+		frameInA.setOrigin(btVector3(60, 0, 0));
+		frameInB.setIdentity();
+		frameInB.setOrigin(btVector3(0, 0, 0));
+		//btPoint2PointConstraint()
+		//btHingeConstraint* constraint = new btHingeConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), previous->GetTransform().GetPosition(), block->GetTransform().GetPosition(), btVector3(1, 1, 1), btVector3(1, 1, 1));
+		//btFixedConstraint* constraint = new btFixedConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB);
+		btPoint2PointConstraint* constraint = new btPoint2PointConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA.getOrigin(), frameInB.getOrigin());
+		//btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint();
+		//constraint->setLinearLowerLimit(btVector3(-1, -1, 0));
+		//constraint->setLinearUpperLimit(btVector3(1, 1, 0));
 		//PositionConstraint* constraint = new PositionConstraint(previous,
 		//	block, maxDistance);
 		physics->AddConstraint(constraint);
@@ -623,8 +672,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 		.SetPosition(position);
 
 	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
-	
-	btCollisionShape* shape = new btCapsuleShape(btScalar(radius),btScalar(halfHeight));
+
+	btCollisionShape* shape = new btCapsuleShape(btScalar(radius), btScalar(halfHeight));
 	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
 	btTransform bulletTransform;
 
@@ -724,13 +773,13 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 		for (int z = 0; z < numRows; ++z) {
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
 			int randVal = rand() % 4;
-			if (randVal==0) {
+			if (randVal == 0) {
 				if (useBullet)
 					AddBulletCubeToWorld(position, cubeDims);
 				else
 					AddCubeToWorld(position, cubeDims);
 			}
-			else if(randVal==1) {
+			else if (randVal == 1) {
 				if (useBullet)
 					AddBulletSphereToWorld(position, sphereRadius);
 				else
@@ -889,9 +938,23 @@ bool TutorialGame::SelectObject() {
 
 			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 
+			/*
+			btVector3 from = ray.GetPosition();
+			btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * 200;
+
+			btCollisionWorld::ClosestRayResultCallback rcb(from, to);
+			//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
+			PhysicsSystem::Raycast(from, to, rcb);
+		*/
+
 			RayCollision closestCollision;
-			if (world->Raycast(ray, closestCollision, true)) {
-				selectionObject = (GameObject*)closestCollision.node;
+			//if (world->Raycast(ray, closestCollision, true)) {
+			if (PhysicsSystem::Raycast(ray, closestCollision, 300)) {
+				//if (rcb.hasHit()) {
+					//selectionObject = (GameObject*)closestCollision.node;
+					//std::cout << "Hit normal" << rcb.m_hitNormalWorld << "\n";
+					//selectionObject = world->GetGameObjectByBulletBody(rcb.m_collisionObject);
+				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 				return true;
 			}
