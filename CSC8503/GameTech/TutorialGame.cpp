@@ -418,7 +418,7 @@ GameObject** TutorialGame::LevelTestOne() {
 
 	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0)
 		, PlatformSize, 0);
-	platforms[numstairs-1]= AddCubeToWorld(startPos + Vector3(numstairs * cubeDistance, numstairs* 5.0f, 0), PlatformSize, 0);
+	platforms[numstairs-1]= AddCubeToWorld(startPos + Vector3((numstairs-1) * cubeDistance, (numstairs-1)* 5.0f, 0), PlatformSize, 0);
 
 	GameObject* previous = platforms[0];
 	for (int i = 1; i < numstairs-1; ++i) {

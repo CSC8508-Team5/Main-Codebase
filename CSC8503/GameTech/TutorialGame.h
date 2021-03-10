@@ -2,7 +2,6 @@
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "StateGameObject.h"
-#include "../CSC8503Common/Timer.h"
 
 namespace NCL {
 	namespace CSC8503 {
