@@ -69,7 +69,8 @@ namespace NCL {
 			float		platformtimer;
 			float		yaw;
 			float		pitch;
-			DWORD		jumptimer;
+			bool		isjump;
+			int			numstairs;
 			GameObject** platforms;
 			GameObject* spinplat;
 			GameObject* player;

@@ -8,7 +8,6 @@
 #include <list>
 #include <algorithm>
 #include <math.h>
-#include "../CSC8503Common/Timer.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -24,12 +23,13 @@ TutorialGame::TutorialGame()	{
 
 	//adding for level design
 	platformtimer = 0.0f;
-	platforms = new GameObject*[15];
+	platforms = new GameObject*[17];
 	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
-	jumptimer = 0;
+	isjump = false;
+	numstairs = 14;
 	//end 
 	
 	Debug::SetRenderer(renderer);
@@ -135,57 +135,33 @@ void TutorialGame::UpdateGame(float dt) {
 	renderer->Update(dt);
 
 	Debug::FlushRenderables(dt);
-	//UpdateLevelOne();
+	CollisionDetection::CollisionInfo info;
+
+	UpdateLevelOne();
 	UpdatePlayer(dt);
+
 	//UpdateSpinningPlatform();
 	renderer->Render();
 }
 
 void TutorialGame::UpdateLevelOne() {
-	for (int i = 0; i < 15; ++i) {
+	float speed = 30.0f;
+		for (int i = 1; i < numstairs-1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
-		if (i % 3 == 0) {
-			if ((platformtimer >= 0) && (platformtimer < 100.0f)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8f));
-				platformtimer += 0.1f;
-				continue;
+		if (i % 3 == 1) {
+			if (position.z <= -60) {
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
-			else if (platformtimer >= 100.0f) {
-				platformtimer = 0;
-				platformtimer -= 0.1f;
-				continue;
-			}
-			else if ((platformtimer <= 0) && (platformtimer > -100.0f)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8f));
-				platformtimer -= 0.1f;
-				continue;
-			}
-			else if (platformtimer <= -100.0f) {
-				platformtimer = 0;
-				platformtimer += 0.1f;
-				continue;
+			else if (position.z >=10) {
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
-		else if (i % 3 == 2) {
-			if ((platformtimer >= 0) && (platformtimer < 100.0f)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, -0.8f));
-				platformtimer += 0.2f;
-				continue;
+		else if (i % 3 == 0) {
+			if(position.z <=-10) {
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
-			else if (platformtimer >= 100.0f) {
-				platformtimer = 0;
-				platformtimer -= 0.2f;
-				continue;
-			}
-			else if ((platformtimer <= 0) && (platformtimer > -100.0f)) {
-				platforms[i]->GetTransform().SetPosition(position + Vector3(0, 0, 0.8f));
-				platformtimer -= 0.2f;
-				continue;
-			}
-			else if (platformtimer <= -100.0f) {
-				platformtimer = 0;
-				platformtimer += 0.2f;
-				continue;
+			else if (position.z >= 60) {
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 	}
@@ -200,7 +176,20 @@ void TutorialGame::UpdatePlayer(float dt) {
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
-	
+	CollisionDetection::CollisionInfo info;
+	for (int i = 0; i < numstairs; ++i) {
+		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
+			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity()) ;
+			isjump = false;
+		}
+		//finish
+		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs-1], info)) {
+			Debug::Print("You Win", Vector2(45, 25));
+		}
+	}
+	/*if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
+		player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity);
+	}*/
 
 	if (yaw < 0) {
 		yaw += 360.0f;
@@ -215,13 +204,28 @@ void TutorialGame::UpdatePlayer(float dt) {
 		pitch =90.0f;
 	}
 	float frameSpeed = 50 * dt;
+	float cameraSpeed = 25 * dt;
 	//player turns head
-	/*Quaternion orientation = player->GetTransform().GetOrientation();
-	orientation = orientation + (Quaternion(0,yaw,0,1));
+	Quaternion orientation = player->GetTransform().GetOrientation();
+	double turnsin, turncos;
+	turnsin = sin((3.1415927 / 2) * ((yaw/10-45)/2));
+	turncos = cos((3.1415927 / 2) * ((yaw/10-45)/ 2));
+	orientation = Quaternion(0,turnsin,0,turncos);
 	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);*/
+	player->GetTransform().SetOrientation(orientation);
 
+	if (playerposition.y <= -5) {
+		InitCharaters();
+	}
 	//player movement
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
+		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
+		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		player->GetTransform().SetPosition(playerposition);
+	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
 		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
 		player->GetTransform().SetPosition(playerposition);
@@ -231,37 +235,27 @@ void TutorialGame::UpdatePlayer(float dt) {
 		player->GetTransform().SetPosition(playerposition);
 	}
 
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
-	}
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		//limit the max jump time
-		/*DWORD maxtime =10;
-		if (jumptimer ==0) {
-			jumptimer = GetTickCount();
+		//player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
+		if(!isjump){
+			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+			isjump = true;
 		}
-		if (GetTickCount()- jumptimer < maxtime) {
-			player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
-		}
-		else {
-			player->GetPhysicsObject()->AddForce(Vector3(0, 0, 0));
-			jumptimer = 0;
-		}*/
-		player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
+
 	}
+	else{
+		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); }
+
 
 	// Third person Camera
 	double cosine, sine;
+
 	cosine = cos((3.1415927 / 2) * (-yaw) * 0.1);
 	sine = sin((3.1415927 / 2) * (-yaw) * 0.1);
 	world->GetMainCamera()->SetPosition(playerposition + Vector3(-15*cosine, 5, -15*sine));
-	world->GetMainCamera()->SetYaw(270+yaw*10);
+	float newyaw = (270 + yaw * 10)- int((270 + yaw * 10)/360)*360;
+	world->GetMainCamera()->SetYaw(newyaw);
 	world->GetMainCamera()->SetPitch(pitch);
 
 
@@ -403,13 +397,13 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
-	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
+	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	InitCharaters();
-	InitDefaultFloor();
+	//InitDefaultFloor();
 	//BridgeConstraintTest();
-	//platforms = LevelTestOne();
-	/*Pendulum();
-	spinplat = 	SpinningPlatform();*/
+	platforms = LevelTestOne();
+	//Pendulum();
+	//spinplat = 	SpinningPlatform();
 }
 
 GameObject** TutorialGame::LevelTestOne() {
@@ -418,30 +412,31 @@ GameObject** TutorialGame::LevelTestOne() {
 	Vector3 middlecubeSize = Vector3(10, 5, 20);
 
 	float invCubeMass = 0; // how heavy the middle pieces are
-	int numStairs = 15;
 	float cubeDistance = 20; // distance between links
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
 
-	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0)
+	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0)
 		, PlatformSize, 0);
-	GameObject* end = AddCubeToWorld(startPos + Vector3((numStairs + 1) * cubeDistance, (numStairs + 1) * 5.0f, 0), PlatformSize, 0);
+	platforms[numstairs-1]= AddCubeToWorld(startPos + Vector3(numstairs * cubeDistance, numstairs* 5.0f, 0), PlatformSize, 0);
 
-	GameObject* previous = start;
-	for (int i = 0; i < numStairs; ++i) {
-		if (i % 3 == 0) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
+	GameObject* previous = platforms[0];
+	for (int i = 1; i < numstairs-1; ++i) {
+		if (i % 3 == 1) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
+			platforms[i] = block;
+			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
+			previous = block;
+		}
+		else if (i % 3 == 2) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
 			platforms[i] = block;
 			previous = block;
 		}
-		else if (i % 3 == 1) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+		else if(i % 3 == 0) {
+			GameObject* block = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
 			platforms[i] = block;
-			previous = block;
-		}
-		else if(i % 3 == 2) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			platforms[i] = block;
+			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
 			previous = block;
 		}
 	}
@@ -450,9 +445,9 @@ GameObject** TutorialGame::LevelTestOne() {
 
 GameObject* TutorialGame::SpinningPlatform() {
 	float radius = 50.0f;
-	float halfhight = 1.0f;
+	float hight = 3.0f;
 	Vector3 position = Vector3(0, 0, 0);
-	GameObject* spinplat = AddCylinderToWorld(position, radius, halfhight, 0.0f);
+	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
 	return spinplat;
 }
 
@@ -530,15 +525,15 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 /*
 The cylinder now using the CapsuleVolume, might need to change 
 */
-GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float halfhight, float inverseMass) {
+GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
 	GameObject* cylinder = new GameObject();
 
-	Vector3 cylinderSize = Vector3(radius, halfhight, radius);
-	CapsuleVolume* volume = new CapsuleVolume(halfhight, radius);
+	Vector3 cylinderSize = Vector3(radius*2, hight, radius*2);
+	AABBVolume* volume = new AABBVolume(Vector3(radius , hight, radius ));
 	cylinder->SetBoundingVolume((CollisionVolume*)volume);
 
 	cylinder->GetTransform()
-		.SetScale(Vector3(radius * 2, halfhight, radius * 2))
+		.SetScale(cylinderSize)
 		.SetPosition(position);
 
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), spinplatMesh, basicTex, basicShader));
@@ -668,7 +663,9 @@ void TutorialGame::InitDefaultFloor() {
 
 void TutorialGame::InitCharaters() {
 	player = AddPlayerToWorld(Vector3(-150, 10, 0));
-	player->GetTransform().SetOrientation(Quaternion(0,-0.9,0,1));
+	Quaternion orientation = Quaternion(0, -1, 0, 1);
+	orientation.Normalise();
+	player->GetTransform().SetOrientation(orientation);
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }

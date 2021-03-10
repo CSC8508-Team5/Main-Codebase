@@ -374,7 +374,6 @@ int main() {
 
 		}*/
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
-
 		g->UpdateGame(dt);
 		//DisplayPathfinding();
 	}
