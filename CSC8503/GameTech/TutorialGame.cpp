@@ -13,7 +13,7 @@ TutorialGame::TutorialGame() {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	physics = new PhysicsSystem(*world, true);
-	//irrklang audio system
+ 	//irrklang audio system
 	audio = new AudioSystem();
 
 
@@ -59,6 +59,7 @@ void TutorialGame::InitialiseAssets() {
 
 	loadFunc("cube.msh", &cubeMesh);
 	loadFunc("sphere.msh", &sphereMesh);
+	loadFunc("Cylinder.msh", &cylinderMesh);
 	loadFunc("Male1.msh", &charMeshA);
 	loadFunc("courier.msh", &charMeshB);
 	loadFunc("security.msh", &enemyMesh);
@@ -75,6 +76,7 @@ void TutorialGame::InitialiseAssets() {
 TutorialGame::~TutorialGame() {
 	delete cubeMesh;
 	delete sphereMesh;
+	delete cylinderMesh;
 	delete charMeshA;
 	delete charMeshB;
 	delete enemyMesh;
@@ -292,9 +294,11 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 	testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
-	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
+	InitMixedGridWorld(5, 5, 3.5f, 3.5f, physics->isUseBulletPhysics());
 	InitGameExamples();
-	InitDefaultFloor();
+
+	InitDefaultFloor(physics->isUseBulletPhysics());
+
 	BridgeConstraintTest();
 
 	//create audio system agent object 
@@ -303,7 +307,7 @@ void TutorialGame::InitWorld() {
 	audioAgent->SetSoundSource(new SoundSource(Assets::SFXDIR + "bell.wav", audioAgent->GetTransform().GetPosition()));
 
 	//create Bullet Cube 
-	AddBulletCubeToWorld(Vector3(1, 10, 1), Vector3(1, 1, 1));
+	//AddBulletCubeToWorld(Vector3(1, 10, 1), Vector3(1, 1, 1));
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -358,27 +362,6 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
-
-	btCollisionShape* shape = new btBoxShape(floorSize);
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
-	btTransform bulletTransform;
-
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
-
-	btScalar mass=0.0f;
-
-
-
-	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
-
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape);
-
-	//btRigidBody* body = new btRigidBody(*rbInfo);
-	floor->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(floor->GetBulletBody());
 	world->AddGameObject(floor);
 
 	return floor;
@@ -451,10 +434,42 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
- 
+
 	world->AddGameObject(cube);
 
 	return cube;
+}
+
+GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& position)
+{
+	GameObject* floor = new GameObject();
+
+	Vector3 floorSize = Vector3(200, 2, 200);
+
+	floor->GetTransform()
+		.SetScale(floorSize * 2)
+		.SetPosition(position);
+
+	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
+
+	btCollisionShape* shape = new btBoxShape(floorSize);
+	btTransform bulletTransform;
+
+	bulletTransform.setIdentity();
+	bulletTransform.setOrigin(position);
+
+	btScalar mass = 0.0f;
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape);
+
+	floor->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	physics->AddBulletBody(floor->GetBulletBody());
+
+	world->AddGameObject(floor);
+
+	return floor;
 }
 
 GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass)
@@ -466,7 +481,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& posi
 		.SetScale(dimensions * 2);
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
-	
+
 	//btVector3 btDimensions(btScalar(dimensions.x), btScalar(dimensions.y), btScalar(dimensions.z));
 
 
@@ -502,10 +517,154 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& posi
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	physics->AddBulletBody(cube->GetBulletBody());
 
-	
+
 	world->AddGameObject(cube);
 
 	return cube;
+}
+
+GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& position, float radius, float inverseMass)
+{
+	GameObject* sphere = new GameObject();
+
+	Vector3 sphereSize = Vector3(radius, radius, radius);
+
+	sphere->GetTransform()
+		.SetScale(sphereSize)
+		.SetPosition(position);
+
+	sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
+
+
+	btCollisionShape* shape = new btSphereShape(btScalar(radius));
+	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+	btTransform bulletTransform;
+
+	bulletTransform.setIdentity();
+	bulletTransform.setOrigin(position);
+
+	btScalar mass;
+	if (inverseMass != 0.0f)
+		mass = (1 / inverseMass);
+	else
+		mass = (0.0f);
+
+	bool isDynamic = (mass != 0.0f);
+
+	btVector3 localInertia(0, 0, 0);
+
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+	//btRigidBody* body = new btRigidBody(*rbInfo);
+	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	physics->AddBulletBody(sphere->GetBulletBody());
+
+
+	world->AddGameObject(sphere);
+
+	return sphere;
+}
+
+GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+{
+	GameObject* capsule = new GameObject();
+
+	CapsuleVolume* volume = new CapsuleVolume(halfHeight, radius);
+	capsule->SetBoundingVolume((CollisionVolume*)volume);
+
+	capsule->GetTransform()
+		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
+		.SetPosition(position);
+
+	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
+	
+	btCollisionShape* shape = new btCapsuleShape(btScalar(radius),btScalar(halfHeight));
+	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+	btTransform bulletTransform;
+
+	bulletTransform.setIdentity();
+	bulletTransform.setOrigin(position);
+
+	btScalar mass;
+	if (inverseMass != 0.0f)
+		mass = (1 / inverseMass);
+	else
+		mass = (0.0f);
+
+	bool isDynamic = (mass != 0.0f);
+
+	btVector3 localInertia(0, 0, 0);
+
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+	//btRigidBody* body = new btRigidBody(*rbInfo);
+	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	physics->AddBulletBody(capsule->GetBulletBody());
+
+	world->AddGameObject(capsule);
+
+	return capsule;
+}
+
+
+
+GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+{
+	GameObject* cylinder = new GameObject();
+
+	cylinder->GetTransform()
+		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
+		.SetPosition(position);
+
+	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), cylinderMesh, basicTex, basicShader));
+
+	btCollisionShape* shape = new btCylinderShape(btVector3(btScalar(radius), btScalar(halfHeight), btScalar(radius)));
+	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+	btTransform bulletTransform;
+
+	bulletTransform.setIdentity();
+	bulletTransform.setOrigin(position);
+
+	btScalar mass;
+	if (inverseMass != 0.0f)
+		mass = (1 / inverseMass);
+	else
+		mass = (0.0f);
+
+	bool isDynamic = (mass != 0.0f);
+
+	btVector3 localInertia(0, 0, 0);
+
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+	//btRigidBody* body = new btRigidBody(*rbInfo);
+	cylinder->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	physics->AddBulletBody(cylinder->GetBulletBody());
+
+	world->AddGameObject(cylinder);
+
+	return cylinder;
 }
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
@@ -518,19 +677,39 @@ void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacin
 	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
-void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing) {
+void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, bool useBullet) {
 	float sphereRadius = 1.0f;
 	Vector3 cubeDims = Vector3(1, 1, 1);
 
 	for (int x = 0; x < numCols; ++x) {
 		for (int z = 0; z < numRows; ++z) {
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-
-			if (rand() % 2) {
-				AddCubeToWorld(position, cubeDims);
+			int randVal = rand() % 5;
+			if (randVal==0) {
+				if (useBullet)
+					AddBulletCubeToWorld(position, cubeDims);
+				else
+					AddCubeToWorld(position, cubeDims);
 			}
-			else {
-				AddSphereToWorld(position, sphereRadius);
+			else if(randVal==1) {
+				if (useBullet)
+					AddBulletSphereToWorld(position, sphereRadius);
+				else
+					AddSphereToWorld(position, sphereRadius);
+			}
+			else if (randVal == 2)
+			{
+				if (useBullet)
+					AddBulletCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
+				else
+					AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
+			}
+			else if (randVal == 3)
+			{
+				if (useBullet)
+					AddBulletCylinderToWorld(position, sphereRadius * 2, sphereRadius);
+				//else
+				//	AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
 			}
 		}
 	}
@@ -545,12 +724,15 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 	}
 }
 
-void TutorialGame::InitDefaultFloor() {
-	AddFloorToWorld(Vector3(0, -2, 0));
+void TutorialGame::InitDefaultFloor(bool useBullet) {
+	if (useBullet)
+		AddBulletFloorToWorld(Vector3(0, -2, 0));
+	else
+		AddFloorToWorld(Vector3(0, -2, 0));
 }
 
 void TutorialGame::InitGameExamples() {
-	AddPlayerToWorld(Vector3(-5, 5, -5));
+	lockedObject = AddPlayerToWorld(Vector3(-5, 5, -5));
 	AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));
 }
