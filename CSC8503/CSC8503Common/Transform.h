@@ -19,11 +19,18 @@ namespace NCL {
 		{
 		public:
 			Transform();
+			Transform(btTransform btTrans) 
+			{
+				this->SetOrientation(btTrans.getRotation());
+				this->SetPosition(btTrans.getOrigin());
+			};
+
 			~Transform();
 
 			Transform& SetPosition(const Vector3& worldPos);
 			Transform& SetScale(const Vector3& worldScale);
 			Transform& SetOrientation(const Quaternion& newOr);
+
 			
 			Vector3 Up() const
 			{
