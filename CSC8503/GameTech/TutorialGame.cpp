@@ -249,16 +249,26 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 
 	// Third person Camera
-	double cosine, sine;
+	/*double cosine, sine;
 
 	cosine = cos((3.1415927 / 2) * (-yaw) * 0.1);
 	sine = sin((3.1415927 / 2) * (-yaw) * 0.1);
-	world->GetMainCamera()->SetPosition(playerposition + Vector3(-15*cosine, 5, -15*sine));
-	float newyaw = (270 + yaw * 10)- int((270 + yaw * 10)/360)*360;
+	world->GetMainCamera()->SetPosition(playerposition + Vector3(-15 * cosine, 5, -15 * sine));
+	float newyaw = (270 + yaw * 10) - int((270 + yaw * 10) / 360) * 360;
 	world->GetMainCamera()->SetYaw(newyaw);
-	world->GetMainCamera()->SetPitch(pitch);
+	world->GetMainCamera()->SetPitch(pitch);*/
+	const float Deg2Rad = 3.14f / 180.0f;
+	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
+	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
+	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
+	Matrix4 modelMat = mat.Inverse();
 
+	Quaternion q(modelMat);
+	Vector3 angles = q.ToEuler(); //nearly there now!
 
+	world->GetMainCamera()->SetPosition(camerTargetPos);
+	world->GetMainCamera()->SetPitch(angles.x);
+	world->GetMainCamera()->SetYaw(angles.y);
 }
 
 void TutorialGame::UpdateKeys() {
