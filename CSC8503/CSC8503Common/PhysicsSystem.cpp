@@ -19,7 +19,7 @@ and the forces that are added to objects to change those positions
 
 */
 
-//btDiscreteDynamicsWorld* NCL::CSC8503::PhysicsSystem::dynamicsWorld;
+btDiscreteDynamicsWorld* NCL::CSC8503::PhysicsSystem::dynamicsWorld=nullptr;
 
 PhysicsSystem::PhysicsSystem(GameWorld& g, bool enalbeBulletPhysics) : gameWorld(g) {
 	applyGravity = false;
@@ -117,7 +117,27 @@ any collisions they are in.
 
 */
 void PhysicsSystem::Clear() {
-	allCollisions.clear();
+	if (useBulletPhysics)
+	{
+		//dynamicsWorld->clearForces();
+		for (int i = dynamicsWorld->getNumConstraints() - 1; i >= 0; i--)
+		{
+			dynamicsWorld->removeConstraint(dynamicsWorld->getConstraint(i));
+		}
+		/*for (int i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+		{
+			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+			btRigidBody* body = btRigidBody::upcast(obj);
+			if (body && body->getMotionState())
+			{
+				delete body->getMotionState();
+			}
+			dynamicsWorld->removeCollisionObject(obj);
+			//delete obj;
+		}*/
+	}
+	else
+		allCollisions.clear();
 }
 
 /*

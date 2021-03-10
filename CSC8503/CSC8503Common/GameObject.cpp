@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "CollisionDetection.h"
+#include "PhysicsSystem.h"
 
 using namespace NCL::CSC8503;
 
@@ -19,7 +20,6 @@ GameObject::GameObject(string objectName)	{
 GameObject::~GameObject()	{
 	delete boundingVolume;
 	delete physicsObject;
-	delete bulletPhysicsObject;
 	delete renderObject;
 	
 	if (soundSource)
@@ -29,6 +29,7 @@ GameObject::~GameObject()	{
 	}
 	if (bulletPhysicsObject)
 	{
+		PhysicsSystem::RemoveBulletBody(GetBulletBody());
 		delete bulletPhysicsObject->getCollisionShape();
 		delete bulletPhysicsObject;
 	}

@@ -38,11 +38,11 @@ namespace NCL {
 
 			void SetGravity(const Vector3& g);
 
-			void AddBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body); }
-			void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
+			static void AddBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body); }
+			static void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
 
-			void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
-			void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
+			static void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
+			static void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
 
 			bool isUseBulletPhysics() const { return useBulletPhysics; }
 		protected:
@@ -91,7 +91,7 @@ namespace NCL {
 			///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 			btSequentialImpulseConstraintSolver* solver;// = new btSequentialImpulseConstraintSolver;
 
-			btDiscreteDynamicsWorld* dynamicsWorld;// = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+			static btDiscreteDynamicsWorld* dynamicsWorld;// = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
 			//keep track of the shapes, we release memory at exit.
 			//make sure to re-use collision shapes among rigid bodies whenever possible!

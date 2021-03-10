@@ -34,7 +34,9 @@ namespace NCL {
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, bool useBullet = false);
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
 			void InitDefaultFloor(bool useBullet = false);
+			
 			void BridgeConstraintTest();
+			void BridgeBulletConstraintTest();
 	
 			bool SelectObject();
 			void MoveSelectedObject();
