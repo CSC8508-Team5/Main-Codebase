@@ -70,7 +70,7 @@ void HM_Win::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		StartMenu = new HM_StartMenu();
-
+		
 	}
 
 

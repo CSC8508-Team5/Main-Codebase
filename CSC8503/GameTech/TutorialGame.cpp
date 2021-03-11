@@ -133,14 +133,13 @@ void TutorialGame::UpdateGame(float dt) {
 	else {
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
-<<<<<<< Updated upstream
-=======
+
 	} 
 	if (isfinish) {
 		WinScreen->SetPanelActive(true);
 		
 		Debug::Print("You Win", Vector2(45, 25));
->>>>>>> Stashed changes
+
 	}
 
 	/*if (useGravity) {
@@ -314,11 +313,9 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-<<<<<<< Updated upstream
+
 			//isjump = true; //Comment this if want a quick win.
-=======
-			//isjump = true;
->>>>>>> Stashed changes
+
 		}
 
 	}
