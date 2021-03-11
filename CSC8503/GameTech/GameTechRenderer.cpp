@@ -248,7 +248,7 @@ void GameTechRenderer::LoadSkybox() {
 }
 
 void GameTechRenderer::RenderFrame() {
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	BuildObjectList();
 	SortObjectList();
 	RenderShadowMap();
@@ -260,7 +260,7 @@ void GameTechRenderer::RenderFrame() {
 
 	//RenderSkybox();
 	//RenderCamera();
-	//glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
 	RenderHUD();
 	RenderUI();
