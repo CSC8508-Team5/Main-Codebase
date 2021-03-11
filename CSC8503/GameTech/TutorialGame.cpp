@@ -215,26 +215,55 @@ void TutorialGame::LockedObjectMovement() {
 	Vector3 charForward = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
 	Vector3 charForward2 = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
 
-	float force = 100.0f;
+	float force = 1.0f;
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
+		if (physics->isUseBulletPhysics())
+		{
+			selectionObject->GetBulletBody()->activate();
+			selectionObject->GetBulletBody()->applyCentralImpulse(-rightAxis * force);
+		}
+		else
 		lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-		Vector3 worldPos = selectionObject->GetTransform().GetPosition();
+		if (physics->isUseBulletPhysics())
+		{
+			selectionObject->GetBulletBody()->activate();
+			selectionObject->GetBulletBody()->applyCentralImpulse(rightAxis * force);
+		}
+		else
 		lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
+		if (physics->isUseBulletPhysics())
+		{
+			selectionObject->GetBulletBody()->activate();
+			selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
+		}
+		else
 		lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
+		if (physics->isUseBulletPhysics())
+		{
+			selectionObject->GetBulletBody()->activate();
+			selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
+		}
+		else
 		lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
+		if (physics->isUseBulletPhysics())
+		{
+			selectionObject->GetBulletBody()->activate();
+			selectionObject->GetBulletBody()->applyCentralImpulse(Vector3(0, -10, 0));
+		}
+		else
 		lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
 	}
 }
