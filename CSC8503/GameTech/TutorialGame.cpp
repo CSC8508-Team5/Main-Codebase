@@ -266,12 +266,11 @@ void TutorialGame::UpdatePlayer(float dt) {
 		pitch =90.0f;
 	}
 	float frameSpeed = 50 * dt;
-	float cameraSpeed = 25 * dt;
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
 	double turnsin, turncos;
-	turnsin = sin((3.1415927 / 2) * ((yaw/10-45)/2));
-	turncos = cos((3.1415927 / 2) * ((yaw/10-45)/ 2));
+	turnsin = sin((3.1415927 / 2) * ((yaw/9-45)/2));
+	turncos = cos((3.1415927 / 2) * ((yaw/9-45)/ 2));
 	orientation = Quaternion(0,turnsin,0,turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
@@ -306,7 +305,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-			//isjump = true; //Comment this if want a quick win.
+			isjump = true; //Comment this if want a quick win.
 		}
 
 	}
@@ -315,7 +314,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 
 	// Third person Camera
-	const float Deg2Rad = 3.1415926f / 180.0f;
+	std::cout << yaw << endl;
+	const float Deg2Rad = 3.1415927f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
 	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
