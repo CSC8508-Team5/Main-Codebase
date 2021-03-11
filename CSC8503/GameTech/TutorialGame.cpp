@@ -511,6 +511,10 @@ void TutorialGame::InitWorld() {
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 	platforms = LevelTestOne();
+	for (int i = 0; i < numstairs; i++)
+	{
+		std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
+	}
 	//Pendulum();
 	spinplat = 	SpinningPlatform();
 	coincollected = 0;
