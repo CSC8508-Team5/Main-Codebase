@@ -33,14 +33,13 @@ TutorialGame::TutorialGame()	{
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 	
 	
-	PauseMenu = new HM_PauseMenu(); // Pause menu
-    WinScreen = new HM_Win(); // wining screen
-	LoseScreen = new HM_Lose(); // lose screen
 	StartMenu = new HM_StartMenu(); // main menu
-	
-	
-	StartMenu->SetPanelActive(false);
-	//PauseMenu->SetPanelActive(false);
+	PauseMenu = new HM_PauseMenu(); // Pause menu
+	WinScreen = new HM_Win(); // wining screen
+	LoseScreen = new HM_Lose(); // lose screen
+
+	StartMenu->SetPanelActive(true);
+	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
@@ -101,10 +100,10 @@ void TutorialGame::UpdateGame(float dt) {
 	UpdateKeys();
 
 	if (useGravity) {
-		Debug::Print("(G)ravity on", Vector2(5, 95));
+	//	Debug::Print("(G)ravity on", Vector2(5, 95));
 	}
 	else {
-		Debug::Print("(G)ravity off", Vector2(5, 95));
+		//Debug::Print("(G)ravity off", Vector2(5, 95));
 	}
 
 	SelectObject();
@@ -192,6 +191,9 @@ void TutorialGame::UpdateKeys() {
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
 		PauseMenu->SetPanelActive(true);
+		StartMenu->SetPanelActive(false);
+		WinScreen->SetPanelActive(false);
+		LoseScreen->SetPanelActive(false);
 	}
 
 	if (lockedObject) {

@@ -16,7 +16,7 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIImage.h"
 
 #include "DW_UIRenderer.h"
-
+#include "HM_StartMenu.h"
 
 
 class  HM_Win
@@ -44,6 +44,7 @@ private:
 
 	DW_UIPanel* m_panel;
 
+	HM_StartMenu* StartMenu;
 
 	void ClickFunc(const std::string& str);
 

@@ -10,8 +10,8 @@ HM_Lose::HM_Lose() {
 	//Score_text = new DW_UIText("ScoreText", "Score", 1.1f, NCL::Maths::Vector3{ 520.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); //  score text
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
-	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,330.0f,0.0f });  // Continue button
-	Back_btn = new DW_UIImage("MenuButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,230.0f,0.0f });  // Back to main menu button
+	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,200.0f ,0.0f });  // Continue button
+	Back_btn = new DW_UIImage("MenuButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,100.0f,0.0f });  // Back to main menu button
 
 	str = NCL::Assets::TEXTUREDIR + "gameover.png";
 	m_lose = new DW_UIImage("Background", str.c_str(), { 0.7f, 0.4f }, NCL::Maths::Vector3{ 630.0f,550.0f,0.0f });  // Menu background picture
@@ -39,7 +39,7 @@ HM_Lose::HM_Lose() {
 	//m_panel->AddComponent(Score_text);
 	m_panel->AddComponent(m_lose);
 
-	
+
 	//4.add callback to this panel, if some of its components be clicked, we can do something here! 
 	//event type is panel's name
 	std::function<void(std::string)> temp = std::bind(&HM_Lose::ClickFunc, this, std::placeholders::_1);
@@ -56,7 +56,7 @@ HM_Lose::~HM_Lose() {
 
 	delete PlayAgain_text;
 	delete Back_btn;
-	
+
 
 	delete m_panel;
 }
@@ -64,10 +64,11 @@ HM_Lose::~HM_Lose() {
 void HM_Lose::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
-
+		this->SetPanelActive(false);
 	}
 	else if (str == "MenuButton") {
-
+		this->SetPanelActive(false);
+		StartMenu = new HM_StartMenu();
 	}
 
 
