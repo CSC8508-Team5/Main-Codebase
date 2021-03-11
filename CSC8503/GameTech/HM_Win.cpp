@@ -65,6 +65,7 @@ void HM_Win::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
 		this->SetPanelActive(false);
+		
 	}
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
