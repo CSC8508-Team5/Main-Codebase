@@ -134,10 +134,6 @@ void TutorialGame::UpdateGame(float dt) {
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
 	}
-	if (isfinish) {
-		WinScreen->SetPanelActive(true);
-		Debug::Print("You Win", Vector2(45, 25));
-	}
 
 	/*if (useGravity) {
 		Debug::Print("(G)ravity on", Vector2(5, 95));
@@ -146,8 +142,8 @@ void TutorialGame::UpdateGame(float dt) {
 		Debug::Print("(G)ravity off", Vector2(5, 95));
 	}*/
 
-	SelectObject();
-	MoveSelectedObject();
+	//SelectObject();
+	//MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -177,12 +173,13 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
+	if (!isfinish) {
+		UpdateLevelOne();
+		UpdateCoins();
+		UpdatePlayer(dt);
+		UpdateSpinningPlatform();
+	}
 
-	UpdateLevelOne();
-	UpdateCoins();
-	UpdatePlayer(dt);
-
-	UpdateSpinningPlatform();
 
 	DW_UIRenderer::get_instance().Update(dt);
 
@@ -236,7 +233,7 @@ void TutorialGame::UpdateSpinningPlatform(){
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20),Vector4(0, 1, 1, 1));
+	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
@@ -278,8 +275,13 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation = Quaternion(0,turnsin,0,turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
-
+	
+	if (isfinish) {
+		WinScreen->SetPanelActive(true);
+		//Debug::Print("You Win", Vector2(45, 25));
+	}
 	if (playerposition.y <= -5) {
+		player->GetTransform().SetScale(Vector3(0,0,0));
 		InitCharaters();
 	}
 	//player movement
@@ -304,7 +306,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-			isjump = true;
+			//isjump = true; //Comment this if want a quick win.
 		}
 
 	}
@@ -772,11 +774,11 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
-	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});
+	/*std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});*/
 
 	GameObject* character = new GameObject();
-	character->SetHUD(hud);
+	//character->SetHUD(hud);
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 
