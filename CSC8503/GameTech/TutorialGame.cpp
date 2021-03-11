@@ -58,7 +58,7 @@ TutorialGame::TutorialGame()	{
 	LoseScreen = new HM_Lose(); // lose screen
 	OptionMenu = new HM_Option(); // option menu
 	
-	StartMenu->SetPanelActive(false);
+	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
