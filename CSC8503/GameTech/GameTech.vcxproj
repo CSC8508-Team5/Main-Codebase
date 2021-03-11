@@ -150,6 +150,7 @@
     <ClCompile Include="DW_Light.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
     <ClCompile Include="DW_ShadowHelper.cpp" />
+    <ClCompile Include="DW_SkyboxHelper.cpp" />
     <ClCompile Include="DW_Tools.cpp" />
     <ClCompile Include="DW_UIbase.cpp" />
     <ClCompile Include="DW_UIEventMgr.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="DW_Quad.h" />
     <ClInclude Include="DW_ShadowHelper.h" />
     <ClInclude Include="DW_Singleton.h" />
+    <ClInclude Include="DW_SkyboxHelper.h" />
     <ClInclude Include="DW_Tools.h" />
     <ClInclude Include="DW_UIbase.h" />
     <ClInclude Include="DW_UIEventMgr.h" />

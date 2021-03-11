@@ -31,6 +31,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	shadowShader = new OGLShader("GameTechShadowVert.glsl", "GameTechShadowFrag.glsl");
 
 	//Skybox!
+	m_skyboxHelper = new DW_SkyboxHelper();
 	skyboxShader = new OGLShader("skyboxVertex.glsl", "skyboxFragment.glsl");
 	skyboxMesh = new OGLMesh();
 	skyboxMesh->SetVertexPositions({Vector3(-1, 1,-1), Vector3(-1,-1,-1) , Vector3(1,-1,-1) , Vector3(1,1,-1) });
@@ -52,6 +53,9 @@ GameTechRenderer::~GameTechRenderer()	{
 	delete shadowShader;
 	delete m_deferredHelper;
 	delete m_fillBufferShader;
+	delete m_lightingShader;
+	delete m_combineShader;
+	delete m_skyboxHelper;
 }
 
 

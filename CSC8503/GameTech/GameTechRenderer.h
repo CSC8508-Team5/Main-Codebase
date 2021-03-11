@@ -17,6 +17,7 @@
 #include "DW_Light.h"
 #include "DW_ShadowHelper.h"
 #include "DW_DeferredRenderingHelper.h"
+#include "DW_SkyboxHelper.h"
 
 
 namespace NCL {
@@ -67,6 +68,7 @@ namespace NCL {
 			OGLShader*  skyboxShader;
 			OGLMesh*	skyboxMesh;
 			GLuint		skyboxTex;
+			DW_SkyboxHelper* m_skyboxHelper;
 
 			//shadow mapping things
 			OGLShader*	shadowShader;
