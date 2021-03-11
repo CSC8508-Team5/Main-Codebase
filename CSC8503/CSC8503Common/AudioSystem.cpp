@@ -1,6 +1,6 @@
 #include "AudioSystem.h"
 
-ISoundEngine* NCL::CSC8503::AudioSystem::engine;
+ISoundEngine* NCL::CSC8503::AudioSystem::engine = nullptr;
 
 NCL::CSC8503::AudioSystem::AudioSystem()
 {
@@ -90,6 +90,11 @@ ISoundSource* NCL::CSC8503::AudioSystem::AddSourceAudio(string filename)
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceSFX(string filename)
 {
 	return AddSource(Assets::SFXDIR + filename);
+}
+
+void NCL::CSC8503::AudioSystem::StopAll()
+{
+	if (engine) engine->stopAllSounds();
 }
 
 void NCL::CSC8503::AudioSystem::RemoveSource(ISoundSource* source)

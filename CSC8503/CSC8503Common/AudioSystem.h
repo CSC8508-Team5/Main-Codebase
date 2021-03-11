@@ -65,6 +65,8 @@ namespace NCL {
 			static ISoundSource* AddSourceAudio(string filename);
 			static ISoundSource* AddSourceSFX(string filename);
 
+			static void StopAll();
+
 			static void RemoveSource(ISoundSource* source);
 			static void RemoveSource(string filename);
 			static void RemoveSourceAudio(string filename);
