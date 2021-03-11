@@ -17,6 +17,7 @@
 #include "DW_Light.h"
 #include "DW_ShadowHelper.h"
 #include "DW_DeferredRenderingHelper.h"
+#include "DW_SkyboxHelper.h"
 
 
 namespace NCL {
@@ -30,6 +31,8 @@ namespace NCL {
 			GameTechRenderer(GameWorld& world);
 			~GameTechRenderer();
 
+			void SetSphereMesh(OGLMesh* m) { m_sphereMesh = m; }
+			DW_DeferredRenderingHelper* GetDeferredRenderingHelper() { return m_deferredHelper; }
 		protected:
 			void RenderFrame()	override;
 
@@ -51,12 +54,21 @@ namespace NCL {
 			void LoadSkybox();
 			void InitLight();
 
+			void FillGBuffer();
+			void RenderLighting();
+			void CombineBuffer();
+
+			void BlitFBO();
+
+			//Matrix4 viewMatrix;
+			//Matrix4 projectionMatrix;
 
 			vector<const RenderObject*> activeObjects;
 
 			OGLShader*  skyboxShader;
 			OGLMesh*	skyboxMesh;
 			GLuint		skyboxTex;
+			DW_SkyboxHelper* m_skyboxHelper;
 
 			//shadow mapping things
 			OGLShader*	shadowShader;
@@ -72,7 +84,7 @@ namespace NCL {
 			OGLShader* m_fillBufferShader;
 			OGLShader* m_lightingShader;
 			OGLShader* m_combineShader;
-
+			OGLMesh* m_sphereMesh;
 
 		};
 	}

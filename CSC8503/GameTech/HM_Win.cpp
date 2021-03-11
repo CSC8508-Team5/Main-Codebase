@@ -12,8 +12,8 @@ HM_Win::HM_Win() {
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 
 
-	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,330.0f,0.0f });  // Continue button
-	Back_btn = new DW_UIImage("MenuButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,230.0f,0.0f });  // Back to main menu button
+	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,200.0f,0.0f });  // Continue button
+	Back_btn = new DW_UIImage("MenuButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,100.0f,0.0f });  // Back to main menu button
 
 	str = NCL::Assets::TEXTUREDIR + "bg1.png";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 1.82f, 1.0f }, NCL::Maths::Vector3{ 650.0f,360.0f,0.0f });  // Menu background picture
@@ -23,7 +23,7 @@ HM_Win::HM_Win() {
 	PlayAgain_text = new DW_UIText("PlayAgain", "Play Again", 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
 	Back_text = new DW_UIText("Menu", "Menu", 0.7f, NCL::Maths::Vector3{ 590.0f,90.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
 	//2.create an ui panel (it must have a name)
-	m_panel = new DW_UIPanel("ExamplePanel");
+	m_panel = new DW_UIPanel("WinMenu");
 
 	//3.add these ui components into the ui panel. 
 	//Attention: 
@@ -33,7 +33,7 @@ HM_Win::HM_Win() {
 
 	m_panel->AddComponent(PlayAgain_btn);
 	m_panel->AddComponent(Back_btn);
-	
+
 	m_panel->AddComponent(PlayAgain_text);
 	m_panel->AddComponent(Back_text);
 
@@ -64,10 +64,13 @@ HM_Win::~HM_Win() {
 void HM_Win::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
-
+		this->SetPanelActive(false);
+		
 	}
 	else if (str == "MenuButton") {
-
+		this->SetPanelActive(false);
+		StartMenu = new HM_StartMenu();
+		
 	}
 
 

@@ -1,11 +1,3 @@
-/*
-Part of UI System code.
-
-An example of how to create an UIPanel
-
-Comments and queries to: Dawei Wang, Group 5
-*/
-
 #pragma once
 
 #include "../../Common/Vector3.h"
@@ -17,39 +9,44 @@ Comments and queries to: Dawei Wang, Group 5
 
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
+#include "../CSC8503Common/AudioSystem.h"
 
-
-class  HM_Win
+class HM_Option
 {
 public:
-	HM_Win();
-	~HM_Win();
+	HM_Option(NCL::CSC8503::AudioSystem* audio);
+	~HM_Option();
 
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
-
+	float volume = 1.0f;
 private:
 	DW_UIImage* m_bg;
 
-	DW_UIImage* PlayAgain_btn;
-	DW_UIImage* Back_btn;
+	DW_UIImage* VolumeUp_btn;
+	DW_UIImage* VolumeDown_btn;
+	DW_UIImage* Volume_btn;
+	DW_UIImage* Close_btn;
 
+	DW_UIText* Option_text; 
+	DW_UIText* Close_text;
+
+	DW_UIText* Volume_text;
+
+	DW_UIText* VolumeUp_text;
+	DW_UIText* VolumeDown_text;
 	
-	DW_UIText* WinScreen_text;
-
-	DW_UIText* PlayAgain_text;
-	DW_UIText* Back_text;
-
-	DW_UIText* Score_text;
 
 	DW_UIPanel* m_panel;
 
-	HM_StartMenu* StartMenu;
-	bool m_isEnable;
+	bool m_isEnable = false;
 	void ClickFunc(const std::string& str);
+
+	// The audio system
+	NCL::CSC8503::AudioSystem* globalAudio;
 
 };
 

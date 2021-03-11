@@ -150,6 +150,7 @@
     <ClCompile Include="DW_Light.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
     <ClCompile Include="DW_ShadowHelper.cpp" />
+    <ClCompile Include="DW_SkyboxHelper.cpp" />
     <ClCompile Include="DW_Tools.cpp" />
     <ClCompile Include="DW_UIbase.cpp" />
     <ClCompile Include="DW_UIEventMgr.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="DW_UITextRenderer.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
     <ClCompile Include="HM_Lose.cpp" />
+    <ClCompile Include="HM_Option.cpp" />
     <ClCompile Include="HM_PauseMenu.cpp" />
     <ClCompile Include="HM_StartMenu.cpp" />
     <ClCompile Include="HM_Win.cpp" />
@@ -176,6 +178,7 @@
     <ClInclude Include="DW_Quad.h" />
     <ClInclude Include="DW_ShadowHelper.h" />
     <ClInclude Include="DW_Singleton.h" />
+    <ClInclude Include="DW_SkyboxHelper.h" />
     <ClInclude Include="DW_Tools.h" />
     <ClInclude Include="DW_UIbase.h" />
     <ClInclude Include="DW_UIEventMgr.h" />
@@ -189,6 +192,7 @@
     <ClInclude Include="DW_UITextRenderer.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="HM_Lose.h" />
+    <ClInclude Include="HM_Option.h" />
     <ClInclude Include="HM_PauseMenu.h" />
     <ClInclude Include="HM_StartMenu.h" />
     <ClInclude Include="HM_Win.h" />

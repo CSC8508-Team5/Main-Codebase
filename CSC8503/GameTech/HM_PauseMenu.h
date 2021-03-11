@@ -17,7 +17,7 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIImage.h"
 
 #include "DW_UIRenderer.h"
-
+#include "HM_StartMenu.h"
 
 
 class  HM_PauseMenu
@@ -26,7 +26,11 @@ public:
 	HM_PauseMenu();
 	~HM_PauseMenu();
 
-	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
+	void SetPanelActive(const bool flag) { 
+		m_panel->SetPanelIsEnable(flag); 
+		m_isEnable = flag;
+	}
+	bool GetPanelIsEnable() { return m_isEnable; }
 
 
 private:
@@ -44,7 +48,8 @@ private:
 
 	DW_UIPanel* m_panel;
 
-
+	HM_StartMenu* StartMenu;
+	bool m_isEnable;
 	void ClickFunc(const std::string& str);
 
 };
