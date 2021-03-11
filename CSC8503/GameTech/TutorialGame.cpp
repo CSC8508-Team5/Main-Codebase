@@ -107,15 +107,15 @@ void TutorialGame::UpdateGame(float dt) {
 		Debug::Print("You Win", Vector2(45, 25));
 	}
 
-	if (useGravity) {
+	/*if (useGravity) {
 		Debug::Print("(G)ravity on", Vector2(5, 95));
 	}
 	else {
 		Debug::Print("(G)ravity off", Vector2(5, 95));
-	}
+	}*/
 
-	SelectObject();
-	MoveSelectedObject();
+	//SelectObject();
+	//MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -150,7 +150,7 @@ void TutorialGame::UpdateGame(float dt) {
 	UpdateCoins();
 	UpdatePlayer(dt);
 
-	//UpdateSpinningPlatform();
+	UpdateSpinningPlatform();
 	renderer->Render();
 }
 
@@ -190,6 +190,11 @@ void TutorialGame::UpdateLevelOne() {
 
 void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+	CollisionDetection::CollisionInfo info;
+	if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
+		//player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity());
+		isjump = false;
+	}
 }
 
 void TutorialGame::UpdateCoins() {
@@ -213,9 +218,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
-	/*if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
-		player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity);
-	}*/
 
 	if (yaw < 0) {
 		yaw += 360.0f;
@@ -263,7 +265,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		//player->GetPhysicsObject()->AddForce(Vector3(0, 100, 0));
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 			isjump = true;
@@ -300,10 +301,10 @@ void TutorialGame::UpdateKeys() {
 		InitCamera(); //F2 will reset the camera to a specific default place
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::G)) {
+	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::G)) {
 		useGravity = !useGravity; //Toggle gravity!
 		physics->UseGravity(useGravity);
-	}
+	}*/
 	//Running certain physics updates in a consistent order might cause some
 	//bias in the calculations - the same objects might keep 'winning' the constraint
 	//allowing the other one to stretch too much etc. Shuffling the order so that it
@@ -431,7 +432,7 @@ void TutorialGame::InitWorld() {
 	//BridgeConstraintTest();
 	platforms = LevelTestOne();
 	//Pendulum();
-	//spinplat = 	SpinningPlatform();
+	spinplat = 	SpinningPlatform();
 	coincollected = 0;
 }
 
@@ -483,10 +484,11 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 }
 
 GameObject* TutorialGame::SpinningPlatform() {
-	float radius = 50.0f;
-	float hight = 3.0f;
-	Vector3 position = Vector3(0, 0, 0);
+	float radius = 30.0f;
+	float hight = 2.5f;
+	Vector3 position = Vector3(-150, 5, -80);
 	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
+	spinplat->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
 	return spinplat;
 }
 
@@ -771,7 +773,7 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	
 	GameObject* apple = new GameObject();
 
-	SphereVolume* volume = new SphereVolume(1.0f);
+	SphereVolume* volume = new SphereVolume(1.5f);
 	apple->SetBoundingVolume((CollisionVolume*)volume);
 	apple->GetTransform()
 		.SetScale(Vector3(0.25, 0.25, 0.25))
