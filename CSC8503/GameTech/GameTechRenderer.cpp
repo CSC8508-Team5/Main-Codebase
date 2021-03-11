@@ -32,7 +32,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	//Skybox!
 	m_skyboxHelper = new DW_SkyboxHelper();
-	skyboxShader = new OGLShader("skyboxVertex.glsl", "skyboxFragment.glsl");
+	skyboxShader = new OGLShader("CubemapVertex.glsl", "CubemapFragment.glsl");
+	//skyboxShader = new OGLShader("skyboxVertex.glsl", "skyboxFragment.glsl");
 	skyboxMesh = new OGLMesh();
 	skyboxMesh->SetVertexPositions({Vector3(-1, 1,-1), Vector3(-1,-1,-1) , Vector3(1,-1,-1) , Vector3(1,1,-1) });
 	skyboxMesh->SetVertexIndices({ 0,1,2,2,3,0 });
@@ -246,7 +247,9 @@ void GameTechRenderer::LoadSkybox() {
 
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
@@ -262,7 +265,7 @@ void GameTechRenderer::RenderFrame() {
 
 	BlitFBO();
 
-	//RenderSkybox();
+	RenderSkybox();
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
@@ -348,7 +351,7 @@ void GameTechRenderer::RenderShadowMap() {
 }
 
 void GameTechRenderer::RenderSkybox() {
-	glDisable(GL_CULL_FACE);
+	/*glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 
@@ -374,7 +377,27 @@ void GameTechRenderer::RenderSkybox() {
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);*/
+
+	glDepthFunc(GL_LEQUAL);
+	BindShader(skyboxShader);
+
+	float screenAspect = (float)currentWidth / (float)currentHeight;
+	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrixWithoutTranlation();
+	Matrix4 projMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+	int projLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "projMatrix");
+	int viewLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "viewMatrix");
+	glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
+	glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
+
+	glUniform1i(glGetUniformLocation(skyboxShader->GetProgramID(), "cubemap"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+	
+	m_skyboxHelper->Draw();
+	glDepthFunc(GL_LESS);
+
+	
 }
 
 void GameTechRenderer::RenderCamera() {

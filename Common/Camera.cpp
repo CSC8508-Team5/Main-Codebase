@@ -61,6 +61,11 @@ Matrix4 Camera::BuildViewMatrix() const {
 		Matrix4::Translation(-position);
 };
 
+Matrix4 Camera::BuildViewMatrixWithoutTranlation() {
+	return Matrix4::Rotation(-pitch, Vector3(1, 0, 0)) *
+		Matrix4::Rotation(-yaw, Vector3(0, 1, 0));
+}
+
 Matrix4 Camera::GetRotationMatrix() const {
 	return Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0));
 }

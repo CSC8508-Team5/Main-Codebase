@@ -67,6 +67,9 @@ namespace NCL {
 		//to a vertex shader (i.e it's already an 'inverse camera matrix').
 		Matrix4 BuildViewMatrix() const;
 
+		//use for skybox
+		Matrix4 BuildViewMatrixWithoutTranlation();
+
 		Matrix4 GetRotationMatrix() const;
 
 		Matrix4 BuildProjectionMatrix(float currentAspect = 1.0f) const;
