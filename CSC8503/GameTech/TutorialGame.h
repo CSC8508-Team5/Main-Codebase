@@ -28,7 +28,7 @@ namespace NCL {
 
 			void InitWorld();
 
-			void InitGameExamples();
+			void InitCharaters();
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
@@ -51,6 +51,18 @@ namespace NCL {
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
+			//adding for level design
+			GameObject** LevelTestOne();
+			GameObject* SpinningPlatform();
+			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			GameObject* AddCoins(const Vector3& position);
+			void Pendulum();
+			void UpdateLevelOne();
+			void UpdateCoins();
+			void UpdateSpinningPlatform();
+			void UpdatePlayer(float dt);
+			//end
+
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
 		  StateGameObject * testStateObject = nullptr;
 
@@ -62,6 +74,20 @@ namespace NCL {
 			bool inSelectionMode;
 
 			float		forceMagnitude;
+			//adding for level design
+			float		platformtimer;
+			float		yaw;
+			float		pitch;
+			bool		isjump;
+			bool		isfinish;
+			int			numstairs;
+			int			numcoins;
+			int			coincollected;
+			GameObject** platforms;
+			GameObject** coins;
+			GameObject* spinplat;
+			GameObject* player;
+			//end
 
 			GameObject* selectionObject = nullptr;
 
@@ -77,9 +103,14 @@ namespace NCL {
 			OGLMesh*	enemyMesh	= nullptr;
 			OGLMesh*	bonusMesh	= nullptr;
 
+			//Teamwork Meshes
+			OGLMesh* spinplatMesh = nullptr;
+			//end
+
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
 			Vector3 lockedOffset		= Vector3(0, 14, 20);
+			float lockedDistance = 15.0f;
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;
 			}
