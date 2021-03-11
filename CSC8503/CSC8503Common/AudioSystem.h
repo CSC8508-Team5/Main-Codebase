@@ -88,6 +88,7 @@ namespace NCL {
 
 		private:
 			static ISoundEngine* engine;
+			float volumeVar = 1.0f;
 		};
 	}
 }

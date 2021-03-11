@@ -9,11 +9,12 @@
 
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
+#include "../CSC8503Common/AudioSystem.h"
 
 class HM_Option
 {
 public:
-	HM_Option();
+	HM_Option(NCL::CSC8503::AudioSystem* audio);
 	~HM_Option();
 
 	void SetPanelActive(const bool flag) {
@@ -21,7 +22,7 @@ public:
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
-	int Volume = 10;
+	float volume = 1.0f;
 private:
 	DW_UIImage* m_bg;
 
@@ -41,9 +42,11 @@ private:
 
 	DW_UIPanel* m_panel;
 
-	
-	bool m_isEnable;
+	bool m_isEnable = false;
 	void ClickFunc(const std::string& str);
+
+	// The audio system
+	NCL::CSC8503::AudioSystem* globalAudio;
 
 };
 

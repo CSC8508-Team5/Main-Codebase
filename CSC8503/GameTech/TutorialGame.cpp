@@ -56,7 +56,7 @@ TutorialGame::TutorialGame()	{
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
-	OptionMenu = new HM_Option(); // option menu
+	OptionMenu = new HM_Option(audio); // option menu
 	
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
