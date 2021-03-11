@@ -47,8 +47,10 @@ namespace NCL {
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
 			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			GameObject* AddCoins(const Vector3& position);
 			void Pendulum();
 			void UpdateLevelOne();
+			void UpdateCoins();
 			void UpdateSpinningPlatform();
 			void UpdatePlayer(float dt);
 			//end
@@ -69,8 +71,12 @@ namespace NCL {
 			float		yaw;
 			float		pitch;
 			bool		isjump;
+			bool		isfinish;
 			int			numstairs;
+			int			numcoins;
+			int			coincollected;
 			GameObject** platforms;
+			GameObject** coins;
 			GameObject* spinplat;
 			GameObject* player;
 			//end

@@ -24,12 +24,16 @@ TutorialGame::TutorialGame()	{
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject*[17];
+	coins = new GameObject * [25];
 	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
 	isjump = false;
+	isfinish = false;
 	numstairs = 14;
+	numcoins = 25; // Upper limit of coins
+	coincollected = 0;
 	//end 
 	
 	Debug::SetRenderer(renderer);
@@ -82,6 +86,7 @@ TutorialGame::~TutorialGame()	{
 	delete basicShader;
 
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
+	delete[] coins;
 	delete spinplat;
 	delete player;
 
@@ -97,6 +102,10 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 
 	UpdateKeys();
+
+	if (isfinish) {
+		Debug::Print("You Win", Vector2(45, 25));
+	}
 
 	if (useGravity) {
 		Debug::Print("(G)ravity on", Vector2(5, 95));
@@ -138,6 +147,7 @@ void TutorialGame::UpdateGame(float dt) {
 	CollisionDetection::CollisionInfo info;
 
 	UpdateLevelOne();
+	UpdateCoins();
 	UpdatePlayer(dt);
 
 	//UpdateSpinningPlatform();
@@ -165,10 +175,37 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 	}
+		CollisionDetection::CollisionInfo info;
+		for (int i = 0; i < numstairs; ++i) {
+			if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
+				player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
+				isjump = false;
+			}
+			//finish
+			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
+				isfinish = true;
+			}
+		}
 };
 
 void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+}
+
+void TutorialGame::UpdateCoins() {
+	SphereVolume* volume = new SphereVolume(0.0f);
+	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20),Vector4(0, 1, 1, 1));
+	for (int i = 0; i < numcoins; ++i) {
+		if (coins[i] != nullptr) {
+			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
+			CollisionDetection::CollisionInfo info;
+			if (CollisionDetection::ObjectIntersection(player, coins[i], info)) {
+				coincollected += 1;
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0, 0, 0));
+			}
+		}
+	}
 }
 
 void TutorialGame::UpdatePlayer(float dt) {
@@ -176,17 +213,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
-	CollisionDetection::CollisionInfo info;
-	for (int i = 0; i < numstairs; ++i) {
-		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
-			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity()) ;
-			isjump = false;
-		}
-		//finish
-		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs-1], info)) {
-			Debug::Print("You Win", Vector2(45, 25));
-		}
-	}
 	/*if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
 		player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity);
 	}*/
@@ -249,15 +275,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 
 	// Third person Camera
-	/*double cosine, sine;
-
-	cosine = cos((3.1415927 / 2) * (-yaw) * 0.1);
-	sine = sin((3.1415927 / 2) * (-yaw) * 0.1);
-	world->GetMainCamera()->SetPosition(playerposition + Vector3(-15 * cosine, 5, -15 * sine));
-	float newyaw = (270 + yaw * 10) - int((270 + yaw * 10) / 360) * 360;
-	world->GetMainCamera()->SetYaw(newyaw);
-	world->GetMainCamera()->SetPitch(pitch);*/
-	const float Deg2Rad = 3.14f / 180.0f;
+	const float Deg2Rad = 3.1415926f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
 	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
@@ -266,7 +284,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	Quaternion q(modelMat);
 	Vector3 angles = q.ToEuler(); //nearly there now!
 
-	world->GetMainCamera()->SetPosition(camerTargetPos);
+	world->GetMainCamera()->SetPosition(camerTargetPos+Vector3(0,3,0));//Adding a distance on Y
 	world->GetMainCamera()->SetPitch(angles.x);
 	world->GetMainCamera()->SetYaw(angles.y);
 }
@@ -414,6 +432,7 @@ void TutorialGame::InitWorld() {
 	platforms = LevelTestOne();
 	//Pendulum();
 	//spinplat = 	SpinningPlatform();
+	coincollected = 0;
 }
 
 GameObject** TutorialGame::LevelTestOne() {
@@ -426,31 +445,41 @@ GameObject** TutorialGame::LevelTestOne() {
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
 
-	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0)
-		, PlatformSize, 0);
+	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0), PlatformSize, 0);
 	platforms[numstairs-1]= AddCubeToWorld(startPos + Vector3((numstairs-1) * cubeDistance, (numstairs-1)* 5.0f, 0), PlatformSize, 0);
+	platforms[0]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+	platforms[numstairs - 1]->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+	//initial coins
+	for (int i = 0; i < numcoins; ++i) {
+		coins[i] = nullptr;
+	}
 
-	GameObject* previous = platforms[0];
 	for (int i = 1; i < numstairs-1; ++i) {
 		if (i % 3 == 1) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			platforms[i] = block;
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
 			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
-			previous = block;
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1)* 5.0f+3, -20));
 		}
 		else if (i % 3 == 2) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i] = block;
-			previous = block;
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if(i % 3 == 0) {
-			GameObject* block = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			platforms[i] = block;
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
 			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
-			previous = block;
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1) * 5.0f+3, 20));
 		}
 	}
 	return platforms;
+}
+
+GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
+	GameObject* coin = new GameObject();
+	coin = AddBonusToWorld(position);
+	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+	return coin;
 }
 
 GameObject* TutorialGame::SpinningPlatform() {
@@ -676,6 +705,7 @@ void TutorialGame::InitCharaters() {
 	Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
+	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }
@@ -693,13 +723,14 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	character->GetTransform()
 		.SetScale(Vector3(meshSize, meshSize, meshSize))
 		.SetPosition(position);
-
-	if (rand() % 2) {
+	//Don't need random player now.
+	/*if (rand() % 2) {
 		character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshA, nullptr, basicShader));
 	}
 	else {
 		character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
-	}
+	}*/
+	character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
 	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
@@ -740,7 +771,7 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	
 	GameObject* apple = new GameObject();
 
-	SphereVolume* volume = new SphereVolume(0.25f);
+	SphereVolume* volume = new SphereVolume(1.0f);
 	apple->SetBoundingVolume((CollisionVolume*)volume);
 	apple->GetTransform()
 		.SetScale(Vector3(0.25, 0.25, 0.25))
@@ -749,11 +780,10 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
 	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
 
-	apple->GetPhysicsObject()->SetInverseMass(1.0f);
+	apple->GetPhysicsObject()->SetInverseMass(0.0f);
 	apple->GetPhysicsObject()->InitSphereInertia();
 
 	world->AddGameObject(apple);
-
 	return apple;
 }
 
@@ -834,8 +864,8 @@ added linear motion into our physics system. After the second tutorial, objects 
 line - after the third, they'll be able to twist under torque aswell.
 */
 void TutorialGame::MoveSelectedObject() {
-	renderer->DrawString(" Click Force :" + std::to_string(forceMagnitude),
-		Vector2(10, 20)); // Draw debug text at 10 ,20
+	/*renderer->DrawString(" Click Force :" + std::to_string(forceMagnitude),
+		Vector2(10, 20)); // Draw debug text at 10 ,20*/
 	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 100.0f;
 
 	if (!selectionObject) {
