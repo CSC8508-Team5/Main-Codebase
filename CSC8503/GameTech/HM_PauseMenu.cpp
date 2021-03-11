@@ -67,7 +67,7 @@ void HM_PauseMenu::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		StartMenu = new HM_StartMenu();
-
+		m_isEnable = true;
 	}
 
 
