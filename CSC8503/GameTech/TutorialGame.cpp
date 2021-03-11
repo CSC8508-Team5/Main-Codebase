@@ -412,9 +412,9 @@ void TutorialGame::BridgeConstraintTest() {
 
 void TutorialGame::BridgeBulletConstraintTest() {
 	Vector3 cubeSize = Vector3(8, 8, 8);
-	float invCubeMass = 0.1f; // how heavy the middle pieces are
-	int numLinks = 10;
-	float maxDistance = 30; // constraint distance
+	float invCubeMass = 0.01f; // how heavy the middle pieces are
+	int numLinks = 20;
+	float maxDistance = 22; // constraint distance
 	float cubeDistance = 20; // distance between links
 
 	Vector3 startPos = Vector3(5, 100, 5);
@@ -422,35 +422,52 @@ void TutorialGame::BridgeBulletConstraintTest() {
 	GameObject* start = AddBulletCubeToWorld(startPos + Vector3(0, 0, 0)
 		, cubeSize, 0);
 	GameObject* end = AddBulletCubeToWorld(startPos + Vector3((numLinks + 1)
-		* cubeDistance, 0, 0), cubeSize, 0);
+		* cubeDistance+8, 0, 0), cubeSize, 0);
 
 	GameObject* previous = start;
+
+	//relative transform of objects
+	btTransform frameInA;
+	btTransform frameInB;
+
+	frameInA.setIdentity();
+	frameInA.setOrigin(btVector3(cubeDistance /2, 0, 0));
+	frameInB.setIdentity();
+	frameInB.setOrigin(btVector3(-cubeDistance /2, 0, 0));
 
 	for (int i = 0; i < numLinks; ++i) {
 		GameObject* block = AddBulletCubeToWorld(startPos + Vector3((i + 1) *
 			cubeDistance, 0, 0), cubeSize, invCubeMass);
 
-		btTransform frameInA;
-		btTransform frameInB;
-
-		frameInA.setIdentity();
-		frameInA.setOrigin(btVector3(60, 0, 0));
-		frameInB.setIdentity();
-		frameInB.setOrigin(btVector3(0, 0, 0));
 		//btPoint2PointConstraint()
 		//btHingeConstraint* constraint = new btHingeConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), previous->GetTransform().GetPosition(), block->GetTransform().GetPosition(), btVector3(1, 1, 1), btVector3(1, 1, 1));
 		//btFixedConstraint* constraint = new btFixedConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB);
-		btPoint2PointConstraint* constraint = new btPoint2PointConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA.getOrigin(), frameInB.getOrigin());
+		btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB,true);
+		constraint->setLinearUpperLimit(btVector3(0, 0, 0));
+		constraint->setLinearLowerLimit(btVector3(0, 0, 0));
+		constraint->setAngularLowerLimit(btVector3(0, -1, -1));
+		constraint->setAngularUpperLimit(btVector3(0, 1, 1));
+		constraint->enableSpring(3, true);
+		constraint->setStiffness(3, 0.01f);
+
+		//previous->GetBulletBody()->addConstraintRef(constraint);
+		//block->GetBulletBody()->addConstraintRef(constraint);
+		//constraint->setDamping(3, 0.25f);
+
+		//btPoint2PointConstraint* constraint = new btPoint2PointConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA.getOrigin(), frameInB.getOrigin());
 		//btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint();
 		//constraint->setLinearLowerLimit(btVector3(-1, -1, 0));
 		//constraint->setLinearUpperLimit(btVector3(1, 1, 0));
 		//PositionConstraint* constraint = new PositionConstraint(previous,
 		//	block, maxDistance);
+		
 		physics->AddConstraint(constraint);
 		previous = block;
 
 	}
-	btFixedConstraint* constraint = new btFixedConstraint(*previous->GetBulletBody(), *end->GetBulletBody(), previous->GetTransform(), end->GetTransform());
+
+	//btPoint2PointConstraint* constraint = new btPoint2PointConstraint(*previous->GetBulletBody(), *end->GetBulletBody(), frameInA.getOrigin(), frameInB.getOrigin());
+	btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint(*previous->GetBulletBody(), *end->GetBulletBody(), frameInA, frameInB, true);
 
 	//PositionConstraint* constraint = new PositionConstraint(previous,
 	//	end, maxDistance);
