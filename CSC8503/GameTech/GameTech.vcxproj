@@ -163,6 +163,7 @@
     <ClCompile Include="DW_UITextRenderer.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
     <ClCompile Include="HM_Lose.cpp" />
+    <ClCompile Include="HM_Option.cpp" />
     <ClCompile Include="HM_PauseMenu.cpp" />
     <ClCompile Include="HM_StartMenu.cpp" />
     <ClCompile Include="HM_Win.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="DW_UITextRenderer.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="HM_Lose.h" />
+    <ClInclude Include="HM_Option.h" />
     <ClInclude Include="HM_PauseMenu.h" />
     <ClInclude Include="HM_StartMenu.h" />
     <ClInclude Include="HM_Win.h" />

@@ -56,11 +56,15 @@ TutorialGame::TutorialGame()	{
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
-
-	StartMenu->SetPanelActive(true);
+	OptionMenu = new HM_Option(); // option menu
+	
+	StartMenu->SetPanelActive(false);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
+	OptionMenu->SetPanelActive(false);
+
+	
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
@@ -126,7 +130,7 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 
 	UpdateKeys();
-	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable()) {
+	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
 	}
@@ -389,6 +393,14 @@ void TutorialGame::UpdateKeys() {
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
 		LoseScreen->SetPanelActive(false);
+		OptionMenu->SetPanelActive(false);
+	}
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
+		PauseMenu->SetPanelActive(false);
+		StartMenu->SetPanelActive(false);
+		WinScreen->SetPanelActive(false);
+		LoseScreen->SetPanelActive(false);
+		OptionMenu->SetPanelActive(true);
 	}
 
 	if (lockedObject) {

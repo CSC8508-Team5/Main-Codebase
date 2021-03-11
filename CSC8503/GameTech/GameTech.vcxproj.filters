@@ -87,6 +87,9 @@
     <ClCompile Include="DW_DeferredRenderingHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HM_Option.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -156,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DW_DeferredRenderingHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_Option.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
