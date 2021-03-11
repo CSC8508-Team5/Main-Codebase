@@ -126,8 +126,16 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 
 	UpdateKeys();
-
+	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable()) {
+		Window::GetWindow()->ShowOSPointer(true);
+		Window::GetWindow()->LockMouseToWindow(false);
+	}
+	else {
+		Window::GetWindow()->ShowOSPointer(false);
+		Window::GetWindow()->LockMouseToWindow(true);
+	}
 	if (isfinish) {
+		WinScreen->SetPanelActive(true);
 		Debug::Print("You Win", Vector2(45, 25));
 	}
 
@@ -138,8 +146,8 @@ void TutorialGame::UpdateGame(float dt) {
 		Debug::Print("(G)ravity off", Vector2(5, 95));
 	}*/
 
-	//SelectObject();
-	//MoveSelectedObject();
+	SelectObject();
+	MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -512,7 +520,7 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 		else if (i % 3 == 2) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 		}
 		else if(i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);

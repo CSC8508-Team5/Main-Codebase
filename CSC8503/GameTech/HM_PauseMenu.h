@@ -26,7 +26,11 @@ public:
 	HM_PauseMenu();
 	~HM_PauseMenu();
 
-	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
+	void SetPanelActive(const bool flag) { 
+		m_panel->SetPanelIsEnable(flag); 
+		m_isEnable = flag;
+	}
+	bool GetPanelIsEnable() { return m_isEnable; }
 
 
 private:
@@ -45,7 +49,7 @@ private:
 	DW_UIPanel* m_panel;
 
 	HM_StartMenu* StartMenu;
-
+	bool m_isEnable;
 	void ClickFunc(const std::string& str);
 
 };
