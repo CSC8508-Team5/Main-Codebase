@@ -30,6 +30,8 @@ namespace NCL {
 			GameTechRenderer(GameWorld& world);
 			~GameTechRenderer();
 
+			void SetSphereMesh(OGLMesh* m) { m_sphereMesh = m; }
+
 		protected:
 			void RenderFrame()	override;
 
@@ -51,6 +53,14 @@ namespace NCL {
 			void LoadSkybox();
 			void InitLight();
 
+			void FillGBuffer();
+			void RenderLighting();
+			void CombineBuffer();
+
+			void BlitFBO();
+
+			//Matrix4 viewMatrix;
+			//Matrix4 projectionMatrix;
 
 			vector<const RenderObject*> activeObjects;
 
@@ -72,7 +82,7 @@ namespace NCL {
 			OGLShader* m_fillBufferShader;
 			OGLShader* m_lightingShader;
 			OGLShader* m_combineShader;
-
+			OGLMesh* m_sphereMesh;
 
 		};
 	}

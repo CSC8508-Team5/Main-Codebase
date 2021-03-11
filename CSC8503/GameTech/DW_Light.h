@@ -25,6 +25,8 @@ public:
 	DW_Light(const LightType type);
 	~DW_Light();
 
+	int GetType() { return (int)m_type; }
+
 	NCL::Maths::Vector3 GetPosition() { return m_position; }
 	void SetPosition(const NCL::Maths::Vector3& pos) { m_position = pos;  }
 

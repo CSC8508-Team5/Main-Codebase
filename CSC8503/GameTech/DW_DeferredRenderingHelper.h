@@ -16,18 +16,51 @@ Comments and queries to: Dawei Wang, Group 5
 class DW_DeferredRenderingHelper
 {
 public:
-	DW_DeferredRenderingHelper();
+	DW_DeferredRenderingHelper(const int w,const int h);
 	~DW_DeferredRenderingHelper();
 
-	GLuint GetBufferFBO() { return m_gBufferFBO; }
-	GLuint GetLightingFBO() { return m_lightingFBO; }
-private:
-	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex;
+	GLuint GetBufferFBO() { 
+		return m_gBufferFBO; 
+	}
 
-	GLuint m_lightingFBO,m_otherLightingDiffTex,m_otherLightingSpecTex,m_D_LightingDiffTex,m_D_LightingSpecTex;
+	GLuint GetLightingFBO() { 
+		return m_lightingFBO; 
+	}
+
+	DW_Light* GetDirectionLight() { 
+		return m_directionalLight; 
+	}
+
+	std::vector<DW_Light*> GetPointLights() {
+		return m_pointLights;
+	}
+
+	GLuint GetGBufferDepthTex() {
+		return m_gBufferDepthTex;
+	}
+
+	GLuint GetGBufferNormalTex() { 
+		return m_gBufferNormalTex; 
+	}
+
+	GLuint GetGBufferColorTex() { 
+		return m_gBufferColorTex; 
+	}
+
+	GLuint GetGBufferShadowTex() {
+		return m_gBufferShadowTex;
+	}
+
+	GLuint GetLightingDiffTex() { return m_lightingDiffTex; }
+	GLuint GetLightingSpecTex() { return m_lightingSpecTex;}
+
+private:
+	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex, m_gBufferShadowTex;
+
+	GLuint m_lightingFBO, m_lightingDiffTex, m_lightingSpecTex;
 
 	const int POINT_LIGHTS_NUM = 32;
-	const int WIDTH{ 1280 }, HEIGHT{ 720 };
+	int m_width, m_height;
 	std::vector<DW_Light*> m_pointLights;
 	DW_Light* m_spotLight;
 	DW_Light* m_directionalLight;

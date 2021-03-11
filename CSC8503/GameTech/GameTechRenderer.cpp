@@ -15,10 +15,11 @@ Matrix4 biasMatrix = Matrix4::Translation(Vector3(0.5, 0.5, 0.5)) * Matrix4::Sca
 GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetWindow()), gameWorld(world)	{
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glClearColor(0, 0, 0, 1);
+	glEnable(GL_BLEND);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	//deferred rendering
-	m_deferredHelper = new DW_DeferredRenderingHelper();
+	m_deferredHelper = new DW_DeferredRenderingHelper(currentWidth,currentHeight);
 	m_fillBufferShader = new OGLShader("FillBufferVert.glsl", "FillBufferFrag.glsl");
 	m_lightingShader = new OGLShader("LightingVert.glsl", "LightingFrag.glsl");
 	m_combineShader= new OGLShader("CombineVert.glsl", "CombineFrag.glsl");
@@ -60,6 +61,150 @@ void GameTechRenderer::InitLight() {
 	m_directionalLight->SetDirection(Vector3(0, 0, 0) - m_directionalLight->GetPosition());
 	m_directionalLight->SetColor(Vector4(0.6f, 0.6f, 0.6f, 1));
 	m_directionalLight->SetAmbient(0.05f);
+}
+
+void GameTechRenderer::FillGBuffer() {
+	float screenAspect = (float)currentWidth / (float)currentHeight;
+	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+	/*float screenAspect = (float)currentWidth / (float)currentHeight;
+	viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+	projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);*/
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_deferredHelper->GetBufferFBO());
+	glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT );
+
+	BindShader(m_fillBufferShader);
+
+	glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "viewMatrix"), 1, false, (float*)&viewMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projectionMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "shadowMatrix"), 1, false, (float*)&shadowMatrix);
+
+	glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "shadowTex"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_shadowHelper->GetTexture());
+
+	glUniform3fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "lightDir"), 1, (float*)&m_deferredHelper->GetDirectionLight()->GetDirection());
+	
+
+	for (const auto& i : activeObjects) {
+
+		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
+		glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "modelMatrix"), 1, false, (float*)&modelMatrix);
+		BindTextureToShader((OGLTexture*)(*i).GetDefaultTexture(), "diffuseTex", 0);
+
+		glUniform4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "objectColour"), 1, (float*)&i->GetColour());
+		glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "hasVertexColours"), !(*i).GetMesh()->GetColourData().empty());
+		glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "hasTexture"), (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
+		
+		BindMesh((*i).GetMesh());
+		int layerCount = (*i).GetMesh()->GetSubMeshCount();
+		for (int i = 0; i < layerCount; ++i) {
+			DrawBoundMesh(i);
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GameTechRenderer::RenderLighting() {
+	float screenAspect = (float)currentWidth / (float)currentHeight;
+	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_deferredHelper->GetLightingFBO());
+	BindShader(m_lightingShader);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDepthFunc(GL_ALWAYS);
+	glDepthMask(GL_FALSE);
+
+	glUniformMatrix4fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "viewMatrix"), 1, false, (float*)&viewMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projectionMatrix);
+
+	glUniform1i(glGetUniformLocation(m_lightingShader->GetProgramID(), "depthTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_deferredHelper->GetGBufferDepthTex());
+
+	glUniform1i(glGetUniformLocation(m_lightingShader->GetProgramID(), "normTex"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_deferredHelper->GetGBufferNormalTex());
+
+	glUniform1i(glGetUniformLocation(m_lightingShader->GetProgramID(), "shadowTex"), 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_deferredHelper->GetGBufferShadowTex());
+
+	glUniform2f(glGetUniformLocation(m_lightingShader->GetProgramID(), "pixelSize"), 1.0f / (float)currentWidth, 1.0f / (float)currentHeight);
+	glUniform3fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "cameraPos"), 1, (float*)&gameWorld.GetMainCamera()->GetPosition());
+
+	Matrix4 invViewProj = (projectionMatrix * viewMatrix).Inverse();
+	glUniformMatrix4fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "inverseProjView"), 1, false, (float*)&invViewProj);
+
+	glCullFace(GL_BACK);
+	//directional light
+	glUniform3fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "directionalLight.direction"), 1, (float*)&m_deferredHelper->GetDirectionLight()->GetDirection());
+	glUniform4fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "directionalLight.color"), 1, (float*)&m_deferredHelper->GetDirectionLight()->GetColor());
+	glUniform1f(glGetUniformLocation(m_lightingShader->GetProgramID(), "directionalLight.ambient"), m_deferredHelper->GetDirectionLight()->GetAmbient());
+
+	glUniform1i(glGetUniformLocation(m_lightingShader->GetProgramID(), "lightType"), m_deferredHelper->GetDirectionLight()->GetType());
+
+	DW_Quad::get_instance().BindVAO();
+	DW_Quad::get_instance().Draw();
+
+
+	glCullFace(GL_FRONT);
+	//point light
+	std::vector<DW_Light*> temp = m_deferredHelper->GetPointLights();
+	for (int i = 0; i < temp.size(); i++)
+	{
+		glUniform1i(glGetUniformLocation(m_lightingShader->GetProgramID(), "lightType"), temp[i]->GetType());
+		glUniform1f(glGetUniformLocation(m_lightingShader->GetProgramID(), "lightRadius"), temp[i]->GetRadius());
+		glUniform3fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "lightPos"), 1, (float*)&temp[i]->GetPosition());
+
+		glUniform1f(glGetUniformLocation(m_lightingShader->GetProgramID(), "pointLight.ambient"), temp[i]->GetAmbient());
+		glUniform1f(glGetUniformLocation(m_lightingShader->GetProgramID(), "pointLight.radius"), temp[i]->GetRadius());
+		glUniform3fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "pointLight.position"), 1, (float*)&temp[i]->GetPosition());
+		glUniform4fv(glGetUniformLocation(m_lightingShader->GetProgramID(), "pointLight.color"), 1, (float*)&temp[i]->GetColor());
+
+		BindMesh(m_sphereMesh);
+		DrawBoundMesh();
+	}
+
+
+	glCullFace(GL_BACK);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+void GameTechRenderer::CombineBuffer() {
+	BindShader(m_combineShader);
+	glUniform1i(glGetUniformLocation(m_combineShader->GetProgramID(), "diffuseTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_deferredHelper->GetGBufferColorTex());
+
+	glUniform1i(glGetUniformLocation(m_combineShader->GetProgramID(), "diffuseLight"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_deferredHelper->GetLightingDiffTex());
+
+	glUniform1i(glGetUniformLocation(m_combineShader->GetProgramID(), "specularLight"), 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D,m_deferredHelper->GetLightingSpecTex());
+
+	DW_Quad::get_instance().BindVAO();
+	DW_Quad::get_instance().Draw();
+}
+
+void GameTechRenderer::BlitFBO() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_deferredHelper->GetBufferFBO());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(0, 0, currentWidth, currentHeight, 0, 0, currentWidth, currentHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GameTechRenderer::LoadSkybox() {
@@ -104,14 +249,18 @@ void GameTechRenderer::LoadSkybox() {
 
 void GameTechRenderer::RenderFrame() {
 	//glEnable(GL_CULL_FACE);
-	glClearColor(0, 0, 0, 1);
 	BuildObjectList();
 	SortObjectList();
 	RenderShadowMap();
-	RenderSkybox();
-	RenderCamera();
-	//glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+	FillGBuffer();
+	RenderLighting();
+	CombineBuffer();
 
+	BlitFBO();
+
+	//RenderSkybox();
+	//RenderCamera();
+	//glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
 	RenderHUD();
 	RenderUI();
@@ -161,13 +310,13 @@ void GameTechRenderer::RenderShadowMap() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glViewport(0, 0, SHADOWSIZE, SHADOWSIZE);
-
+	
 	glCullFace(GL_FRONT);
 
 	BindShader(shadowShader);
 	int mvpLocation = glGetUniformLocation(shadowShader->GetProgramID(), "mvpMatrix");
 
-	Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(m_directionalLight->GetPosition(), m_directionalLight->GetPosition()+m_directionalLight->GetDirection(), Vector3(0,1,0));
+	Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(m_deferredHelper->GetDirectionLight()->GetPosition(), m_deferredHelper->GetDirectionLight()->GetPosition() + m_deferredHelper->GetDirectionLight()->GetDirection(), Vector3(0,1,0));
 	//Matrix4 shadowProjMatrix = Matrix4::Perspective(100.0f, 500.0f, 1, 45.0f);
 	Matrix4 shadowProjMatrix = Matrix4::Orthographic(1.0f, 400.0f, 100.0f, -100.0f, 100.0f, -100.0f);//directional light use orth matrix to cast shadow
 
@@ -269,7 +418,7 @@ void GameTechRenderer::RenderCamera() {
 			glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
 			glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-			glUniform3fv(glGetUniformLocation(shader->GetProgramID(), "directionalLight.direction"), 1, (float*)&m_directionalLight->GetPosition());
+			glUniform3fv(glGetUniformLocation(shader->GetProgramID(), "directionalLight.direction"), 1, (float*)&m_directionalLight->GetDirection());
 			glUniform4fv(glGetUniformLocation(shader->GetProgramID(), "directionalLight.color"), 1, (float*)&m_directionalLight->GetColor());
 			glUniform1f(glGetUniformLocation(shader->GetProgramID(), "directionalLight.ambient"), m_directionalLight->GetAmbient());
 
@@ -282,8 +431,7 @@ void GameTechRenderer::RenderCamera() {
 		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);			
 		
-		Matrix4 fullShadowMat = shadowMatrix * modelMatrix;
-		glUniformMatrix4fv(shadowLocation, 1, false, (float*)&fullShadowMat);
+		glUniformMatrix4fv(shadowLocation, 1, false, (float*)&shadowMatrix);
 
 		glUniform4fv(colourLocation, 1, (float*)&i->GetColour());
 
