@@ -54,6 +54,8 @@ public:
 	GLuint GetLightingDiffTex() { return m_lightingDiffTex; }
 	GLuint GetLightingSpecTex() { return m_lightingSpecTex;}
 
+	void SetPointLights(const std::vector<NCL::Maths::Vector3>& poses);
+
 private:
 	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex, m_gBufferShadowTex;
 

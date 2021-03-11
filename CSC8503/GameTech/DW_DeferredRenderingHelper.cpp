@@ -55,7 +55,7 @@ DW_DeferredRenderingHelper::~DW_DeferredRenderingHelper() {
 void DW_DeferredRenderingHelper::InitLights() {
 	float space{ 40.0f };
 	//point lights
-	for ( int i = 0; i <8; i++)
+	/*for ( int i = 0; i <8; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
@@ -67,11 +67,11 @@ void DW_DeferredRenderingHelper::InitLights() {
 				0.3f + (float)(rand() / (float)RAND_MAX),
 				1));
 			temp->SetAmbient(0.05f);
-			temp->SetRadius(20.0f);
+			temp->SetRadius(30.0f);
 
 			m_pointLights.push_back(temp);
 		}	
-	}
+	}*/
 
 	//spot light
 	m_spotLight=new DW_Light(DW_Light::LightType::Spot);
@@ -88,6 +88,24 @@ void DW_DeferredRenderingHelper::InitLights() {
 	m_directionalLight->SetDirection(NCL::Maths::Vector3(75.0f, 0.0f, 0.0f) - m_directionalLight->GetPosition());
 	m_directionalLight->SetColor(NCL::Maths::Vector4(0.5f, 0.5f, 0.5f, 1));
 	m_directionalLight->SetAmbient(0.05f);
+}
+
+void DW_DeferredRenderingHelper::SetPointLights(const std::vector<NCL::Maths::Vector3>& poses) {
+	for (int i = 0; i < poses.size(); i++)
+	{
+		DW_Light* temp = new DW_Light(DW_Light::LightType::Point);
+
+		NCL::Maths::Vector3 pos = NCL::Maths::Vector3(poses[i].x, poses[i].y+20.0f, poses[i].z);
+		temp->SetPosition(pos);
+		temp->SetColor(NCL::Maths::Vector4(0.6f + (float)(rand() / (float)RAND_MAX),
+			0.1f + (float)(rand() / (float)RAND_MAX),
+			0.1f + (float)(rand() / (float)RAND_MAX),
+			1));
+		temp->SetAmbient(0.05f);
+		temp->SetRadius(30.0f);
+
+		m_pointLights.push_back(temp);
+	}
 }
 
 void DW_DeferredRenderingHelper::GenerateScreenTexture(GLuint& into, bool depth) {

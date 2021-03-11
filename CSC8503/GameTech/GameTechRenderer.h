@@ -32,7 +32,7 @@ namespace NCL {
 			~GameTechRenderer();
 
 			void SetSphereMesh(OGLMesh* m) { m_sphereMesh = m; }
-
+			DW_DeferredRenderingHelper* GetDeferredRenderingHelper() { return m_deferredHelper; }
 		protected:
 			void RenderFrame()	override;
 
