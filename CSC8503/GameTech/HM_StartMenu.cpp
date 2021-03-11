@@ -8,19 +8,19 @@ HM_StartMenu::HM_StartMenu() {
 	GameName_text = new DW_UIText("GameNameText", "Game Name", 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
-	Solo_btn = new DW_UIImage("SoloButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,440.0f,0.0f });  // single player mode button
-	Duo_btn = new DW_UIImage("DuoButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,340.0f,0.0f });  // mutli player mode button
-	Quit_btn = new DW_UIImage("QuitButton", str.c_str(), { 0.5f, 0.6f }, NCL::Maths::Vector3{ 630.0f,240.0f,0.0f });  // quit button
+	Solo_btn = new DW_UIImage("SoloButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,315.0f,0.0f });  // single player mode button
+	Duo_btn = new DW_UIImage("DuoButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,215.0f,0.0f });  // mutli player mode button
+	Quit_btn = new DW_UIImage("QuitButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,115.0f,0.0f });  // quit button
 
 	str = NCL::Assets::TEXTUREDIR + "bg1.png";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 1.82f, 1.0f }, NCL::Maths::Vector3{ 650.0f,360.0f,0.0f });  // Menu background picture
-	
+
 
 	Solo_text = new DW_UIText("Solo", "Solo", 0.7f, NCL::Maths::Vector3{ 605.0f,305.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // single player mode text
 	Duo_text = new DW_UIText("Duo", "Duo", 0.7f, NCL::Maths::Vector3{ 605.0f,205.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // mutli player mode text
 	Quit_text = new DW_UIText("Quit", "Quit", 0.7f, NCL::Maths::Vector3{ 605.0f,105.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // quit text
 	//2.create an ui panel (it must have a name)
-	m_panel = new DW_UIPanel("ExamplePanel");
+	m_panel = new DW_UIPanel("StartMenu");
 
 	//3.add these ui components into the ui panel. 
 	//Attention: 
@@ -49,22 +49,22 @@ HM_StartMenu::HM_StartMenu() {
 HM_StartMenu::~HM_StartMenu() {
 	delete m_bg;
 	delete Solo_btn;
-	
+
 	delete Solo_text;
 	delete m_panel;
 }
 
 void HM_StartMenu::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
-	if (str == "SoloButton")	{
-		
+	if (str == "SoloButton") {
+		this->SetPanelActive(false);
 	}
 	if (str == "DuoButton") {
-
+		this->SetPanelActive(false);
 	}
 	if (str == "QuitButton") {
 
 	}
-	
+
 	std::cout << str << "\n";
 }
