@@ -247,7 +247,10 @@ void TutorialGame::UpdateSpinningPlatform(){
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
+	if (!StartMenu->GetPanelIsEnable() &&!PauseMenu->GetPanelIsEnable() && 
+		!WinScreen->GetPanelIsEnable() && !LoseScreen->GetPanelIsEnable() && !OptionMenu->GetPanelIsEnable()) {
+		Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
+	}
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
