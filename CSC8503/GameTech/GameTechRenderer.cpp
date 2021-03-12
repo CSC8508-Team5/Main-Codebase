@@ -85,9 +85,7 @@ void GameTechRenderer::FillGBuffer() {
 	glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projectionMatrix);
 	glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "shadowMatrix"), 1, false, (float*)&shadowMatrix);
 
-	glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "shadowTex"), 1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_shadowHelper->GetTexture());
+	
 
 	glUniform3fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "lightDir"), 1, (float*)&m_deferredHelper->GetDirectionLight()->GetDirection());
 	
@@ -97,6 +95,10 @@ void GameTechRenderer::FillGBuffer() {
 		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "modelMatrix"), 1, false, (float*)&modelMatrix);
 		BindTextureToShader((OGLTexture*)(*i).GetDefaultTexture(), "diffuseTex", 0);
+
+		glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "shadowTex"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_shadowHelper->GetTexture());
 
 		glUniform4fv(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "objectColour"), 1, (float*)&i->GetColour());
 		glUniform1i(glGetUniformLocation(m_fillBufferShader->GetProgramID(), "hasVertexColours"), !(*i).GetMesh()->GetColourData().empty());
