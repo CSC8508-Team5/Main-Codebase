@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DW_BloomHelper.cpp" />
     <ClCompile Include="DW_DeferredRenderingHelper.cpp" />
     <ClCompile Include="DW_Light.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="TutorialGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DW_BloomHelper.h" />
     <ClInclude Include="DW_DeferredRenderingHelper.h" />
     <ClInclude Include="DW_Light.h" />
     <ClInclude Include="DW_Quad.h" />

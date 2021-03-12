@@ -257,20 +257,25 @@ void GameTechRenderer::RenderFrame() {
 	glEnable(GL_CULL_FACE);
 	BuildObjectList();
 	SortObjectList();
+
+	//0.shadow map
 	RenderShadowMap();
+
+	//1.deferred rendering stage
 	FillGBuffer();
 	RenderLighting();
 	CombineBuffer();
 
+	//2.copy depth and stencil buffer 
 	BlitFBO();
 
+	//3.forward rendering stage
 	RenderSkybox();
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
 	RenderHUD();
 	RenderUI();
-	
 }
 
 void GameTechRenderer::RenderUI() {
