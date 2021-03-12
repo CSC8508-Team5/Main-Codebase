@@ -20,7 +20,7 @@ TutorialGame::TutorialGame()	{
 	audio		= new AudioSystem();
 
 	//global play 2D as background music
-	audio->PlayAudio("Casual Theme #1 (Looped).ogg");
+	//audio->PlayAudio("Casual Theme #1 (Looped).ogg");
 	//global play 3D
 	//audio->PlayAudio("Casual Theme #1 (Looped).ogg", Vector3(0, 0, 0));
 	//other format
@@ -139,11 +139,11 @@ void TutorialGame::UpdateGame(float dt) {
 		Window::GetWindow()->LockMouseToWindow(true);
 
 	} 
-	if (isfinish) {
+	if (isfinish && !WinScreen->GetPanelIsEnable()) {
+		
 		WinScreen->SetPanelActive(true);
 		
-		Debug::Print("You Win", Vector2(45, 25));
-
+		//Debug::Print("You Win", Vector2(45, 25));
 	}
 
 	/*if (useGravity) {
@@ -229,6 +229,9 @@ void TutorialGame::UpdateLevelOne() {
 			//finish
 			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 				isfinish = true;
+
+				audio->StopAll();
+				audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
 			}
 		}
 };
@@ -253,6 +256,7 @@ void TutorialGame::UpdateCoins() {
 				coincollected += 1;
 				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
 				coins[i]->GetTransform().SetScale(Vector3(0, 0, 0));
+				audio->PlaySFX("PP_Collect_Coin_1_2.wav");
 			}
 		}
 	}
@@ -319,7 +323,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 			//isjump = true; //Comment this if want a quick win.
 			isjump = true; //Comment this if want a quick win.
-
+			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
 	}

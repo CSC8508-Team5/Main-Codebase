@@ -1,6 +1,6 @@
 #include "HM_PauseMenu.h"
 
-
+#include "../CSC8503Common/AudioSystem.h"
 
 HM_PauseMenu::HM_PauseMenu() {
 	//1.create many ui components if you need! (they must have a name)
@@ -63,9 +63,11 @@ void HM_PauseMenu::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "ContinueButton") {
 		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 	}
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 		StartMenu = new HM_StartMenu();
 		m_isEnable = true;
 	}

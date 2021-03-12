@@ -1,10 +1,9 @@
 #include "HM_Win.h"
 
-
+#include "../CSC8503Common/AudioSystem.h"
 
 HM_Win::HM_Win() {
 	//1.create many ui components if you need! (they must have a name)
-
 
 	WinScreen_text = new DW_UIText("WinScreenText", "You Win !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
 	Score_text = new DW_UIText("ScoreText", "Score", 1.1f, NCL::Maths::Vector3{ 520.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); //  score text
@@ -64,11 +63,13 @@ HM_Win::~HM_Win() {
 void HM_Win::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 		this->SetPanelActive(false);
-		
+
 	}
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		StartMenu = new HM_StartMenu();
 		
 	}

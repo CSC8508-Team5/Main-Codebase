@@ -69,9 +69,10 @@ void HM_Option::ClickFunc(const std::string& str) {
 	float epsilon = 0.01f;
 	if (str == "CloseButton") {
 		this->SetPanelActive(false);
-
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 	}
 	else if (str == "VolumeUpButton") {
+		NCL::CSC8503::AudioSystem::PlaySFX("CGM3_Cute_Chirpy_Button_02_4.wav");
 		if (volume < 1.0f)
 		{
 			volume += 0.1f;
@@ -81,6 +82,7 @@ void HM_Option::ClickFunc(const std::string& str) {
 
 	}
 	else if (str == "VolumeDownButton") {
+		NCL::CSC8503::AudioSystem::PlaySFX("CGM3_Cute_Chirpy_Button_02_4.wav");
 		if (volume > 0)
 		{
 			volume -= 0.1f;
