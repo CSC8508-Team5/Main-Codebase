@@ -1,4 +1,6 @@
 #pragma once
+
+
 #include "../../Plugins/OpenGLRendering/OGLRenderer.h"
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
@@ -59,6 +61,7 @@ namespace NCL {
 			void CombineBuffer();
 
 			void BlitFBO();
+			void RenderLights();
 
 			//Matrix4 viewMatrix;
 			//Matrix4 projectionMatrix;
@@ -85,6 +88,10 @@ namespace NCL {
 			OGLShader* m_lightingShader;
 			OGLShader* m_combineShader;
 			OGLMesh* m_sphereMesh;
+
+			//forward rendering things
+			OGLShader* m_lightShader;
+
 
 		};
 	}

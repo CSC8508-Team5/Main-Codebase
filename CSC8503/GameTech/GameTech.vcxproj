@@ -149,7 +149,9 @@
     <ClCompile Include="DW_BloomHelper.cpp" />
     <ClCompile Include="DW_DeferredRenderingHelper.cpp" />
     <ClCompile Include="DW_Light.cpp" />
+    <ClCompile Include="DW_PostEffectHelper.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
+    <ClCompile Include="DW_RenderCombineHelper.cpp" />
     <ClCompile Include="DW_ShadowHelper.cpp" />
     <ClCompile Include="DW_SkyboxHelper.cpp" />
     <ClCompile Include="DW_Tools.cpp" />
@@ -177,7 +179,9 @@
     <ClInclude Include="DW_BloomHelper.h" />
     <ClInclude Include="DW_DeferredRenderingHelper.h" />
     <ClInclude Include="DW_Light.h" />
+    <ClInclude Include="DW_PostEffectHelper.h" />
     <ClInclude Include="DW_Quad.h" />
+    <ClInclude Include="DW_RenderCombineHelper.h" />
     <ClInclude Include="DW_ShadowHelper.h" />
     <ClInclude Include="DW_Singleton.h" />
     <ClInclude Include="DW_SkyboxHelper.h" />

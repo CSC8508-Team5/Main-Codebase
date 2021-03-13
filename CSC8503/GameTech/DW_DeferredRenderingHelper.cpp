@@ -95,7 +95,7 @@ void DW_DeferredRenderingHelper::SetPointLights(const std::vector<NCL::Maths::Ve
 	{
 		DW_Light* temp = new DW_Light(DW_Light::LightType::Point);
 
-		NCL::Maths::Vector3 pos = NCL::Maths::Vector3(poses[i].x, poses[i].y+20.0f, poses[i].z);
+		NCL::Maths::Vector3 pos = NCL::Maths::Vector3(poses[i].x, poses[i].y+15.0f, poses[i].z);
 		temp->SetPosition(pos);
 		temp->SetColor(NCL::Maths::Vector4(0.6f + (float)(rand() / (float)RAND_MAX),
 			0.1f + (float)(rand() / (float)RAND_MAX),

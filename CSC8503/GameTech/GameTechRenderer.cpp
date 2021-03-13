@@ -33,13 +33,16 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	//Skybox!
 	m_skyboxHelper = new DW_SkyboxHelper();
 	skyboxShader = new OGLShader("CubemapVertex.glsl", "CubemapFragment.glsl");
+	LoadSkybox();
 	//skyboxShader = new OGLShader("skyboxVertex.glsl", "skyboxFragment.glsl");
-	skyboxMesh = new OGLMesh();
+	/*skyboxMesh = new OGLMesh();
 	skyboxMesh->SetVertexPositions({Vector3(-1, 1,-1), Vector3(-1,-1,-1) , Vector3(1,-1,-1) , Vector3(1,1,-1) });
 	skyboxMesh->SetVertexIndices({ 0,1,2,2,3,0 });
-	skyboxMesh->UploadToGPU();
+	skyboxMesh->UploadToGPU();*/
 
-	LoadSkybox();
+	//forward rendering
+	m_lightShader= new OGLShader("LightVertex.glsl", "LightFragment.glsl");
+
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -211,6 +214,27 @@ void GameTechRenderer::BlitFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void GameTechRenderer::RenderLights() {
+	float screenAspect = (float)currentWidth / (float)currentHeight;
+	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+
+	BindShader(m_lightShader);
+
+	glUniformMatrix4fv(glGetUniformLocation(m_lightShader->GetProgramID(), "viewMatrix"), 1, false, (float*)&viewMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(m_lightShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projectionMatrix);
+
+	std::vector<DW_Light*> temp = m_deferredHelper->GetPointLights();
+	for (int i = 0; i < temp.size(); i++)
+	{
+		Matrix4 model = Matrix4::Translation(temp[i]->GetPosition());
+		glUniformMatrix4fv(glGetUniformLocation(m_lightShader->GetProgramID(), "modelMatrix"), 1, false, (float*)&model);
+		glUniform4fv(glGetUniformLocation(m_lightShader->GetProgramID(), "color"), 1, (float*)&temp[i]->GetColor());
+		BindMesh(m_sphereMesh);
+		DrawBoundMesh();
+	}
+}
+
 void GameTechRenderer::LoadSkybox() {
 	string filenames[6] = {
 		"/Cubemap/skyrender0004.png",
@@ -270,6 +294,7 @@ void GameTechRenderer::RenderFrame() {
 	BlitFBO();
 
 	//3.forward rendering stage
+	RenderLights();
 	RenderSkybox();
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
