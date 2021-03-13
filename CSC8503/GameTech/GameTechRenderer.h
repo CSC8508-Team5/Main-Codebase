@@ -20,6 +20,7 @@
 #include "DW_ShadowHelper.h"
 #include "DW_DeferredRenderingHelper.h"
 #include "DW_SkyboxHelper.h"
+#include "DW_RenderCombineHelper.h"
 
 
 namespace NCL {
@@ -62,6 +63,7 @@ namespace NCL {
 
 			void BlitFBO();
 			void RenderLights();
+			void RenderFinalQuad();
 
 			//Matrix4 viewMatrix;
 			//Matrix4 projectionMatrix;
@@ -91,7 +93,8 @@ namespace NCL {
 
 			//forward rendering things
 			OGLShader* m_lightShader;
-
+			OGLShader* m_finalQuadShader;
+			DW_RenderCombineHelper* m_combineHelper;
 
 		};
 	}

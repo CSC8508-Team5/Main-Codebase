@@ -41,7 +41,9 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	skyboxMesh->UploadToGPU();*/
 
 	//forward rendering
+	m_combineHelper = new DW_RenderCombineHelper(currentWidth, currentHeight);
 	m_lightShader= new OGLShader("LightVertex.glsl", "LightFragment.glsl");
+	m_finalQuadShader = new OGLShader("FinalQuadVert.glsl", "FinalQuadFrag.glsl");
 
 }
 
@@ -60,6 +62,9 @@ GameTechRenderer::~GameTechRenderer()	{
 	delete m_lightingShader;
 	delete m_combineShader;
 	delete m_skyboxHelper;
+	delete m_combineHelper;
+	delete m_lightShader;
+	delete m_finalQuadShader;
 }
 
 
@@ -190,6 +195,7 @@ void GameTechRenderer::RenderLighting() {
 
 
 void GameTechRenderer::CombineBuffer() {
+	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
 	BindShader(m_combineShader);
 	glUniform1i(glGetUniformLocation(m_combineShader->GetProgramID(), "diffuseTex"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -205,11 +211,12 @@ void GameTechRenderer::CombineBuffer() {
 
 	DW_Quad::get_instance().BindVAO();
 	DW_Quad::get_instance().Draw();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GameTechRenderer::BlitFBO() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_deferredHelper->GetBufferFBO());
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_combineHelper->GetFBO());
 	glBlitFramebuffer(0, 0, currentWidth, currentHeight, 0, 0, currentWidth, currentHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -218,6 +225,7 @@ void GameTechRenderer::RenderLights() {
 	float screenAspect = (float)currentWidth / (float)currentHeight;
 	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
 	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
 
 	BindShader(m_lightShader);
 
@@ -233,6 +241,18 @@ void GameTechRenderer::RenderLights() {
 		BindMesh(m_sphereMesh);
 		DrawBoundMesh();
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GameTechRenderer::RenderFinalQuad() {
+	BindShader(m_finalQuadShader);
+
+	glUniform1i(glGetUniformLocation(m_finalQuadShader->GetProgramID(), "diffuseTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_combineHelper->GetTexture());
+
+	DW_Quad::get_instance().BindVAO();
+	DW_Quad::get_instance().Draw();
 }
 
 void GameTechRenderer::LoadSkybox() {
@@ -295,7 +315,9 @@ void GameTechRenderer::RenderFrame() {
 
 	//3.forward rendering stage
 	RenderLights();
+
 	RenderSkybox();
+	RenderFinalQuad();
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
@@ -408,6 +430,7 @@ void GameTechRenderer::RenderSkybox() {
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);*/
 
+	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
 	glDepthFunc(GL_LEQUAL);
 	BindShader(skyboxShader);
 
@@ -426,7 +449,7 @@ void GameTechRenderer::RenderSkybox() {
 	m_skyboxHelper->Draw();
 	glDepthFunc(GL_LESS);
 
-	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GameTechRenderer::RenderCamera() {
