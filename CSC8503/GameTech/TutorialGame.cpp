@@ -599,7 +599,6 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape);
 
 	floor->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(floor->GetBulletBody());
 
 	world->AddGameObject(floor);
 
@@ -649,9 +648,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& posi
 
 	//btRigidBody* body = new btRigidBody(*rbInfo);
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(cube->GetBulletBody());
-
-
+	
 	world->AddGameObject(cube);
 
 	return cube;
@@ -698,8 +695,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 
 	//btRigidBody* body = new btRigidBody(*rbInfo);
 	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(sphere->GetBulletBody());
-
+	
 
 	world->AddGameObject(sphere);
 
@@ -747,8 +743,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 
 	//btRigidBody* body = new btRigidBody(*rbInfo);
 	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(capsule->GetBulletBody());
-
+	
 	world->AddGameObject(capsule);
 
 	return capsule;
@@ -794,8 +789,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& 
 
 	//btRigidBody* body = new btRigidBody(*rbInfo);
 	cylinder->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	physics->AddBulletBody(cylinder->GetBulletBody());
-
+	
 	world->AddGameObject(cylinder);
 
 	return cylinder;

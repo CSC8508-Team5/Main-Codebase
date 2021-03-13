@@ -15,22 +15,23 @@
 
 #include <vector>
 
+#define BIT(x) ( 1 <<(x)) 
+
 using std::vector;
 
 namespace NCL {
 	namespace CSC8503 {
-
 		class GameObject {
 		public:
 			enum class Layer {
-				None = 0,
-				Default = 1,
-				Detail = 2,
-				Player = 4,
-				Enemy = 8,
-				Projectile = 16,
-				GUI = 32,
-				All = 256
+				None	= 0,
+				Default = BIT(0),
+				Detail	= BIT(1),
+				Player	= BIT(2),
+				Enemy	= BIT(3),
+				Projectile = BIT(4),
+				GUI		= BIT(5),
+				All		= BIT(6)-1
 			};
 			GameObject(string name = "");
 			~GameObject();
@@ -78,9 +79,7 @@ namespace NCL {
 				bulletPhysicsObject = newObject;
 			}
 
-			void SetBulletPhysicsObject(btCollisionObject* newObject) {
-				bulletPhysicsObject = newObject;
-			}
+			void SetBulletPhysicsObject(btCollisionObject* newObject);
 
 			const string& GetName() const {
 				return name;
@@ -112,11 +111,29 @@ namespace NCL {
 			void SetSoundSource(SoundSource* s) { soundSource = s; }
 			SoundSource* GetSoundSource() { return this->soundSource; }
 			
+			Layer GetLayer() { return layer; }
+			unsigned int GetLayerMask() { return layerMask; }
+
+			void SetLayer(Layer l) { layer = l; UpdateBulletBodyLayer(); }
+			void EnableLayerMask(Layer target) { layerMask |= (unsigned int)target; UpdateBulletBodyLayerMask();}
+			void DisableLayerMask(Layer target) { layerMask &= ~(unsigned int)target; UpdateBulletBodyLayerMask(); }
+			void SetLayerMask(unsigned int mask) { layerMask = mask; UpdateBulletBodyLayerMask(); }
+			void UpdateBulletBodyLayerMask()
+			{
+				if(bulletPhysicsObject)
+					GetBulletBody()->getBroadphaseHandle()->m_collisionFilterMask = layerMask;
+			}
+			void UpdateBulletBodyLayer()
+			{
+				if (bulletPhysicsObject)
+					GetBulletBody()->getBroadphaseHandle()->m_collisionFilterGroup = (unsigned int)layer;
+			}
+
+
 			virtual void Update(float dt)
 			{
-				//if (soundSource)
-				//	soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
-			
+				if (soundSource)
+					soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
 			}
 
 		protected:
@@ -135,8 +152,8 @@ namespace NCL {
 
 			DW_UIHUD* m_HUD;
 
-			Layer layer;
-			int LayerMask;
+			Layer layer = Layer::Default;
+			unsigned int layerMask = (unsigned int)Layer::All;
 
 			Vector3 broadphaseAABB;
 		};

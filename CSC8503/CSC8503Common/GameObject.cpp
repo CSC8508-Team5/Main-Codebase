@@ -36,6 +36,15 @@ GameObject::~GameObject()	{
 	delete m_HUD;
 }
 
+void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObject)
+{
+	if (newObject == nullptr && bulletPhysicsObject != nullptr)
+		PhysicsSystem::RemoveBulletBody(GetBulletBody());
+	bulletPhysicsObject = newObject;
+	if (bulletPhysicsObject)
+		PhysicsSystem::AddBulletBody(GetBulletBody(), (int)layer, layerMask);
+}
+
 bool GameObject::GetBroadphaseAABB(Vector3&outSize) const {
 	if (!boundingVolume) {
 		return false;

@@ -39,7 +39,7 @@ namespace NCL {
 			void SetGravity(const Vector3& g);
 
 			//functions for add/remove [rigidbody] to/from dynamicsWorld of bullet physics engine 
-			static void AddBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body); }
+			static void AddBulletBody(btRigidBody* body, int group = (int)GameObject::Layer::Default, int mask = (int)GameObject::Layer::All) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body, group, mask);}
 			static void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
 
 			//functions for add/remove [constraint] to/from dynamicsWorld of bullet physics engine 
