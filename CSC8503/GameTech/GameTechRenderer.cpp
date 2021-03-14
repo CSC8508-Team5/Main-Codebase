@@ -257,6 +257,8 @@ void GameTechRenderer::RenderFinalQuad() {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_bloomHelper->GetPingPangColorBuffer(1));
 
+	glUniform1f(glGetUniformLocation(m_finalQuadShader->GetProgramID(), "exposure"), m_exp);
+	
 	DW_Quad::get_instance().BindVAO();
 	DW_Quad::get_instance().Draw();
 }
@@ -350,6 +352,7 @@ void GameTechRenderer::RenderFrame() {
 
 	RenderSkybox();//TODO, the color of skybox lead to the error of the color of bloom
 	RenderFinalQuad();
+	
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 

@@ -37,6 +37,15 @@ namespace NCL {
 
 			void SetSphereMesh(OGLMesh* m) { m_sphereMesh = m; }
 			DW_DeferredRenderingHelper* GetDeferredRenderingHelper() { return m_deferredHelper; }
+			void SetExp(const bool flag) {
+				if (flag)
+				{
+					m_exp += 0.01f;
+				}
+				else {
+					m_exp -= 0.01f;
+				}
+			}
 		protected:
 			void RenderFrame()	override;
 
@@ -99,6 +108,7 @@ namespace NCL {
 			DW_RenderCombineHelper* m_combineHelper;
 			DW_BloomHelper* m_bloomHelper;
 			OGLShader* m_gaussianShader;
+			float m_exp{ 1.0f };
 		};
 	}
 }
