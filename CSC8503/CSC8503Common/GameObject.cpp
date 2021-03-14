@@ -34,6 +34,8 @@ GameObject::~GameObject()	{
 		delete bulletPhysicsObject;
 	}
 	delete m_HUD;
+
+	collisionObjects.clear();
 }
 
 void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObject)
@@ -42,7 +44,10 @@ void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObje
 		PhysicsSystem::RemoveBulletBody(GetBulletBody());
 	bulletPhysicsObject = newObject;
 	if (bulletPhysicsObject)
+	{
+		GetBulletBody()->setUserPointer(this);
 		PhysicsSystem::AddBulletBody(GetBulletBody(), (int)layer, layerMask);
+	}
 }
 
 bool GameObject::GetBroadphaseAABB(Vector3&outSize) const {

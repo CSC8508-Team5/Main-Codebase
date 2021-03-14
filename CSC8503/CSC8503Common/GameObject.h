@@ -81,16 +81,21 @@ namespace NCL {
 
 			void SetBulletPhysicsObject(btCollisionObject* newObject);
 
+			void SetName(string n)
+			{
+				name = n;
+			}
+
 			const string& GetName() const {
 				return name;
 			}
 
 			virtual void OnCollisionBegin(GameObject* otherObject) {
-				//std::cout << "OnCollisionBegin event occured!\n";
+				std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
-				//std::cout << "OnCollisionEnd event occured!\n";
+				std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
 			}
 
 			bool GetBroadphaseAABB(Vector3& outsize) const;
@@ -129,6 +134,36 @@ namespace NCL {
 					GetBulletBody()->getBroadphaseHandle()->m_collisionFilterGroup = (unsigned int)layer;
 			}
 
+			void AddCollisionObject(GameObject* object)
+			{
+				vector<GameObject*>::iterator it;
+				if (!FindCollisionObject(object, it))
+				{
+					collisionObjects.emplace_back(object);
+					OnCollisionBegin(object);
+				}
+			}
+			void RemoveCollisionObject(GameObject* object)
+			{
+				vector<GameObject*>::iterator it;
+				if (FindCollisionObject(object, it))
+				{
+					collisionObjects.erase(it);
+					OnCollisionEnd(object);
+				}
+			}
+			bool FindCollisionObject(GameObject* object, vector<GameObject*>::iterator& it)
+			{
+				for (vector<GameObject*>::iterator i = collisionObjects.begin();i!= collisionObjects.end();i++)
+				{
+					if (*i == object)
+					{
+						it = i;
+						return true;
+					}
+				}
+				return false;
+			}
 
 			virtual void Update(float dt)
 			{
@@ -156,6 +191,8 @@ namespace NCL {
 			unsigned int layerMask = (unsigned int)Layer::All;
 
 			Vector3 broadphaseAABB;
+
+			vector<GameObject*> collisionObjects;
 		};
 	}
 }

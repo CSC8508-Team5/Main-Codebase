@@ -3,7 +3,7 @@
 #include <set>
 
 //bullet3 physics
-//#include <btBulletCollisionCommon.h>
+#include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
 #pragma comment(lib,"LinearMath.lib")
@@ -14,6 +14,81 @@
 
 namespace NCL {
 	namespace CSC8503 {
+		class TriggerCollisionDispatcher : public btCollisionDispatcher
+		{
+		public:
+			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration) : btCollisionDispatcher(collisionConfiguration)
+			{
+
+			}
+
+
+			virtual bool
+				needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
+			{
+
+				btAssert(body0);
+				btAssert(body1);
+
+				bool needsCollision = true;
+
+#ifdef BT_DEBUG
+				if (!(m_dispatcherFlags & btCollisionDispatcher::CD_STATIC_STATIC_REPORTED))
+				{
+					//broadphase filtering already deals with this
+					if (body0->isStaticOrKinematicObject() && body1->isStaticOrKinematicObject())
+					{
+						m_dispatcherFlags |= btCollisionDispatcher::CD_STATIC_STATIC_REPORTED;
+						printf("warning btCollisionDispatcher::needsCollision: static-static collision!\n");
+					}
+				}
+#endif  //BT_DEBUG
+				GameObject* obj0 = (GameObject*)body0->getUserPointer();
+				GameObject* obj1 = (GameObject*)body1->getUserPointer();
+
+				if ((!body0->isActive()) && (!body1->isActive()))
+					needsCollision = false;
+				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
+				{
+					obj0->RemoveCollisionObject(obj1);
+					obj1->RemoveCollisionObject(obj0);
+
+					needsCollision = false;
+				}
+				else
+				{
+					obj0->AddCollisionObject(obj1);
+					obj1->AddCollisionObject(obj0);
+				}
+
+
+				return needsCollision;
+			}
+			virtual bool
+				needsResponse(btCollisionObject* body0, btCollisionObject* body1)
+			{
+				//here you can do filtering
+				bool hasResponse =
+					(body0->hasContactResponse() && body1->hasContactResponse());
+				//no response between two static/kinematic bodies:
+				hasResponse = hasResponse &&
+					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
+				return hasResponse;
+			}
+		};
+
+		struct TriggerFilterCallback : public btOverlapFilterCallback
+		{
+			// return true when pairs need collision
+			virtual bool
+				needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
+			{
+				bool collides = (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
+				collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
+				//add some additional logic here that modified 'collides'
+				return collides;
+			}
+		};
 		class PhysicsSystem {
 		public:
 			PhysicsSystem(GameWorld& g, bool useBulletPhysics = false);
@@ -39,13 +114,13 @@ namespace NCL {
 			void SetGravity(const Vector3& g);
 
 			//functions for add/remove [rigidbody] to/from dynamicsWorld of bullet physics engine 
-			static void AddBulletBody(btRigidBody* body, int group = (int)GameObject::Layer::Default, int mask = (int)GameObject::Layer::All) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body, group, mask);}
+			static void AddBulletBody(btRigidBody* body, int group = (int)GameObject::Layer::Default, int mask = (int)GameObject::Layer::All) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body, group, mask); }
 			static void RemoveBulletBody(btRigidBody* body) { if (dynamicsWorld && body) dynamicsWorld->removeRigidBody(body); }
 
 			//functions for add/remove [constraint] to/from dynamicsWorld of bullet physics engine 
 			static void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
 			static void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
-			
+
 			//function for ray test of dyanmicsWorld
 			static void Raycast(btVector3 startPos, btVector3 endPos, btCollisionWorld::RayResultCallback& resultCallback) { if (dynamicsWorld) dynamicsWorld->rayTest(startPos, endPos, resultCallback); }
 			//static btCollisionWorld::ClosestRayResultCallback Raycast(Ray ray, float maxDistance) { if (dynamicsWorld) dynamicsWorld->rayTest(ray.GetPosition(), ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance, resultCallback); }
@@ -67,6 +142,13 @@ namespace NCL {
 
 			bool isUseBulletPhysics() const { return useBulletPhysics; }
 		protected:
+			void TriggerNearCallback(btBroadphasePair& collisionPair,
+				btCollisionDispatcher& dispatcher, btDispatcherInfo& dispatchInfo) {
+				// Do your collision logic here
+				// Only dispatch the Bullet collision information if you want the physics to continue
+				dispatcher.defaultNearCallback(collisionPair, dispatcher, dispatchInfo);
+			}
+
 			void BasicCollisionDetection();
 			void BroadPhase();
 			void NarrowPhase();
@@ -114,9 +196,7 @@ namespace NCL {
 
 			static btDiscreteDynamicsWorld* dynamicsWorld;// = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-			//keep track of the shapes, we release memory at exit.
-			//make sure to re-use collision shapes among rigid bodies whenever possible!
-			btAlignedObjectArray<btCollisionShape*> collisionShapes;
+			btOverlapFilterCallback* broadphaseFilterCallback;
 		};
 	}
 }

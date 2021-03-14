@@ -576,7 +576,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
 GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& position)
 {
-	GameObject* floor = new GameObject();
+	GameObject* floor = new GameObject("Floor");
 
 	Vector3 floorSize = Vector3(200, 2, 200);
 
@@ -597,6 +597,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape);
+
+	//floor->DisableLayerMask(GameObject::Layer::Default);
 
 	floor->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 

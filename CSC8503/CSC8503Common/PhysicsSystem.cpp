@@ -33,7 +33,7 @@ PhysicsSystem::PhysicsSystem(GameWorld& g, bool enalbeBulletPhysics) : gameWorld
 	overlappingPairCache = nullptr;
 	dispatcher = nullptr;
 	collisionConfiguration = nullptr;
-
+	broadphaseFilterCallback = nullptr;
 	useBulletPhysics = enalbeBulletPhysics;
 	if (useBulletPhysics)
 		InitBullet();
@@ -47,10 +47,14 @@ PhysicsSystem::~PhysicsSystem() {
 void NCL::CSC8503::PhysicsSystem::InitBullet()
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	dispatcher = new TriggerCollisionDispatcher(collisionConfiguration);
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+
+	//callbacks
+	broadphaseFilterCallback = new TriggerFilterCallback();
+	dynamicsWorld->getPairCache()->setOverlapFilterCallback(broadphaseFilterCallback);
 
 	dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
 	std::cout << "Bullet discrete dynamics physics world initialized.\n";
@@ -71,14 +75,6 @@ void NCL::CSC8503::PhysicsSystem::ReleaseBullet()
 		delete obj;
 	}
 
-	//delete collision shapes
-	for (int j = 0; j < collisionShapes.size(); j++)
-	{
-		btCollisionShape* shape = collisionShapes[j];
-		collisionShapes[j] = 0;
-		delete shape;
-	}
-
 	//delete dynamics world
 	delete dynamicsWorld;
 
@@ -93,8 +89,7 @@ void NCL::CSC8503::PhysicsSystem::ReleaseBullet()
 
 	delete collisionConfiguration;
 
-	//next line is optional: it will be cleared by the destructor when the array goes out of scope
-	collisionShapes.clear();
+	delete broadphaseFilterCallback;
 
 	std::cout << "Bullet physics world released.\n";
 }
