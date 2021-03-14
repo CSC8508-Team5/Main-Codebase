@@ -44,7 +44,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	m_combineHelper = new DW_RenderCombineHelper(currentWidth, currentHeight);
 	m_lightShader= new OGLShader("LightVertex.glsl", "LightFragment.glsl");
 	m_finalQuadShader = new OGLShader("FinalQuadVert.glsl", "FinalQuadFrag.glsl");
-
+	m_gaussianShader = new OGLShader("GaussianVert.glsl", "GaussianFrag.glsl");
+	m_bloomHelper = new DW_BloomHelper(currentWidth, currentHeight );
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -250,9 +251,39 @@ void GameTechRenderer::RenderFinalQuad() {
 	glUniform1i(glGetUniformLocation(m_finalQuadShader->GetProgramID(), "diffuseTex"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_combineHelper->GetTexture());
+	//glBindTexture(GL_TEXTURE_2D, m_bloomHelper->GetPingPangColorBuffer(1));
+
+	glUniform1i(glGetUniformLocation(m_finalQuadShader->GetProgramID(), "bloomTex"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_bloomHelper->GetPingPangColorBuffer(1));
 
 	DW_Quad::get_instance().BindVAO();
 	DW_Quad::get_instance().Draw();
+}
+
+void GameTechRenderer::BlurLights() {
+	bool horizontal = true, first_iteration = true;
+	unsigned int amount = 10;
+	GLuint tex = m_combineHelper->GetBlurTexture();
+	BindShader(m_gaussianShader);
+
+	glUniform1i(glGetUniformLocation(m_gaussianShader->GetProgramID(), "image"), 0);
+	glActiveTexture(GL_TEXTURE0);
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_bloomHelper->GetPingPangFBO(horizontal));
+
+		glUniform1i(glGetUniformLocation(m_gaussianShader->GetProgramID(), "horizontal"), horizontal);
+		glBindTexture(GL_TEXTURE_2D, first_iteration ? tex : m_bloomHelper->GetPingPangColorBuffer(!horizontal));  // bind texture of other framebuffer (or scene if first iteration)
+
+		DW_Quad::get_instance().BindVAO();
+		DW_Quad::get_instance().Draw();
+		horizontal = !horizontal;
+		if (first_iteration)
+			first_iteration = false;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GameTechRenderer::LoadSkybox() {
@@ -315,8 +346,9 @@ void GameTechRenderer::RenderFrame() {
 
 	//3.forward rendering stage
 	RenderLights();
+	BlurLights();
 
-	RenderSkybox();
+	RenderSkybox();//TODO, the color of skybox lead to the error of the color of bloom
 	RenderFinalQuad();
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...

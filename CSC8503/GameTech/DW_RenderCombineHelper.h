@@ -12,8 +12,10 @@ public:
 
 	GLuint GetFBO() { return m_FBO; }
 	GLuint GetTexture() { return m_Tex; }
+	GLuint GetBlurTexture() { return m_blurLightTex; }
 private:
 	GLuint m_FBO,m_Tex,m_RBO;
+	GLuint m_blurLightTex;
 	int m_width, m_height;
 };
 
