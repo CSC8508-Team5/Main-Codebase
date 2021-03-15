@@ -64,7 +64,7 @@ OGLRenderer::OGLRenderer(Window& w) : RendererBase(w)	{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		debugShader = new OGLShader("debugVert.glsl", "debugFrag.glsl");
 	}
 

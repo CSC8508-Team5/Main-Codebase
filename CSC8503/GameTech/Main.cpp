@@ -1,4 +1,4 @@
-#include "../../Common/Window.h"
+ï»¿#include "../../Common/Window.h"
 
 #include "../CSC8503Common/StateMachine.h"
 #include "../CSC8503Common/StateTransition.h"
@@ -40,7 +40,7 @@ using namespace CSC8503;
 //	  }
 //  
 //   }
-// return state; // will be ¡¯ongoing ¡¯ until success
+// return state; // will be ï¿½ï¿½ongoing ï¿½ï¿½ until success
 // }
 //	);
 //	 BehaviourAction* goToRoom = new BehaviourAction("Go To Room ",
@@ -59,7 +59,7 @@ using namespace CSC8503;
 //	   }
 //   
 //	}
-// return state; // will be ¡¯ongoing ¡¯ until success
+// return state; // will be ï¿½ï¿½ongoing ï¿½ï¿½ until success
 // }
 //	 );
 //	 BehaviourAction* openDoor = new BehaviourAction(" Open Door ",
@@ -137,7 +137,7 @@ using namespace CSC8503;
 //		   behaviourTimer = 0.0f;
 //		   distanceToTarget = rand() % 250;
 //		   BehaviourState state = Ongoing;
-//		   std::cout << "We ¡¯re going on an adventure !\n";
+//		   std::cout << "We ï¿½ï¿½re going on an adventure !\n";
 //		   while (state == Ongoing) {
 //			   state = rootSequence -> Execute(1.0f); // fake dt
 //			  
@@ -197,14 +197,14 @@ void TestStateMachine() {
 	int data = 0;
 	State* A = new State([&](float dt) -> void
 		{
-			std::cout << "I¡¯m in state A!\n";
+			std::cout << "Iï¿½ï¿½m in state A!\n";
 			data++;
 		}
 	);
 
 	State* B = new State([&](float dt) -> void
 		{
-			std::cout << "I¡¯m in state B!\n";
+			std::cout << "Iï¿½ï¿½m in state B!\n";
 			data--;
 		}
 	);
@@ -334,9 +334,9 @@ hide or show the
 
 */
 int main() {
-	Window* w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
-
-
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
+	
+	
 	//TestPushdownAutomata(w);
 	if (!w->HasInitialised()) {
 		return -1;
@@ -368,9 +368,11 @@ int main() {
 			w->SetWindowPosition(0, 0);
 		}
 
-		/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::M)) {
-			std::cout << " Returning to main menu !\n";
-			TestPushdownAutomata(w);
+			//std::cout << w->GetMouse()->GetAbsolutePosition() << "\n";
+
+			/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::M)) {
+				std::cout << " Returning to main menu !\n";
+				TestPushdownAutomata(w);
 
 		}*/
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));

@@ -68,6 +68,11 @@ void GameWorld::UpdateWorld(float dt) {
 	if (shuffleConstraints) {
 		std::random_shuffle(constraints.begin(), constraints.end());
 	}
+
+	for (auto obj : gameObjects)
+	{
+		obj->Update(dt);
+	}
 }
 
 bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObject) const {
@@ -116,6 +121,20 @@ void GameWorld::RemoveConstraint(Constraint* c, bool andDelete) {
 	if (andDelete) {
 		delete c;
 	}
+}
+
+GameObject* NCL::CSC8503::GameWorld::GetGameObjectByBulletBody(const btCollisionObject* body)
+{
+	for (GameObject* g : gameObjects) {
+		if (g->GetBulletPhysicsObject())
+		{
+			if (body == g->GetBulletPhysicsObject())
+			{
+				return g;
+			}
+		}
+	}
+	return nullptr;
 }
 
 void GameWorld::GetConstraintIterators(

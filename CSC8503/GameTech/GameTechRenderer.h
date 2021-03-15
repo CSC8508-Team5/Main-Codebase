@@ -6,6 +6,18 @@
 
 #include "../CSC8503Common/GameWorld.h"
 
+
+#include "DW_UIText.h"
+#include "DW_UIPanel.h"
+#include "DW_UIRenderer.h"
+
+#include "DW_UIImage.h"
+#include "DW_Quad.h"
+
+#include "DW_Light.h"
+#include "DW_ShadowHelper.h"
+
+
 namespace NCL {
 	class Maths::Vector3;
 	class Maths::Vector4;
@@ -32,8 +44,12 @@ namespace NCL {
 			void RenderShadowMap();
 			void RenderCamera(); 
 			void RenderSkybox();
+			void RenderUI();
+			void RenderHUD();
 
 			void LoadSkybox();
+			void InitLight();
+
 
 			vector<const RenderObject*> activeObjects;
 
@@ -46,10 +62,11 @@ namespace NCL {
 			GLuint		shadowTex;
 			GLuint		shadowFBO;
 			Matrix4     shadowMatrix;
+			DW_ShadowHelper* m_shadowHelper;
 
-			Vector4		lightColour;
-			float		lightRadius;
-			Vector3		lightPosition;
+			DW_Light* m_directionalLight;
+
+
 		};
 	}
 }

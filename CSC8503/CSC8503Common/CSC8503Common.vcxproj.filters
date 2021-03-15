@@ -25,6 +25,15 @@
     <Filter Include="Pathfinding">
       <UniqueIdentifier>{84f869c2-c73b-4eb0-ace4-ff4d685ef4ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{37f68032-f657-4783-a652-c987dc7ba5b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\x64">
+      <UniqueIdentifier>{8c35d07b-2e21-4239-bd3a-74f509c69ea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Win32">
+      <UniqueIdentifier>{fadbb27b-e661-4546-8698-fc2990f697e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameWorld.h">
@@ -120,6 +129,12 @@
     <ClInclude Include="BehaviourAction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundSource.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWorld.cpp">
@@ -185,5 +200,22 @@
     <ClCompile Include="BehaviourAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\bin_x64\irrKlang.dll">
+      <Filter>Audio\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\bin_x64\ikpFlac.dll">
+      <Filter>Audio\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\bin_x64\ikpMP3.dll">
+      <Filter>Audio\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\bin\ikpFlac.dll" />
+    <CopyFileToFolders Include="..\..\bin\ikpMP3.dll" />
+    <CopyFileToFolders Include="..\..\bin\irrKlang.dll" />
   </ItemGroup>
 </Project>

@@ -18,3 +18,17 @@ Vector3::Vector3(const Vector2& v2, float newZ) : x(v2.x), y(v2.y), z(newZ) {
 
 Vector3::Vector3(const Vector4& v4) : x(v4.x), y(v4.y), z(v4.z) {
 }
+
+NCL::Maths::Vector3::Vector3(const irrklang::vec3df v3)
+{
+	x = v3.X;
+	y = v3.Y;
+	z = v3.Z;
+}
+
+NCL::Maths::Vector3::Vector3(const btVector3 v3)
+{
+	x = v3.x();
+	y = v3.y();
+	z = v3.z();
+}
