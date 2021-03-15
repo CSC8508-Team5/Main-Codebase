@@ -157,33 +157,6 @@ namespace NCL {
 				dispatcher.defaultNearCallback(collisionPair, dispatcher, dispatchInfo);
 			}
 
-			void UpdateBulletCallbacks()
-			{
-				int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
-
-				for (int i = 0; i < numManifolds; i++)
-				{
-					btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-					int numContacts = contactManifold->getNumContacts();
-
-					btCollisionObject* body0 = (btCollisionObject*)(contactManifold->getBody0());
-					btCollisionObject* body1 = (btCollisionObject*)(contactManifold->getBody1());
-
-					GameObject* obj0 = (GameObject*)body0->getUserPointer();
-					GameObject* obj1 = (GameObject*)body1->getUserPointer();
-					if (numContacts > 0)
-					{
-						obj0->AddCollisionObject(obj1);
-						obj1->AddCollisionObject(obj0);
-					}
-					else
-					{
-						obj0->RemoveCollisionObject(obj1);
-						obj1->RemoveCollisionObject(obj0);
-					}
-				}
-			}
-
 			void BasicCollisionDetection();
 			void BroadPhase();
 			void NarrowPhase();
@@ -200,6 +173,8 @@ namespace NCL {
 			void UpdateCollisionList();
 			void UpdateObjectAABBs();
 
+			void UpdateBulletCallbacks();
+			 
 			void ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const;
 
 			GameWorld& gameWorld;
