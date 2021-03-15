@@ -324,7 +324,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
-			//isjump = true; //Comment this if want a quick win.
 			isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
