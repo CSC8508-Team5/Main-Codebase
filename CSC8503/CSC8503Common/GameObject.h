@@ -91,11 +91,15 @@ namespace NCL {
 			}
 
 			virtual void OnCollisionBegin(GameObject* otherObject) {
-				std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
+				//std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
-				std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
+				//std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
+			}
+
+			virtual void OnCollisionStay(GameObject* otherObject) {
+				//std::cout << "OnCollision Stay event with " << otherObject->GetWorldID() << ":" << otherObject->GetName() << "\n";
 			}
 
 			bool GetBroadphaseAABB(Vector3& outsize) const;
@@ -141,6 +145,10 @@ namespace NCL {
 				{
 					collisionObjects.emplace_back(object);
 					OnCollisionBegin(object);
+				}
+				else
+				{
+					OnCollisionStay(object);
 				}
 			}
 			void RemoveCollisionObject(GameObject* object)

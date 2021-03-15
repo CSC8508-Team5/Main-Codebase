@@ -17,16 +17,12 @@ namespace NCL {
 		class TriggerCollisionDispatcher : public btCollisionDispatcher
 		{
 		public:
-			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration) : btCollisionDispatcher(collisionConfiguration)
+			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration)
+				: btCollisionDispatcher(collisionConfiguration) {}
+
+
+			virtual bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
 			{
-
-			}
-
-
-			virtual bool
-				needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
-			{
-
 				btAssert(body0);
 				btAssert(body1);
 
@@ -51,7 +47,7 @@ namespace NCL {
 				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
 					needsCollision = false;
 
-				if (needsCollision)
+				/*if (needsCollision)
 				{
 					obj0->AddCollisionObject(obj1);
 					obj1->AddCollisionObject(obj0);
@@ -60,12 +56,12 @@ namespace NCL {
 				{
 					obj0->RemoveCollisionObject(obj1);
 					obj1->RemoveCollisionObject(obj0);
-				}
+				}*/
 
 				return needsCollision;
 			}
-			virtual bool
-				needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
+
+			bool needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
 			{
 				//here you can do filtering
 				bool hasResponse =
@@ -75,7 +71,6 @@ namespace NCL {
 					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
 				return hasResponse;
 			}
-
 		};
 
 		struct TriggerFilterCallback : public btOverlapFilterCallback
@@ -160,6 +155,33 @@ namespace NCL {
 				// Do your collision logic here
 				// Only dispatch the Bullet collision information if you want the physics to continue
 				dispatcher.defaultNearCallback(collisionPair, dispatcher, dispatchInfo);
+			}
+
+			void UpdateBulletCallbacks()
+			{
+				int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+
+				for (int i = 0; i < numManifolds; i++)
+				{
+					btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+					int numContacts = contactManifold->getNumContacts();
+
+					btCollisionObject* body0 = (btCollisionObject*)(contactManifold->getBody0());
+					btCollisionObject* body1 = (btCollisionObject*)(contactManifold->getBody1());
+
+					GameObject* obj0 = (GameObject*)body0->getUserPointer();
+					GameObject* obj1 = (GameObject*)body1->getUserPointer();
+					if (numContacts > 0)
+					{
+						obj0->AddCollisionObject(obj1);
+						obj1->AddCollisionObject(obj0);
+					}
+					else
+					{
+						obj0->RemoveCollisionObject(obj1);
+						obj1->RemoveCollisionObject(obj0);
+					}
+				}
 			}
 
 			void BasicCollisionDetection();

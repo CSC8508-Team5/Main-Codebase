@@ -260,6 +260,8 @@ void NCL::CSC8503::PhysicsSystem::UpdateBullet(float dt, int maxSteps)
 
 	IntegrateBullet();
 
+	UpdateBulletCallbacks();
+
 	dynamicsWorld->clearForces();
 
 }
