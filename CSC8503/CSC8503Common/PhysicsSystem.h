@@ -49,23 +49,23 @@ namespace NCL {
 				if ((!body0->isActive()) && (!body1->isActive()))
 					needsCollision = false;
 				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
-				{
-					obj0->RemoveCollisionObject(obj1);
-					obj1->RemoveCollisionObject(obj0);
-
 					needsCollision = false;
-				}
-				else
+
+				if (needsCollision)
 				{
 					obj0->AddCollisionObject(obj1);
 					obj1->AddCollisionObject(obj0);
 				}
-
+				else
+				{
+					obj0->RemoveCollisionObject(obj1);
+					obj1->RemoveCollisionObject(obj0);
+				}
 
 				return needsCollision;
 			}
 			virtual bool
-				needsResponse(btCollisionObject* body0, btCollisionObject* body1)
+				needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
 			{
 				//here you can do filtering
 				bool hasResponse =
@@ -75,6 +75,7 @@ namespace NCL {
 					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
 				return hasResponse;
 			}
+
 		};
 
 		struct TriggerFilterCallback : public btOverlapFilterCallback
@@ -86,6 +87,18 @@ namespace NCL {
 				bool collides = (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
 				collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
 				//add some additional logic here that modified 'collides'
+				/*
+				if (!collides)
+				{
+					btRigidBody* body0 = (btRigidBody*)proxy0->m_clientObject;
+					btRigidBody* body1 = (btRigidBody*)proxy1->m_clientObject;
+
+					GameObject* obj0 = (GameObject*)body0->getUserPointer();
+					GameObject* obj1 = (GameObject*)body1->getUserPointer();
+
+					obj0->RemoveCollisionObject(obj1);
+					obj1->RemoveCollisionObject(obj0);
+				}*/
 				return collides;
 			}
 		};
@@ -143,7 +156,7 @@ namespace NCL {
 			bool isUseBulletPhysics() const { return useBulletPhysics; }
 		protected:
 			void TriggerNearCallback(btBroadphasePair& collisionPair,
-				btCollisionDispatcher& dispatcher, btDispatcherInfo& dispatchInfo) {
+				btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo) {
 				// Do your collision logic here
 				// Only dispatch the Bullet collision information if you want the physics to continue
 				dispatcher.defaultNearCallback(collisionPair, dispatcher, dispatchInfo);
