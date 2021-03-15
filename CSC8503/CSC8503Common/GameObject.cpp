@@ -47,6 +47,7 @@ void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObje
 	{
 		GetBulletBody()->setUserPointer(this);
 		PhysicsSystem::AddBulletBody(GetBulletBody(), (int)layer, layerMask);
+		SetIsKinematic(GetIsKinematic());
 	}
 }
 

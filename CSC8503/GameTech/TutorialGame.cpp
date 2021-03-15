@@ -12,6 +12,7 @@ using namespace CSC8503;
 TutorialGame::TutorialGame() {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
+	//physics engine started here
 	physics = new PhysicsSystem(*world, true);
 	//irrklang audio system
 	audio = new AudioSystem();
@@ -609,48 +610,51 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 
 GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass)
 {
+	//Initialize Gameobject*
 	GameObject* cube = new GameObject();
 
+	//Set Gameobject world Transform
 	cube->GetTransform()
 		.SetPosition(position)
 		.SetScale(dimensions * 2);
 
+	//Set Rendering agent
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 
-	//btVector3 btDimensions(btScalar(dimensions.x), btScalar(dimensions.y), btScalar(dimensions.z));
+	//Set Object to Kinematic if you want it not affect by Gravity or Force
+	//cube->SetIsKinematic(true);
 
-
-	//btCollisionShape* shape = nullptr;
-	//shape = new btBoxShape(dimensions);
+	//Initialize shape of the collision object
 	btCollisionShape* shape = new btBoxShape(dimensions);
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
-	btTransform bulletTransform;
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
+	//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+	btTransform bulletTransform = cube->GetTransform();
+	//btTransform bulletTransform;
+	//bulletTransform.setIdentity();
+	//bulletTransform.setOrigin(position);
 
-	btScalar mass;
+	//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
+	//if mass != zero, we shall caculate the local inertia by calling bullet api
 	bool isDynamic = (mass != 0.0f);
-
 	btVector3 localInertia(0, 0, 0);
 
 	if (isDynamic)
 		shape->calculateLocalInertia(mass, localInertia);
 
+	//init motionstate from bullet transform
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
+	//init bullet rigid body
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
+	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
+	//add the gameobject to the world
 	world->AddGameObject(cube);
 
 	return cube;
@@ -978,20 +982,23 @@ bool TutorialGame::SelectObject() {
 				lockedObject = nullptr;
 			}
 
+			//Raycasting is a bit same as before, you should build ray first
 			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 
 			/*
+			//you can also form the raycasting in the other way
 			btVector3 from = ray.GetPosition();
 			btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * 200;
 
 			btCollisionWorld::ClosestRayResultCallback rcb(from, to);
 			//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
 			PhysicsSystem::Raycast(from, to, rcb);
-		*/
+			*/
 
+			//you will get RayCollision for raycasting output as well as before
 			RayCollision closestCollision;
 			//if (world->Raycast(ray, closestCollision, true)) {
-			if (PhysicsSystem::Raycast(ray, closestCollision, 300)) {
+			if (PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
 				//if (rcb.hasHit()) {
 					//selectionObject = (GameObject*)closestCollision.node;
 					//std::cout << "Hit normal" << rcb.m_hitNormalWorld << "\n";

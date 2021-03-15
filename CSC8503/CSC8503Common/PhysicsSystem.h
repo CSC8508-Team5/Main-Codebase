@@ -129,23 +129,37 @@ namespace NCL {
 			static void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
 			static void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
 
-			//function for ray test of dyanmicsWorld
+			//function for raycasting of dyanmicsWorld
 			static void Raycast(btVector3 startPos, btVector3 endPos, btCollisionWorld::RayResultCallback& resultCallback) { if (dynamicsWorld) dynamicsWorld->rayTest(startPos, endPos, resultCallback); }
 			//static btCollisionWorld::ClosestRayResultCallback Raycast(Ray ray, float maxDistance) { if (dynamicsWorld) dynamicsWorld->rayTest(ray.GetPosition(), ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance, resultCallback); }
-			static bool Raycast(Ray& ray, RayCollision& collision, float maxDistance = 200.0f)
+			static bool Raycast(Ray& ray, RayCollision& collision, bool closestObject = true, float maxDistance = 200.0f)
 			{
 				btVector3 from = ray.GetPosition();
 				btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance;
-				btCollisionWorld::ClosestRayResultCallback rcb(from, to);
-				//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
-				PhysicsSystem::Raycast(from, to, rcb);
+				bool hit;
+				if (closestObject)
+				{
+					btCollisionWorld::ClosestRayResultCallback rcb(from, to);
+					PhysicsSystem::Raycast(from, to, rcb);
 
-				collision.node = (void*)rcb.m_collisionObject;
-				collision.collidedAt = rcb.m_hitPointWorld;
-				collision.normal = rcb.m_hitNormalWorld;
-				collision.rayDistance = from.distance(to);
+					collision.node = (void*)rcb.m_collisionObject;
+					collision.collidedAt = rcb.m_hitPointWorld;
+					collision.normal = rcb.m_hitNormalWorld;
+					collision.rayDistance = from.distance(to);
+					hit = rcb.hasHit();
+				}
+				else
+				{
+					btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
+					PhysicsSystem::Raycast(from, to, rcb);
 
-				return rcb.hasHit();
+					collision.node = (void*)rcb.m_collisionObject;
+					collision.collidedAt = rcb.m_hitPointWorld.at(0);
+					collision.normal = rcb.m_hitNormalWorld.at(0);
+					collision.rayDistance = from.distance(to);
+					hit = rcb.hasHit();
+				}
+				return hit;
 			}
 
 			bool isUseBulletPhysics() const { return useBulletPhysics; }

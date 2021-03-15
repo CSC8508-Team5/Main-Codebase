@@ -122,6 +122,18 @@ namespace NCL {
 			
 			Layer GetLayer() { return layer; }
 			unsigned int GetLayerMask() { return layerMask; }
+			bool GetLayerMaskEnabled(Layer target) { return layerMask & (unsigned int)target; }
+
+			void SetIsKinematic(bool k) 
+			{ 
+				isKinematic = k; 
+				if (bulletPhysicsObject) 
+					if(isKinematic)
+						bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+					else
+						bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() & (~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+			}
+			bool GetIsKinematic() { return isKinematic; }
 
 			void SetLayer(Layer l) { layer = l; UpdateBulletBodyLayer(); }
 			void EnableLayerMask(Layer target) { layerMask |= (unsigned int)target; UpdateBulletBodyLayerMask();}
@@ -189,6 +201,7 @@ namespace NCL {
 
 			SoundSource* soundSource;
 
+			bool	isKinematic;
 			bool	isActive;
 			int		worldID;
 			string	name;

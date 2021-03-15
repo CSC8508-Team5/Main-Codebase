@@ -21,6 +21,11 @@ and the forces that are added to objects to change those positions
 
 btDiscreteDynamicsWorld* NCL::CSC8503::PhysicsSystem::dynamicsWorld=nullptr;
 
+/// <summary>
+/// Init physics system
+/// </summary>
+/// <param name="g">gameworld</param>
+/// <param name="enalbeBulletPhysics">if you want to use bullet physics system, then set it to TRUE</param>
 PhysicsSystem::PhysicsSystem(GameWorld& g, bool enalbeBulletPhysics) : gameWorld(g) {
 	applyGravity = false;
 	useBroadPhase = false;
