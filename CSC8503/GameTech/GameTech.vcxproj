@@ -149,6 +149,8 @@
     <ClCompile Include="DW_BloomHelper.cpp" />
     <ClCompile Include="DW_DeferredRenderingHelper.cpp" />
     <ClCompile Include="DW_Light.cpp" />
+    <ClCompile Include="DW_Particle.cpp" />
+    <ClCompile Include="DW_ParticleSystem.cpp" />
     <ClCompile Include="DW_PostEffectHelper.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
     <ClCompile Include="DW_RenderCombineHelper.cpp" />
@@ -179,6 +181,8 @@
     <ClInclude Include="DW_BloomHelper.h" />
     <ClInclude Include="DW_DeferredRenderingHelper.h" />
     <ClInclude Include="DW_Light.h" />
+    <ClInclude Include="DW_Particle.h" />
+    <ClInclude Include="DW_ParticleSystem.h" />
     <ClInclude Include="DW_PostEffectHelper.h" />
     <ClInclude Include="DW_Quad.h" />
     <ClInclude Include="DW_RenderCombineHelper.h" />

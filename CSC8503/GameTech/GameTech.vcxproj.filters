@@ -105,6 +105,12 @@
     <ClCompile Include="DW_Tools.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="DW_Particle.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_ParticleSystem.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -189,6 +195,12 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DW_Tools.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Particle.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_ParticleSystem.h">
       <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
