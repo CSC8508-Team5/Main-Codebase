@@ -420,9 +420,9 @@ void TutorialGame::BridgeBulletConstraintTest() {
 
 	Vector3 startPos = Vector3(5, 100, 5);
 
-	GameObject* start = AddBulletCubeToWorld(startPos + Vector3(0, 0, 0)
+	GameObject* start = CreateBulletCube(startPos + Vector3(0, 0, 0)
 		, cubeSize, 0);
-	GameObject* end = AddBulletCubeToWorld(startPos + Vector3((numLinks + 1)
+	GameObject* end = CreateBulletCube(startPos + Vector3((numLinks + 1)
 		* cubeDistance+8, 0, 0), cubeSize, 0);
 
 	GameObject* previous = start;
@@ -437,7 +437,7 @@ void TutorialGame::BridgeBulletConstraintTest() {
 	frameInB.setOrigin(btVector3(-cubeDistance /2, 0, 0));
 
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject* block = AddBulletCubeToWorld(startPos + Vector3((i + 1) *
+		GameObject* block = CreateBulletCube(startPos + Vector3((i + 1) *
 			cubeDistance, 0, 0), cubeSize, invCubeMass);
 
 		//btPoint2PointConstraint()
@@ -482,6 +482,42 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletFloor(position);
+	else
+		return CreateFloor(position);
+}
+
+/*
+
+Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
+rigid body representation. This and the cube function will let you build a lot of 'simple'
+physics worlds. You'll probably need another function for the creation of OBB cubes too.
+
+*/
+GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletCube(position, dimensions, inverseMass);
+	else
+		return CreateCube(position, dimensions, inverseMass);
+}
+
+GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletSphere(position, radius, inverseMass);
+	else
+		return CreateSphere(position, radius, inverseMass);
+}
+
+GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletCapsule(position, halfHeight, radius, inverseMass);
+	else
+		return CreateCapsule(position, halfHeight, radius, inverseMass);
+}
+
+GameObject* NCL::CSC8503::TutorialGame::CreateFloor(const Vector3& position)
+{
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize = Vector3(200, 2, 200);
@@ -502,14 +538,8 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	return floor;
 }
 
-/*
-
-Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
-rigid body representation. This and the cube function will let you build a lot of 'simple'
-physics worlds. You'll probably need another function for the creation of OBB cubes too.
-
-*/
-GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
+GameObject* NCL::CSC8503::TutorialGame::CreateSphere(const Vector3& position, float radius, float inverseMass)
+{
 	GameObject* sphere = new GameObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
@@ -531,29 +561,8 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	return sphere;
 }
 
-GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
-	GameObject* capsule = new GameObject();
-
-	CapsuleVolume* volume = new CapsuleVolume(halfHeight, radius);
-	capsule->SetBoundingVolume((CollisionVolume*)volume);
-
-	capsule->GetTransform()
-		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
-		.SetPosition(position);
-
-	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
-	capsule->SetPhysicsObject(new PhysicsObject(&capsule->GetTransform(), capsule->GetBoundingVolume()));
-
-	capsule->GetPhysicsObject()->SetInverseMass(inverseMass);
-	capsule->GetPhysicsObject()->InitCubeInertia();
-
-	world->AddGameObject(capsule);
-
-	return capsule;
-
-}
-
-GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
+GameObject* NCL::CSC8503::TutorialGame::CreateCube(const Vector3& position, Vector3 dimensions, float inverseMass)
+{
 	GameObject* cube = new GameObject();
 
 	AABBVolume* volume = new AABBVolume(dimensions);
@@ -575,7 +584,31 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 	return cube;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& position)
+GameObject* NCL::CSC8503::TutorialGame::CreateCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass)
+{
+	GameObject* capsule = new GameObject();
+
+	CapsuleVolume* volume = new CapsuleVolume(halfHeight, radius);
+	capsule->SetBoundingVolume((CollisionVolume*)volume);
+
+	capsule->GetTransform()
+		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
+		.SetPosition(position);
+
+	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
+	capsule->SetPhysicsObject(new PhysicsObject(&capsule->GetTransform(), capsule->GetBoundingVolume()));
+
+	capsule->GetPhysicsObject()->SetInverseMass(inverseMass);
+	capsule->GetPhysicsObject()->InitCubeInertia();
+
+	world->AddGameObject(capsule);
+
+	return capsule;
+}
+
+
+
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletFloor(const Vector3& position)
 {
 	GameObject* floor = new GameObject("Floor");
 
@@ -606,7 +639,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 	return floor;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position, Vector3 dimensions, float inverseMass)
 {
 	//Initialize Gameobject*
 	GameObject* cube = new GameObject();
@@ -658,7 +691,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& posi
 	return cube;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& position, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletSphere(const Vector3& position, float radius, float inverseMass)
 {
 	GameObject* sphere = new GameObject();
 
@@ -702,7 +735,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 	return sphere;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass)
 {
 	GameObject* capsule = new GameObject();
 
@@ -746,7 +779,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 
 
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCylinder(const Vector3& position, float halfHeight, float radius, float inverseMass)
 {
 	GameObject* cylinder = new GameObject();
 
@@ -806,30 +839,28 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
 			int randVal = rand() % 4;
 			if (randVal == 0) {
-				if (useBullet)
-					AddBulletCubeToWorld(position, cubeDims);
-				else
+				/*if (useBullet)
+					CreateBulletCube(position, cubeDims);
+				else*/
 					AddCubeToWorld(position, cubeDims);
 			}
 			else if (randVal == 1) {
-				if (useBullet)
-					AddBulletSphereToWorld(position, sphereRadius);
-				else
+				/*if (useBullet)
+					CreateBulletSphere(position, sphereRadius);
+				else*/
 					AddSphereToWorld(position, sphereRadius);
 			}
 			else if (randVal == 2)
 			{
-				if (useBullet)
-					AddBulletCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
-				else
+				/*if (useBullet)
+					CreateBulletCapsule(position, sphereRadius * 2, sphereRadius);
+				else*/
 					AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
 			}
 			else if (randVal == 3)
 			{
 				if (useBullet)
-					AddBulletCylinderToWorld(position, sphereRadius * 2, sphereRadius);
-				//else
-				//	AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
+					CreateBulletCylinder(position, sphereRadius * 2, sphereRadius);
 			}
 		}
 	}
@@ -846,7 +877,7 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 
 void TutorialGame::InitDefaultFloor(bool useBullet) {
 	if (useBullet)
-		AddBulletFloorToWorld(Vector3(0, -2, 0));
+		CreateBulletFloor(Vector3(0, -2, 0));
 	else
 		AddFloorToWorld(Vector3(0, -2, 0));
 }

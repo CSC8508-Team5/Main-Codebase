@@ -203,7 +203,10 @@ namespace NCL {
 			virtual void Update(float dt)
 			{
 				if (soundSource)
-					soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+					if(bulletPhysicsObject)
+						soundSource->Update(transform.GetPosition(), GetBulletBody()->getLinearVelocity());
+					else
+						soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
 			}
 
 		protected:
