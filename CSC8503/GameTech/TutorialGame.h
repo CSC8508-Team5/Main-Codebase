@@ -63,6 +63,10 @@ namespace NCL {
 			void UpdatePlayer(float dt);
 			//end
 
+			// Conor Level
+			void LevelThree();
+			void UpdateLevelThree();
+
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
 		  StateGameObject * testStateObject = nullptr;
 

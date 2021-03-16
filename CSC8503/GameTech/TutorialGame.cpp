@@ -125,9 +125,9 @@ TutorialGame::~TutorialGame()	{
 }
 
 void TutorialGame::UpdateGame(float dt) {
-	/*if (!inSelectionMode) {
+	if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
-	}*/
+	}
 
 	UpdateKeys();
 	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
@@ -153,8 +153,8 @@ void TutorialGame::UpdateGame(float dt) {
 		Debug::Print("(G)ravity off", Vector2(5, 95));
 	}*/
 
-	//SelectObject();
-	//MoveSelectedObject();
+	SelectObject();
+	MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -185,10 +185,11 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
 	if (!isfinish) {
-		UpdateLevelOne();
-		UpdateCoins();
-		UpdatePlayer(dt);
-		UpdateSpinningPlatform();
+		//UpdateLevelOne();
+		//UpdateCoins();
+		//UpdatePlayer(dt);
+		//UpdateSpinningPlatform();
+		UpdateLevelThree();
 	}
 
 
@@ -235,6 +236,10 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 };
+
+void TutorialGame::UpdateLevelThree() {
+
+}
 
 void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
@@ -334,19 +339,21 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 
 	// Third person Camera
-	std::cout << yaw << endl;
-	const float Deg2Rad = 3.1415927f / 180.0f;
-	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
-	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
-	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
-	Matrix4 modelMat = mat.Inverse();
+	if (false) {
+		std::cout << yaw << endl;
+		const float Deg2Rad = 3.1415927f / 180.0f;
+		float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
+		Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
+		Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
+		Matrix4 modelMat = mat.Inverse();
 
-	Quaternion q(modelMat);
-	Vector3 angles = q.ToEuler(); //nearly there now!
+		Quaternion q(modelMat);
+		Vector3 angles = q.ToEuler(); //nearly there now!
 
-	world->GetMainCamera()->SetPosition(camerTargetPos+Vector3(0,3,0));//Adding a distance on Y
-	world->GetMainCamera()->SetPitch(angles.x);
-	world->GetMainCamera()->SetYaw(angles.y);
+		world->GetMainCamera()->SetPosition(camerTargetPos + Vector3(0, 3, 0));//Adding a distance on Y
+		world->GetMainCamera()->SetPitch(angles.x);
+		world->GetMainCamera()->SetYaw(angles.y);
+	}
 }
 
 void TutorialGame::UpdateKeys() {
@@ -511,7 +518,7 @@ void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetFarPlane(500.0f);
 	world->GetMainCamera()->SetPitch(-5.0f);
 	world->GetMainCamera()->SetYaw(270.0f);
-	world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition()+Vector3(-15,5,0));
+	//world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition()+Vector3(-15,5,0));
 	lockedObject = nullptr;
 }
 
@@ -521,22 +528,25 @@ void TutorialGame::InitWorld() {
 	physics->Clear();
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	InitCharaters();
+	//InitCharaters();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
 
-	platforms = LevelTestOne();
+	/*platforms = LevelTestOne();
 	std::vector<Vector3> poses;
 	for (int i = 0; i < numstairs; i++)
 	{
 		poses.push_back(platforms[i]->GetTransform().GetPosition());
 	}
-	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);*/
 
+
+	// Conor Level
+	LevelThree();
 
 	//Pendulum();
-	spinplat = 	SpinningPlatform();
+	//spinplat = 	SpinningPlatform();
 	coincollected = 0;
 }
 
@@ -578,6 +588,15 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 	}
 	return platforms;
+}
+
+void TutorialGame::LevelThree() {
+	GameObject* startingFloor = AddCubeToWorld(Vector3(0, 0, 0), Vector3(50, 2, 30), 0);
+	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+
+	GameObject* slope = AddCubeToWorld(Vector3(200, 20, 0), Vector3(150, 2, 30), 0);
+	slope->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+	slope->GetTransform().SetOrientation(Quaternion(0, 0, 0.15, 1));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
