@@ -864,10 +864,11 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
 
-	GameObject* character = new GameObject();
+	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
+
 	character->SetHUD(hud);
 
-	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
+	/*AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 
 	character->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -888,7 +889,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 
 	world->AddGameObject(character);
 
-	//lockedObject = character;
+	//lockedObject = character;*/
 
 	return character;
 }
@@ -897,8 +898,8 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	GameObject* character = new GameObject();
-
+	GameObject* character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "enemy");
+		/*
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
 	character->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -912,6 +913,64 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
 	character->GetPhysicsObject()->InitSphereInertia();
 
+	world->AddGameObject(character);*/
+
+	return character;
+}
+
+GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name)
+{
+	float meshSize = 3.0f;
+	float inverseMass = 0.5f;
+
+	GameObject* character = new GameObject(name);
+
+	character->GetTransform()
+		.SetScale(Vector3(meshSize, meshSize, meshSize))
+		.SetPosition(position);
+
+	character->SetRenderObject(new RenderObject(&character->GetTransform(), mesh, texture, shader));
+
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btCapsuleShape(btScalar(0.4f*meshSize), btScalar(0.9f * meshSize));
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = character->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 60.0f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		character->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+
+		//limit character angular motion
+		character->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
+
+	}
+	else
+	{
+		AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
+		character->SetBoundingVolume((CollisionVolume*)volume);
+		character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+
+		character->GetPhysicsObject()->SetInverseMass(inverseMass);
+		character->GetPhysicsObject()->InitSphereInertia();
+	}
+	
 	world->AddGameObject(character);
 
 	return character;

@@ -54,10 +54,9 @@ namespace NCL {
 			GameObject* AddBulletCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 			GameObject* AddBulletCylinderToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
-
-
 			GameObject* AddPlayerToWorld(const Vector3& position);
 			GameObject* AddEnemyToWorld(const Vector3& position);
+			GameObject* AddCharacterToWorld(const Vector3& position,OGLMesh* mesh, OGLTexture* texture, OGLShader* shader,string name="char");
 			GameObject* AddBonusToWorld(const Vector3& position);
 
 			StateGameObject* AddStateObjectToWorld(const Vector3& position);
