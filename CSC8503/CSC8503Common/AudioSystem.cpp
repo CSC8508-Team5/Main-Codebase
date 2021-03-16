@@ -1,6 +1,6 @@
 #include "AudioSystem.h"
 
-irrklang::ISoundEngine* NCL::CSC8503::AudioSystem::engine = nullptr;
+ISoundEngine* NCL::CSC8503::AudioSystem::engine = nullptr;
 
 NCL::CSC8503::AudioSystem::AudioSystem()
 {
@@ -11,7 +11,7 @@ NCL::CSC8503::AudioSystem::AudioSystem()
 	}
 	engine->loadPlugins("./ikpMP3.dll");
 	engine->loadPlugins("./ikpFlac.dll");
-	engine->setSoundVolume(1.0f);
+	engine->setSoundVolume(volumeVar);
 	std::cout << "irrKlang audio system initialized\n";
 }
 
@@ -95,6 +95,11 @@ ISoundSource* NCL::CSC8503::AudioSystem::AddSourceAudio(string filename)
 ISoundSource* NCL::CSC8503::AudioSystem::AddSourceSFX(string filename)
 {
 	return AddSource(Assets::SFXDIR + filename);
+}
+
+void NCL::CSC8503::AudioSystem::StopAll()
+{
+	if (engine) engine->stopAllSounds();
 }
 
 void NCL::CSC8503::AudioSystem::RemoveSource(ISoundSource* source)

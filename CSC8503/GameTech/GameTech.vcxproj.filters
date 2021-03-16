@@ -16,6 +16,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{8c5a81ec-3c6f-4974-82e1-f25f76e79dd0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{f47cc1d1-7dd2-43d9-9b5d-297a0b80781e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -69,20 +72,47 @@
     <ClCompile Include="HM_Lose.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DW_UIHUD.cpp">
+    <ClCompile Include="HM_Option.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DW_Quad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DW_Tools.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DW_DeferredRenderingHelper.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="DW_Light.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_UIHUD.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_BloomHelper.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_PostEffectHelper.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_Quad.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_RenderCombineHelper.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="DW_ShadowHelper.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_SkyboxHelper.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_Tools.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_Particle.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_ParticleSystem.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DW_Flame.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,20 +167,47 @@
     <ClInclude Include="HM_Lose.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DW_UIHUD.h">
+    <ClInclude Include="HM_Option.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DW_Quad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DW_Tools.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DW_DeferredRenderingHelper.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DW_Light.h">
-      <Filter>Header Files</Filter>
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_UIHUD.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_BloomHelper.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_PostEffectHelper.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Quad.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_RenderCombineHelper.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DW_ShadowHelper.h">
-      <Filter>Header Files</Filter>
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_SkyboxHelper.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Tools.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Particle.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_ParticleSystem.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Flame.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

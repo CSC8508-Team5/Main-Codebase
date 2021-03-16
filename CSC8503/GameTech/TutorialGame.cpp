@@ -20,7 +20,7 @@ TutorialGame::TutorialGame() {
 	audio = new AudioSystem();
 
 	//global play 2D as background music
-	audio->PlayAudio("Casual Theme #1 (Looped).ogg");
+	//audio->PlayAudio("Casual Theme #1 (Looped).ogg");
 	//global play 3D
 	//audio->PlayAudio("Casual Theme #1 (Looped).ogg", Vector3(0, 0, 0));
 	//other format
@@ -49,14 +49,23 @@ TutorialGame::TutorialGame() {
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
-	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+	
+	
+	StartMenu = new HM_StartMenu(); // main menu
+	PauseMenu = new HM_PauseMenu(); // Pause menu
+	WinScreen = new HM_Win(); // wining screen
+	LoseScreen = new HM_Lose(); // lose screen
+	OptionMenu = new HM_Option(audio); // option menu
+	
+	StartMenu->SetPanelActive(true);
+	PauseMenu->SetPanelActive(false);
+	WinScreen->SetPanelActive(false);
+	LoseScreen->SetPanelActive(false);
+	OptionMenu->SetPanelActive(false);
 
-		//StartMenu =new HM_StartMenu(); // main menu
-		//PauseMenu = new HM_PauseMenu(); // Pause menu
-		//WinScreen = new HM_Win(); // wining screen
-		//LoseScreen = new HM_Lose(); // lose screen
-
-	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+	
+//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
 /*
@@ -84,6 +93,7 @@ void TutorialGame::InitialiseAssets() {
 
 	loadFunc("Cylinder.msh", &spinplatMesh);
 
+	renderer->SetSphereMesh(sphereMesh);
 	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 	
@@ -122,9 +132,20 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 
 	UpdateKeys();
+	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+		Window::GetWindow()->ShowOSPointer(true);
+		Window::GetWindow()->LockMouseToWindow(false);
+	}
+	else {
+		Window::GetWindow()->ShowOSPointer(false);
+		Window::GetWindow()->LockMouseToWindow(true);
 
-	if (isfinish) {
-		Debug::Print("You Win", Vector2(45, 25));
+	} 
+	if (isfinish && !WinScreen->GetPanelIsEnable()) {
+		
+		WinScreen->SetPanelActive(true);
+		
+		//Debug::Print("You Win", Vector2(45, 25));
 	}
 
 	/*if (useGravity) {
@@ -170,6 +191,18 @@ void TutorialGame::UpdateGame(float dt) {
 	audio->Update(*world->GetMainCamera());
 
 	CollisionDetection::CollisionInfo info;
+	if (!isfinish) {
+		UpdateLevelOne();
+		UpdateCoins();
+		UpdatePlayer(dt);
+		UpdateSpinningPlatform();
+	}
+
+
+	DW_UIRenderer::get_instance().Update(dt);
+
+	audio->Update(*world->GetMainCamera());
+
 
 	UpdateLevelOne();
 	UpdateCoins();
@@ -209,6 +242,9 @@ void TutorialGame::UpdateLevelOne() {
 			//finish
 			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 				isfinish = true;
+
+				audio->StopAll();
+				audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
 			}
 		}
 };
@@ -224,7 +260,10 @@ void TutorialGame::UpdateSpinningPlatform(){
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20),Vector4(0, 1, 1, 1));
+	if (!StartMenu->GetPanelIsEnable() &&!PauseMenu->GetPanelIsEnable() && 
+		!WinScreen->GetPanelIsEnable() && !LoseScreen->GetPanelIsEnable() && !OptionMenu->GetPanelIsEnable()) {
+		Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
+	}
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
@@ -233,6 +272,7 @@ void TutorialGame::UpdateCoins() {
 				coincollected += 1;
 				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
 				coins[i]->GetTransform().SetScale(Vector3(0, 0, 0));
+				audio->PlaySFX("PP_Collect_Coin_1_2.wav");
 			}
 		}
 	}
@@ -257,17 +297,21 @@ void TutorialGame::UpdatePlayer(float dt) {
 		pitch =90.0f;
 	}
 	float frameSpeed = 50 * dt;
-	float cameraSpeed = 25 * dt;
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
 	double turnsin, turncos;
-	turnsin = sin((3.1415927 / 2) * ((yaw/10-45)/2));
-	turncos = cos((3.1415927 / 2) * ((yaw/10-45)/ 2));
+	turnsin = sin((3.1415927 / 2) * ((yaw/9-45)/2));
+	turncos = cos((3.1415927 / 2) * ((yaw/9-45)/ 2));
 	orientation = Quaternion(0,turnsin,0,turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
-
+	
+	if (isfinish) {
+		WinScreen->SetPanelActive(true);
+		//Debug::Print("You Win", Vector2(45, 25));
+	}
 	if (playerposition.y <= -5) {
+		player->GetTransform().SetScale(Vector3(0,0,0));
 		InitCharaters();
 	}
 	//player movement
@@ -292,7 +336,9 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-			isjump = true;
+
+			isjump = true; //Comment this if want a quick win.
+			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
 	}
@@ -301,7 +347,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 
 	// Third person Camera
-	const float Deg2Rad = 3.1415926f / 180.0f;
+	std::cout << yaw << endl;
+	const float Deg2Rad = 3.1415927f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
 	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
@@ -325,6 +372,14 @@ void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F2)) {
 		InitCamera(); //F2 will reset the camera to a specific default place
 	}
+
+	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::I)) {
+		renderer->SetExp(true);
+	}
+
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::J)) {
+		renderer->SetExp(false);
+	}*/
 
 	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::G)) {
 		useGravity = !useGravity; //Toggle gravity!
@@ -362,6 +417,17 @@ void TutorialGame::UpdateKeys() {
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
 		PauseMenu->SetPanelActive(true);
+		StartMenu->SetPanelActive(false);
+		WinScreen->SetPanelActive(false);
+		LoseScreen->SetPanelActive(false);
+		OptionMenu->SetPanelActive(false);
+	}
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
+		PauseMenu->SetPanelActive(false);
+		StartMenu->SetPanelActive(false);
+		WinScreen->SetPanelActive(false);
+		LoseScreen->SetPanelActive(false);
+		OptionMenu->SetPanelActive(true);
 	}
 
 	if (lockedObject) {
@@ -538,7 +604,17 @@ void TutorialGame::InitWorld() {
 	InitCharaters();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
+
+
 	platforms = LevelTestOne();
+	std::vector<Vector3> poses;
+	for (int i = 0; i < numstairs; i++)
+	{
+		poses.push_back(platforms[i]->GetTransform().GetPosition());
+	}
+	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+
+
 	//Pendulum();
 	spinplat = 	SpinningPlatform();
 	coincollected = 0;
@@ -572,7 +648,7 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 		else if (i % 3 == 2) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 		}
 		else if(i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
@@ -1135,11 +1211,11 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
-	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
+	/*std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});*/
 
 	GameObject* character = new GameObject();
-	character->SetHUD(hud);
+	//character->SetHUD(hud);
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 

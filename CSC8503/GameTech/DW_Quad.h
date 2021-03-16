@@ -32,6 +32,10 @@ public:
 	DW_Quad(const DW_Quad&) = delete;
 	DW_Quad& operator =(const DW_Quad&) = delete;
 
+	void BindVAO() { glBindVertexArray(VAO); }
+	void Draw() { glDrawArrays(GL_TRIANGLES, 0, 6); glBindVertexArray(0); }
+
+
 	void Draw(const GLuint tex,const NCL::Maths::Matrix4& v, const NCL::Maths::Matrix4& p, const NCL::Maths::Vector3& pos, const NCL::Maths::Vector3& scale, const NCL::Maths::Matrix4& rot);
 private:
 	GLuint VAO, VBO;

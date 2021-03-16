@@ -10,7 +10,7 @@
 #include "HM_PauseMenu.h"
 #include "HM_Win.h"
 #include "HM_Lose.h"
-
+#include "HM_Option.h"
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
@@ -132,6 +132,7 @@ namespace NCL {
 			HM_PauseMenu* PauseMenu;
 			HM_Win* WinScreen;
 			HM_Lose* LoseScreen;
+			HM_Option* OptionMenu;
 		};
 	}
 }

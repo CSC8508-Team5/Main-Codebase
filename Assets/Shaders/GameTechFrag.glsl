@@ -65,7 +65,7 @@ void main(void)
 	//}
 
 	
-	vec3  incident = normalize ( directionalLight.direction );
+	vec3  incident = -normalize ( directionalLight.direction );
 	//vec3  incident = normalize ( lightPos - IN.worldPos );
 	float lambert  = max (0.0 , dot ( incident , IN.normal )) * 0.9; 
 

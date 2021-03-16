@@ -28,9 +28,9 @@ void main(void)
 	mat4 mvp 		  = (projMatrix * viewMatrix * modelMatrix);
 	mat3 normalMatrix = transpose ( inverse ( mat3 ( modelMatrix )));
 
-	OUT.shadowProj 	=  shadowMatrix * vec4 ( position,1);
+	OUT.shadowProj 	=  shadowMatrix * modelMatrix *vec4 ( position,1);
 	OUT.worldPos 	= ( modelMatrix * vec4 ( position ,1)). xyz ;
-	//OUT.shadowProj 	=  shadowMatrix * vec4 ( OUT.worldPos,1);
+	
 	OUT.normal 		= normalize ( normalMatrix * normalize ( normal ));
 	
 	OUT.texCoord	= texCoord;

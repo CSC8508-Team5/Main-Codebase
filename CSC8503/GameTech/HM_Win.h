@@ -16,7 +16,7 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIImage.h"
 
 #include "DW_UIRenderer.h"
-
+#include "HM_StartMenu.h"
 
 
 class  HM_Win
@@ -25,8 +25,11 @@ public:
 	HM_Win();
 	~HM_Win();
 
-	void SetPanelActive(const bool flag) { m_panel->SetPanelIsEnable(flag); }
-
+	void SetPanelActive(const bool flag) {
+		m_panel->SetPanelIsEnable(flag);
+		m_isEnable = flag;
+	}
+	bool GetPanelIsEnable() { return m_isEnable; }
 
 private:
 	DW_UIImage* m_bg;
@@ -44,7 +47,8 @@ private:
 
 	DW_UIPanel* m_panel;
 
-
+	HM_StartMenu* StartMenu;
+	bool m_isEnable;
 	void ClickFunc(const std::string& str);
 
 };
