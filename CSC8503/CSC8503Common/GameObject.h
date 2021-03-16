@@ -91,11 +91,11 @@ namespace NCL {
 			}
 
 			virtual void OnCollisionBegin(GameObject* otherObject) {
-				//std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
+				std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
-				//std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
+				std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionStay(GameObject* otherObject) {

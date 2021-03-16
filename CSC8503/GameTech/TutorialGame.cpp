@@ -186,18 +186,26 @@ void TutorialGame::UpdateLevelOne() {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 1) {
 			if (position.z <= -60) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >=10) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		else if (i % 3 == 0) {
 			if(position.z <=-10) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 60) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 	}
@@ -215,7 +223,8 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateSpinningPlatform(){
-	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+	//spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+	spinplat->GetBulletBody()->setAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
 	CollisionDetection::CollisionInfo info;
 	if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
 		//player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity());
@@ -228,7 +237,8 @@ void TutorialGame::UpdateCoins() {
 	Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20),Vector4(0, 1, 1, 1));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
-			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
+			//coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
+			coins[i]->GetBulletBody()->setAngularVelocity(Vector3(0, 2, 0));
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(player, coins[i], info)) {
 				coincollected += 1;
@@ -267,44 +277,65 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation = Quaternion(0,turnsin,0,turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
-
 	if (playerposition.y <= -5) {
 		InitCharaters();
 	}
+
+	float playerMoveSpeed = 10.0f;
+	btVector3 currentSpeed = player->GetBulletBody()->getLinearVelocity();
+
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Forward().Normalised() * playerMoveSpeed*dt;
+		//player->GetBulletBody()->applyCentralForce(player->GetTransform().Forward().Normalised() * 600.0f);
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised()* playerMoveSpeed);
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Forward().Normalised() * -playerMoveSpeed*dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised() * -playerMoveSpeed);
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Right().Normalised() * playerMoveSpeed *dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * playerMoveSpeed);
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Right().Normalised() * -playerMoveSpeed *dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * -playerMoveSpeed);
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 
 	//jump
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		if(!isjump){
-			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {
+		float jumpHeight = 5.0f;
+		//if(!isjump){
+			float jumpSpeed = sqrt(-2.0f * -9.8f * jumpHeight);
+			//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0))
+			currentSpeed += Vector3::Up() * jumpSpeed;
+			//player->GetBulletBody()->setLinearVelocity(Vector3(0, 20, 0));
 			isjump = true;
-		}
+		//}
 
 	}
 	else{
-		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); }
+		//player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); 
+		//player->GetBulletBody()->applyCentralForce(Vector3(0, -100, 0));
+	}
+	player->GetBulletBody()->setActivationState(true);
+	player->GetBulletBody()->setLinearVelocity(currentSpeed);
+	//player->GetBulletBody()->applyCentralForce(currentSpeed);
 
 
 	// Third person Camera
 	const float Deg2Rad = 3.1415926f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
-	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
+	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().Backward().Normalised() * lockedDistance;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
 	Matrix4 modelMat = mat.Inverse();
 
@@ -550,7 +581,7 @@ GameObject** TutorialGame::LevelTestOne() {
 	Vector3 cubeSize = Vector3(10, 5, 10);
 	Vector3 middlecubeSize = Vector3(10, 5, 20);
 
-	float invCubeMass = 0; // how heavy the middle pieces are
+	float invCubeMass = 200000.0f; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
@@ -567,17 +598,28 @@ GameObject** TutorialGame::LevelTestOne() {
 	for (int i = 1; i < numstairs-1; ++i) {
 		if (i % 3 == 1) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
+
+			platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 30));
+			platforms[i]->GetBulletBody()->setActivationState(true);
+			platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setGravity(Vector3::Zero());
+			//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1)* 5.0f+3, -20));
 		}
 		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, 0.0f);
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if(i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -30));
+			//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			platforms[i]->GetBulletBody()->setActivationState(true);
+			platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setGravity(Vector3::Zero());
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1) * 5.0f+3, 20));
 		}
@@ -589,6 +631,9 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 	GameObject* coin = new GameObject();
 	coin = AddBonusToWorld(position);
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+	//coin->SetIsKinematic(false);
+	coin->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+	coin->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
 	return coin;
 }
 
@@ -596,7 +641,10 @@ GameObject* TutorialGame::SpinningPlatform() {
 	float radius = 30.0f;
 	float hight = 2.5f;
 	Vector3 position = Vector3(-150, 5, -80);
-	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
+	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 1.0f);
+	spinplat->GetBulletBody()->setGravity(Vector3::Zero());
+	spinplat->GetBulletBody()->setLinearFactor(Vector3::Zero());
+	spinplat->GetBulletBody()->setAngularFactor(Vector3::Zero());
 	spinplat->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
 	return spinplat;
 }
@@ -919,7 +967,9 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 
 	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+
+	//cube->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+	//cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
 	//add the gameobject to the world
 	world->AddGameObject(cube);
 
@@ -1119,17 +1169,15 @@ void TutorialGame::InitDefaultFloor(bool useBullet) {
 
 void TutorialGame::InitCharaters() {
 	player = AddPlayerToWorld(Vector3(-150, 10, 0));
-	Quaternion orientation = Quaternion(0, -1, 0, 1);
+	/*Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);
+	player->GetTransform().SetOrientation(orientation);*/
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
-	float meshSize = 3.0f;
-	float inverseMass = 0.5f;
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
@@ -1152,13 +1200,13 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	else {
 		character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
 	}*/
-	character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
-	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+	//character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
+	//character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
-	character->GetPhysicsObject()->SetInverseMass(inverseMass);
-	character->GetPhysicsObject()->InitSphereInertia();
+	//character->GetPhysicsObject()->SetInverseMass(inverseMass);
+	//character->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(character);
+	//world->AddGameObject(character);
 
 	//lockedObject = character;*/
 
@@ -1230,6 +1278,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 
 		//limit character angular motion
 		character->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
+		
+		character->SetIsKinematic(false);
 
 	}
 	else
@@ -1286,7 +1336,8 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 		apple->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-		apple->SetIsKinematic(true);
+		
+		//apple->SetIsKinematic(true);
 	}
 	else
 	{
