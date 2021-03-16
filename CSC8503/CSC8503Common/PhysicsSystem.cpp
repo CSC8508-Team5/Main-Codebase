@@ -21,6 +21,11 @@ and the forces that are added to objects to change those positions
 
 btDiscreteDynamicsWorld* NCL::CSC8503::PhysicsSystem::dynamicsWorld=nullptr;
 
+/// <summary>
+/// Init physics system
+/// </summary>
+/// <param name="g">gameworld</param>
+/// <param name="enalbeBulletPhysics">if you want to use bullet physics system, then set it to TRUE</param>
 PhysicsSystem::PhysicsSystem(GameWorld& g, bool enalbeBulletPhysics) : gameWorld(g) {
 	applyGravity = false;
 	useBroadPhase = false;
@@ -258,6 +263,8 @@ void NCL::CSC8503::PhysicsSystem::UpdateBullet(float dt, int maxSteps)
 	//dynamicsWorld->stepSimulation(1.f / 60.f, 10);
 	dynamicsWorld->stepSimulation(dt, maxSteps);
 
+	UpdateBulletCallbacks();
+
 	IntegrateBullet();
 
 	dynamicsWorld->clearForces();
@@ -308,6 +315,33 @@ void PhysicsSystem::UpdateObjectAABBs() {
 	}
 }
 
+void NCL::CSC8503::PhysicsSystem::UpdateBulletCallbacks()
+{
+	int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		int numContacts = contactManifold->getNumContacts();
+
+		btCollisionObject* body0 = (btCollisionObject*)(contactManifold->getBody0());
+		btCollisionObject* body1 = (btCollisionObject*)(contactManifold->getBody1());
+
+		GameObject* obj0 = (GameObject*)body0->getUserPointer();
+		GameObject* obj1 = (GameObject*)body1->getUserPointer();
+
+		if (numContacts > 0)
+		{
+			obj0->AddCollisionObject(obj1);
+			obj1->AddCollisionObject(obj0);
+		}
+		else
+		{
+			obj0->RemoveCollisionObject(obj1);
+			obj1->RemoveCollisionObject(obj0);
+		}
+	}
+}
 /*
 
 This is how we'll be doing collision detection in tutorial 4.
@@ -600,12 +634,12 @@ void NCL::CSC8503::PhysicsSystem::IntegrateBullet()
 		btRigidBody* body = btRigidBody::upcast(object);
 
 		btTransform bTrans;
-		/*if (body && body->getMotionState())
+		if (body && body->getMotionState())
 		{
 			//std::cout << "Get Transform from motion state\n";
 			body->getMotionState()->getWorldTransform(bTrans);
 		}
-		else*/
+		else
 		{
 			bTrans = object->getWorldTransform();
 		}

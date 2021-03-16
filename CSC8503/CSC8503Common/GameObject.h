@@ -76,7 +76,7 @@ namespace NCL {
 			}
 
 			void SetPhysicsObject(btCollisionObject* newObject) {
-				bulletPhysicsObject = newObject;
+				SetBulletPhysicsObject(newObject);
 			}
 
 			void SetBulletPhysicsObject(btCollisionObject* newObject);
@@ -91,11 +91,15 @@ namespace NCL {
 			}
 
 			virtual void OnCollisionBegin(GameObject* otherObject) {
-				std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
+				//std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
-				std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
+				//std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
+			}
+
+			virtual void OnCollisionStay(GameObject* otherObject) {
+				//std::cout << "OnCollision Stay event with " << otherObject->GetWorldID() << ":" << otherObject->GetName() << "\n";
 			}
 
 			bool GetBroadphaseAABB(Vector3& outsize) const;
@@ -118,11 +122,39 @@ namespace NCL {
 			
 			Layer GetLayer() { return layer; }
 			unsigned int GetLayerMask() { return layerMask; }
+			bool GetLayerMaskEnabled(Layer target) { return layerMask & (unsigned int)target; }
+
+			void SetIsKinematic(bool k) 
+			{ 
+				isKinematic = k; 
+				if (bulletPhysicsObject)
+				{
+					/*int internalType = bulletPhysicsObject->getInternalType();
+					switch (internalType)
+					{
+					case btCollisionObject::CollisionObjectTypes::CO_RIGID_BODY:
+						if (isKinematic)
+							GetBulletBody()->setFlags(GetBulletBody()->getFlags() | (int)btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+						else
+							GetBulletBody()->setFlags(GetBulletBody()->getFlags() & (int)(~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+						//break;
+					case btCollisionObject::CollisionObjectTypes::CO_COLLISION_OBJECT:
+					default:*/
+						if (isKinematic)
+							bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() | (int)btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+						else
+							bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() & (int)(~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+						/*break;
+					}*/
+				}
+			}
+			bool GetIsKinematic() { return isKinematic; }
 
 			void SetLayer(Layer l) { layer = l; UpdateBulletBodyLayer(); }
 			void EnableLayerMask(Layer target) { layerMask |= (unsigned int)target; UpdateBulletBodyLayerMask();}
 			void DisableLayerMask(Layer target) { layerMask &= ~(unsigned int)target; UpdateBulletBodyLayerMask(); }
 			void SetLayerMask(unsigned int mask) { layerMask = mask; UpdateBulletBodyLayerMask(); }
+
 			void UpdateBulletBodyLayerMask()
 			{
 				if(bulletPhysicsObject)
@@ -141,6 +173,10 @@ namespace NCL {
 				{
 					collisionObjects.emplace_back(object);
 					OnCollisionBegin(object);
+				}
+				else
+				{
+					OnCollisionStay(object);
 				}
 			}
 			void RemoveCollisionObject(GameObject* object)
@@ -168,7 +204,10 @@ namespace NCL {
 			virtual void Update(float dt)
 			{
 				if (soundSource)
-					soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+					if(bulletPhysicsObject)
+						soundSource->Update(transform.GetPosition(), GetBulletBody()->getLinearVelocity());
+					else
+						soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
 			}
 
 		protected:
@@ -181,6 +220,7 @@ namespace NCL {
 
 			SoundSource* soundSource;
 
+			bool	isKinematic;
 			bool	isActive;
 			int		worldID;
 			string	name;

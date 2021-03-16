@@ -81,14 +81,20 @@ namespace NCL {
 
 			operator btTransform()
 			{
-				btScalar data[16] = { 0 };
-				Matrix4 mat = matrix.Inverse();
+				/*btScalar data[16] = { 0 };
+				Matrix4 mat = matrix;
 				for (int i = 0; i < 16; i++)
 				{
 					data[i] = mat.array[i];
 				}
 				btTransform bT;
 				bT.setFromOpenGLMatrix(data);
+				return bT;*/
+
+
+				btTransform bT;
+				bT.setOrigin(position);
+				bT.setRotation(orientation);
 				return bT;
 			}
 		protected:
