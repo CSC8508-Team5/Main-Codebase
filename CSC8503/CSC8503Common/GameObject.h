@@ -127,11 +127,26 @@ namespace NCL {
 			void SetIsKinematic(bool k) 
 			{ 
 				isKinematic = k; 
-				if (bulletPhysicsObject) 
-					if(isKinematic)
-						bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
-					else
-						bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() & (~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+				if (bulletPhysicsObject)
+				{
+					/*int internalType = bulletPhysicsObject->getInternalType();
+					switch (internalType)
+					{
+					case btCollisionObject::CollisionObjectTypes::CO_RIGID_BODY:
+						if (isKinematic)
+							GetBulletBody()->setFlags(GetBulletBody()->getFlags() | (int)btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+						else
+							GetBulletBody()->setFlags(GetBulletBody()->getFlags() & (int)(~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+						//break;
+					case btCollisionObject::CollisionObjectTypes::CO_COLLISION_OBJECT:
+					default:*/
+						if (isKinematic)
+							bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() | (int)btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+						else
+							bulletPhysicsObject->setCollisionFlags(bulletPhysicsObject->getCollisionFlags() & (int)(~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT));
+						/*break;
+					}*/
+				}
 			}
 			bool GetIsKinematic() { return isKinematic; }
 

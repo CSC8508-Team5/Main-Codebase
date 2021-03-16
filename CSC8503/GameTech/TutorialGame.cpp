@@ -586,12 +586,10 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 		.SetPosition(position);
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
-
+	//floor->SetIsKinematic(true);
 	btCollisionShape* shape = new btBoxShape(floorSize);
-	btTransform bulletTransform;
+	btTransform bulletTransform = floor->GetTransform();
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
 
 	btScalar mass = 0.0f;
 
@@ -674,17 +672,15 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 
 
 	btCollisionShape* shape = new btSphereShape(btScalar(radius));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
-	btTransform bulletTransform;
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
+	btTransform bulletTransform = sphere->GetTransform();
 
-	btScalar mass;
+	//bulletTransform.setIdentity();
+	//bulletTransform.setOrigin(position);
+
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
 	bool isDynamic = (mass != 0.0f);
 
@@ -695,13 +691,11 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
+	//sphere->SetIsKinematic(true);
 
 	world->AddGameObject(sphere);
 
@@ -722,17 +716,15 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
 
 	btCollisionShape* shape = new btCapsuleShape(btScalar(radius), btScalar(halfHeight));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+
 	btTransform bulletTransform;
 
 	bulletTransform.setIdentity();
 	bulletTransform.setOrigin(position);
 
-	btScalar mass;
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
 	bool isDynamic = (mass != 0.0f);
 
@@ -743,11 +735,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
 	world->AddGameObject(capsule);
@@ -768,7 +757,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& 
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), cylinderMesh, basicTex, basicShader));
 
 	btCollisionShape* shape = new btCylinderShape(btVector3(btScalar(radius), btScalar(halfHeight), btScalar(radius)));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+	
 	btTransform bulletTransform;
 
 	bulletTransform.setIdentity();
@@ -789,11 +778,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& 
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	cylinder->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
 	world->AddGameObject(cylinder);
@@ -935,17 +921,53 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 	GameObject* apple = new GameObject();
 
-	SphereVolume* volume = new SphereVolume(0.25f);
-	apple->SetBoundingVolume((CollisionVolume*)volume);
+	btScalar radius = 0.25f;
+
 	apple->GetTransform()
-		.SetScale(Vector3(0.25, 0.25, 0.25))
+		.SetScale(Vector3(radius, radius, radius))
 		.SetPosition(position);
 
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, basicTex, basicShader));
 
-	apple->GetPhysicsObject()->SetInverseMass(1.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+	//
+
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btSphereShape(btScalar(1.25f));
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = apple->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 0.1f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		apple->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+		apple->SetIsKinematic(true);
+	}
+	else
+	{
+		SphereVolume* volume = new SphereVolume(radius);
+		apple->SetBoundingVolume((CollisionVolume*)volume);
+
+		apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+
+		apple->GetPhysicsObject()->SetInverseMass(1.0f);
+		apple->GetPhysicsObject()->InitSphereInertia();
+	}
 
 	world->AddGameObject(apple);
 
