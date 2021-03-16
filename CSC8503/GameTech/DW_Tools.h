@@ -15,5 +15,6 @@ class DW_Tools
 {
 public:
 	static GLuint LoadTexture(char const* path);
+	static float RandomFloatBetween(float low, float high);
 };
 
