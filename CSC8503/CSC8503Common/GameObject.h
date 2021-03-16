@@ -76,7 +76,7 @@ namespace NCL {
 			}
 
 			void SetPhysicsObject(btCollisionObject* newObject) {
-				bulletPhysicsObject = newObject;
+				SetBulletPhysicsObject(newObject);
 			}
 
 			void SetBulletPhysicsObject(btCollisionObject* newObject);
@@ -154,6 +154,7 @@ namespace NCL {
 			void EnableLayerMask(Layer target) { layerMask |= (unsigned int)target; UpdateBulletBodyLayerMask();}
 			void DisableLayerMask(Layer target) { layerMask &= ~(unsigned int)target; UpdateBulletBodyLayerMask(); }
 			void SetLayerMask(unsigned int mask) { layerMask = mask; UpdateBulletBodyLayerMask(); }
+
 			void UpdateBulletBodyLayerMask()
 			{
 				if(bulletPhysicsObject)
