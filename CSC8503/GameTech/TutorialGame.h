@@ -17,6 +17,7 @@ namespace NCL {
 		public:
 			TutorialGame();
 			~TutorialGame();
+			bool IfRestart();
 
 			virtual void UpdateGame(float dt);
 
@@ -61,6 +62,7 @@ namespace NCL {
 			void UpdateCoins();
 			void UpdateSpinningPlatform();
 			void UpdatePlayer(float dt);
+			void Reload();
 			//end
 
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
@@ -73,6 +75,7 @@ namespace NCL {
 			bool useGravity;
 			bool inSelectionMode;
 
+
 			float		forceMagnitude;
 			//adding for level design
 			float		platformtimer;
@@ -80,6 +83,7 @@ namespace NCL {
 			float		pitch;
 			bool		isjump;
 			bool		isfinish;
+			bool		ispause;
 			int			numstairs;
 			int			numcoins;
 			int			coincollected;

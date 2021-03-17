@@ -31,6 +31,7 @@ TutorialGame::TutorialGame()	{
 	useGravity		= true;
 	inSelectionMode = false;
 
+
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject*[17];
@@ -39,8 +40,11 @@ TutorialGame::TutorialGame()	{
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
-	isjump = false;
+	isjump = false; 
+	//gamestate
 	isfinish = false;
+	ispause = false;
+	//gamestate
 	numstairs = 14;
 	numcoins = 25; // Upper limit of coins
 	coincollected = 0;
@@ -67,6 +71,7 @@ TutorialGame::TutorialGame()	{
 	
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
+
 
 /*
 
@@ -124,25 +129,57 @@ TutorialGame::~TutorialGame()	{
 	delete audio;
 }
 
+//Return Game state
+bool TutorialGame::IfRestart() {
+	if (WinScreen->IfRestart()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void TutorialGame::Reload() {
+	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
+	Quaternion orientation = Quaternion(0, -1, 0, 1);
+	orientation.Normalise();
+	player->GetTransform().SetOrientation(orientation);
+	SphereVolume* volume = new SphereVolume(1.5f);
+	for (int i = 0; i < numcoins; ++i) {
+		if (coins[i] != nullptr) {
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+		}
+	}
+	coincollected = 0;
+}
+
 void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-
+	if (WinScreen->IfRestart()) {
+		isfinish = false;
+		Reload();
+		WinScreen->SetRestart(false);
+		//platforms = LevelTestOne();
+	}
 	UpdateKeys();
-	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
 	}
 	else {
+		ispause = false;
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
 
-	} 
+	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-		
+
 		WinScreen->SetPanelActive(true);
-		
+
 		//Debug::Print("You Win", Vector2(45, 25));
 	}
 
@@ -175,8 +212,8 @@ void TutorialGame::UpdateGame(float dt) {
 		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);
 	}
 	if (testStateObject) {
-		 testStateObject -> Update(dt);
-		
+		 testStateObject->Update(dt);
+
 	}
 
 	world->UpdateWorld(dt);
@@ -184,7 +221,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
-	if (!isfinish) {
+	if ((!ispause) || (!isfinish)) {
 		UpdateLevelOne();
 		UpdateCoins();
 		UpdatePlayer(dt);
@@ -223,13 +260,14 @@ void TutorialGame::UpdateLevelOne() {
 		CollisionDetection::CollisionInfo info;
 		for (int i = 0; i < numstairs; ++i) {
 			if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
+				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0,0,0));
 				player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 				isjump = false;
 			}
 			//finish
 			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 				isfinish = true;
-
+				ispause = true;
 				audio->StopAll();
 				audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
 			}
@@ -324,7 +362,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 		if(!isjump){
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
-			isjump = true; //Comment this if want a quick win.
+			//isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
@@ -538,6 +576,7 @@ void TutorialGame::InitWorld() {
 	//Pendulum();
 	spinplat = 	SpinningPlatform();
 	coincollected = 0;
+	//WinScreen->SetRestart(false);
 }
 
 GameObject** TutorialGame::LevelTestOne() {

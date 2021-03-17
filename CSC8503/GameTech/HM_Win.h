@@ -25,6 +25,12 @@ public:
 	HM_Win();
 	~HM_Win();
 
+
+	bool IfRestart() { return restart; }
+	void SetRestart(const bool flag) {
+		restart = flag;
+	}
+
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);
 		m_isEnable = flag;
@@ -49,6 +55,7 @@ private:
 
 	HM_StartMenu* StartMenu;
 	bool m_isEnable;
+	bool restart;
 	void ClickFunc(const std::string& str);
 
 };
