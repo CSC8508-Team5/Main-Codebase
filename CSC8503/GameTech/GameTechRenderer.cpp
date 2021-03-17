@@ -399,7 +399,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderLights();
 	BlurLights();
 
-	RenderFlame();
+	//RenderFlame();
 
 	RenderSkybox();//TODO, the color of skybox lead to the error of the color of bloom
 	RenderFinalQuad();
