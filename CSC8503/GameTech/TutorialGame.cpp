@@ -122,6 +122,7 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
 
+	
 	UpdateKeys();
 
 	if (isfinish) {
@@ -175,13 +176,14 @@ void TutorialGame::UpdateGame(float dt) {
 	UpdateLevelOne();
 	UpdateCoins();
 	UpdatePlayer(dt);
+	world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3(0, 1, 0), dt);
 
 	UpdateSpinningPlatform();
 	renderer->Render();
 }
 
 void TutorialGame::UpdateLevelOne() {
-	float speed = 30.0f;
+	float speed = 15.0f;
 		for (int i = 1; i < numstairs-1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 1) {
@@ -261,11 +263,11 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (yaw > 360.0f) {
 		yaw -= 360.0f;
 	}
-	if (pitch < -90.0f) {
-		pitch = -90.0f;
+	if (pitch < -89.0f) {
+		pitch = -89.0f;
 	}
-	if (pitch > 90.0f) {
-		pitch =90.0f;
+	if (pitch > 89.0f) {
+		pitch =89.0f;
 	}
 	float frameSpeed = 50 * dt;
 	float cameraSpeed = 25 * dt;
@@ -281,31 +283,31 @@ void TutorialGame::UpdatePlayer(float dt) {
 		InitCharaters();
 	}
 
-	float playerMoveSpeed = 10.0f;
+	float playerMoveSpeed = 20.0f;
 	btVector3 currentSpeed = player->GetBulletBody()->getLinearVelocity();
-
+	Vector3 inputVector = Vector3::Zero();
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		currentSpeed += player->GetTransform().Forward().Normalised() * playerMoveSpeed*dt;
+		inputVector += player->GetTransform().Forward().Normalised();
 		//player->GetBulletBody()->applyCentralForce(player->GetTransform().Forward().Normalised() * 600.0f);
 		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised()* playerMoveSpeed);
 		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
 		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		currentSpeed += player->GetTransform().Forward().Normalised() * -playerMoveSpeed*dt;
+		inputVector -= player->GetTransform().Forward().Normalised();
 		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised() * -playerMoveSpeed);
 		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
 		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		currentSpeed += player->GetTransform().Right().Normalised() * playerMoveSpeed *dt;
+		inputVector += player->GetTransform().Right().Normalised();
 		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * playerMoveSpeed);
 		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
 		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		currentSpeed += player->GetTransform().Right().Normalised() * -playerMoveSpeed *dt;
+		inputVector -= player->GetTransform().Right().Normalised();
 		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * -playerMoveSpeed);
 		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
 		//player->GetTransform().SetPosition(playerposition);
@@ -327,24 +329,29 @@ void TutorialGame::UpdatePlayer(float dt) {
 		//player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); 
 		//player->GetBulletBody()->applyCentralForce(Vector3(0, -100, 0));
 	}
+
+
+
 	player->GetBulletBody()->setActivationState(true);
-	player->GetBulletBody()->setLinearVelocity(currentSpeed);
+	player->GetBulletBody()->setLinearVelocity(currentSpeed + inputVector* playerMoveSpeed*dt);
+	//player->GetBulletBody()->setGravity(btVector3(0, -9.8f, 0));
 	//player->GetBulletBody()->applyCentralForce(currentSpeed);
 
 
 	// Third person Camera
 	const float Deg2Rad = 3.1415926f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
-	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().Backward().Normalised() * lockedDistance;
+	float cameraXOffset = lockedDistance * cos(-pitch * Deg2Rad);
+	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().Backward().Normalised() * cameraXOffset;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
 	Matrix4 modelMat = mat.Inverse();
 
 	Quaternion q(modelMat);
 	Vector3 angles = q.ToEuler(); //nearly there now!
 
-	world->GetMainCamera()->SetPosition(camerTargetPos+Vector3(0,3,0));//Adding a distance on Y
+	/*world->GetMainCamera()->SetPosition(camerTargetPos+Vector3(0,3,0));//Adding a distance on Y
 	world->GetMainCamera()->SetPitch(angles.x);
-	world->GetMainCamera()->SetYaw(angles.y);
+	world->GetMainCamera()->SetYaw(angles.y);*/
 }
 
 void TutorialGame::UpdateKeys() {
@@ -635,7 +642,7 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 	//coin->SetIsKinematic(false);
 	coin->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
-	coin->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
+	coin->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
 	return coin;
 }
 
