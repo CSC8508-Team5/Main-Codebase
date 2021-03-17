@@ -793,7 +793,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCapsule(const Vector3& posit
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
 	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	capsule->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
+	//capsule->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
 
 	world->AddGameObject(capsule);
 
@@ -903,7 +903,7 @@ void TutorialGame::InitDefaultFloor(bool useBullet) {
 		CreateBulletFloor(Vector3(0, -2, 0));
 	else
 		AddFloorToWorld(Vector3(0, -2, 0));*/
-	AddFloorToWorld(Vector3(0, 6, 0));
+	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
 void TutorialGame::InitGameExamples() {
