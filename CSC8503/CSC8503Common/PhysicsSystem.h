@@ -113,6 +113,15 @@ namespace NCL {
 
 			void UseGravity(bool state) {
 				applyGravity = state;
+				if (useBulletPhysics)
+					if (applyGravity)
+						UpdateBulletGravity(btVector3(0, 0, 0));
+					else
+						UpdateBulletGravity(gravity);
+			}
+
+			void UpdateBulletGravity(btVector3 gravity) {
+				dynamicsWorld->setGravity(gravity);
 			}
 
 			void SetGlobalDamping(float d) {
@@ -120,6 +129,7 @@ namespace NCL {
 			}
 
 			void SetGravity(const Vector3& g);
+			Vector3 GetGravity()const { return gravity; }
 
 			//functions for add/remove [rigidbody] to/from dynamicsWorld of bullet physics engine 
 			static void AddBulletBody(btRigidBody* body, int group = (int)GameObject::Layer::Default, int mask = (int)GameObject::Layer::All) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body, group, mask); }
