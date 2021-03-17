@@ -4,8 +4,12 @@
 #include "../CSC8503Common/AudioSystem.h"
 #include "StateGameObject.h"
 
+#include "../../Common/Vector3.h"
+#include "../../Common/Assets.h"
 #include "DW_UIRenderer.h"
-
+#include "DW_UIText.h"
+#include "DW_UIPanel.h"
+#include "DW_UIImage.h"
 #include "HM_StartMenu.h"
 #include "HM_PauseMenu.h"
 #include "HM_Win.h"
@@ -57,6 +61,9 @@ namespace NCL {
 			GameObject* SpinningPlatform();
 			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
 			GameObject* AddCoins(const Vector3& position);
+			DW_UIText*	 Coin_text;
+			DW_UIText*   Timer_text;
+			DW_UIPanel* InGameUI;
 			void Pendulum();
 			void UpdateLevelOne();
 			void UpdateCoins();

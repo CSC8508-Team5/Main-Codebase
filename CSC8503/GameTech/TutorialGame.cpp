@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <math.h>
 
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -67,8 +68,14 @@ TutorialGame::TutorialGame()	{
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
-
-	
+//--------------------------------------------------In Game UI------------------------------------------//
+	InGameUI = new DW_UIPanel("InGameUI");
+	Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Timer_text = new DW_UIText("Timertext", "Time :  " , 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	InGameUI->AddComponent(Coin_text);
+	InGameUI->AddComponent(Timer_text);
+	DW_UIRenderer::get_instance().AddPanel(InGameUI);
+	InGameUI->SetPanelIsEnable(false);
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
@@ -122,6 +129,8 @@ TutorialGame::~TutorialGame()	{
 	delete[] coins;
 	delete spinplat;
 	delete player;
+	delete InGameUI;
+	delete Coin_text;
 
 	delete physics;
 	delete renderer;
@@ -152,12 +161,15 @@ void TutorialGame::Reload() {
 		}
 	}
 	coincollected = 0;
+	audio->StopAll();
+	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
 }
 
 void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
+	Timer_text->SetText("Timer : " + std::to_string((int)(dt*10))+ " s"); //unfinished timer
 	if (WinScreen->IfRestart()) {
 		isfinish = false;
 		Reload();
@@ -169,12 +181,13 @@ void TutorialGame::UpdateGame(float dt) {
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
+		InGameUI->SetPanelIsEnable(false);
 	}
 	else {
 		ispause = false;
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
-
+		InGameUI->SetPanelIsEnable(true);
 	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
 
@@ -285,10 +298,7 @@ void TutorialGame::UpdateSpinningPlatform(){
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	if (!StartMenu->GetPanelIsEnable() &&!PauseMenu->GetPanelIsEnable() && 
-		!WinScreen->GetPanelIsEnable() && !LoseScreen->GetPanelIsEnable() && !OptionMenu->GetPanelIsEnable()) {
-		Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
-	}
+	Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
