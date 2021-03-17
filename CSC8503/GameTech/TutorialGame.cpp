@@ -581,7 +581,7 @@ GameObject** TutorialGame::LevelTestOne() {
 	Vector3 cubeSize = Vector3(10, 5, 10);
 	Vector3 middlecubeSize = Vector3(10, 5, 20);
 
-	float invCubeMass = 200000.0f; // how heavy the middle pieces are
+	float invCubeMass = 0.1f; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
