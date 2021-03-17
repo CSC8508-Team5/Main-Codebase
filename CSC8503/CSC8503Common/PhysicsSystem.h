@@ -114,13 +114,13 @@ namespace NCL {
 			void UseGravity(bool state) {
 				applyGravity = state;
 				if (useBulletPhysics)
-					if(applyGravity)
-						UpdateBulletGravity();
+					if (applyGravity)
+						UpdateBulletGravity(btVector3(0, 0, 0));
 					else
 						UpdateBulletGravity(gravity);
 			}
 
-			void UpdateBulletGravity(btVector3 gravity = btVector3(0.0f,-9.8f,0.0f)) {
+			void UpdateBulletGravity(btVector3 gravity) {
 				dynamicsWorld->setGravity(gravity);
 			}
 
