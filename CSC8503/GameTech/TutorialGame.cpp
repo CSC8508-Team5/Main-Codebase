@@ -242,7 +242,8 @@ void TutorialGame::LockedObjectMovement() {
 		if (physics->isUseBulletPhysics())
 		{
 			selectionObject->GetBulletBody()->activate();
-			selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
+			//selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
+			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis*5);
 		}
 		else
 		lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
@@ -252,7 +253,8 @@ void TutorialGame::LockedObjectMovement() {
 		if (physics->isUseBulletPhysics())
 		{
 			selectionObject->GetBulletBody()->activate();
-			selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
+			//selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
+			selectionObject->GetBulletBody()->setLinearVelocity(-fwdAxis * 5);
 		}
 		else
 		lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
@@ -685,6 +687,10 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
+	cube->GetBulletBody()->setLinearFactor(Vector3::Zero());
+	cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
+	cube->GetBulletBody()->setGravity(Vector3::Zero());
+	cube->GetBulletBody()->setLinearVelocity(Vector3::Forward());
 	//add the gameobject to the world
 	world->AddGameObject(cube);
 
@@ -771,7 +777,8 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCapsule(const Vector3& posit
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
 	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+	capsule->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
+
 	world->AddGameObject(capsule);
 
 	return capsule;
@@ -876,10 +883,11 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 }
 
 void TutorialGame::InitDefaultFloor(bool useBullet) {
-	if (useBullet)
+	/*if (useBullet)
 		CreateBulletFloor(Vector3(0, -2, 0));
 	else
-		AddFloorToWorld(Vector3(0, -2, 0));
+		AddFloorToWorld(Vector3(0, -2, 0));*/
+	AddFloorToWorld(Vector3(0, 6, 0));
 }
 
 void TutorialGame::InitGameExamples() {
