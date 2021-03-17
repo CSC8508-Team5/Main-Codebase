@@ -16,6 +16,7 @@ using namespace CSC8503;
 TutorialGame::TutorialGame()	{
 	world		= new GameWorld();
 	renderer	= new GameTechRenderer(*world);
+	renderer->SetIsRenderFlame(false);
 	physics		= new PhysicsSystem(*world);
 	//irrklang audio system
 	audio		= new AudioSystem();

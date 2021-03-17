@@ -7,7 +7,7 @@
 class DW_Particle
 {
 public:
-	DW_Particle();
+	DW_Particle(const NCL::Maths::Vector3& pos);
 	~DW_Particle();
 
 	NCL::Maths::Vector3 GetPosition() { return m_position; }
@@ -23,8 +23,6 @@ public:
 	float GetLifeSpan() { return m_lifespan; }
 
 	void Update(const float dt);
-
-	//static bool SortParticles(const DW_Particle& particleA, const DW_Particle& particleB);
 	static bool SortParticles(DW_Particle* particleA, DW_Particle* particleB);
 private:
 	float m_lifespan;
@@ -34,7 +32,7 @@ private:
 	NCL::Maths::Matrix4 m_modelMatrix;
 
 	float GenerateRandomFloat();
-	void InitFlameData();
+	void InitFlameData(const NCL::Maths::Vector3& pos);
 	
 };
 

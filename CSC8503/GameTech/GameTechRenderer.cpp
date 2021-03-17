@@ -47,7 +47,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	m_gaussianShader = new OGLShader("GaussianVert.glsl", "GaussianFrag.glsl");
 	m_bloomHelper = new DW_BloomHelper(currentWidth, currentHeight );
 	m_flameShader = new OGLShader("FlameVert.glsl", "FlameFrag.glsl");
-	m_flame = new DW_Flame(Vector3{0.0f,5.0f,0.0f}, NCL::Assets::TEXTUREDIR + "fire.jpg");
+	m_flame = new DW_Flame(Vector3{0.0f,1.0f,0.0f}, NCL::Assets::TEXTUREDIR + "fire.jpg");
+	m_flame->SetParticlePos(NCL::Maths::Vector3(-150.0f, 20.f, -30.0f));
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -218,9 +219,16 @@ void GameTechRenderer::CombineBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GameTechRenderer::BlitFBO() {
+void GameTechRenderer::BlitFBO1() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_deferredHelper->GetBufferFBO());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_combineHelper->GetFBO());
+	glBlitFramebuffer(0, 0, currentWidth, currentHeight, 0, 0, currentWidth, currentHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GameTechRenderer::BlitFBO2() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_combineHelper->GetFBO());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBlitFramebuffer(0, 0, currentWidth, currentHeight, 0, 0, currentWidth, currentHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -292,11 +300,15 @@ void GameTechRenderer::BlurLights() {
 }
 
 void GameTechRenderer::RenderFlame() {
+	if (!m_isRenderFlame)
+	{
+		return;
+	}
 	float screenAspect = (float)currentWidth / (float)currentHeight;
 	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
 	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
 	glEnable(GL_BLEND);
 	//glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -324,12 +336,16 @@ void GameTechRenderer::RenderFlame() {
 			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourBlueVar"), 0.0f);
 		}
 
-
+		/*glBindVertexArray(m_flame->GetVAO());
+		for (int j = 0; j < 16; j++) {
+			if (j % 4 == 0)
+				glDrawArrays(GL_TRIANGLE_STRIP, j, 4);
+		}*/
 		glBindVertexArray(m_flame->GetVAO());
-		glDrawArrays(GL_POINTS, 0, 300);
+		glDrawArrays(GL_POINTS, 0, 3000);
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glEnable(GL_DEPTH_TEST);
 }
 
@@ -380,7 +396,7 @@ void GameTechRenderer::Update(float dt) {
 }
 
 void GameTechRenderer::RenderFrame() {
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	BuildObjectList();
 	SortObjectList();
 
@@ -393,21 +409,23 @@ void GameTechRenderer::RenderFrame() {
 	CombineBuffer();
 
 	//2.copy depth and stencil buffer 
-	BlitFBO();
+	BlitFBO1();
 
 	//3.forward rendering stage
 	RenderLights();
 	BlurLights();
 
-	//RenderFlame();
+	
 
 	RenderSkybox();//TODO, the color of skybox lead to the error of the color of bloom
 	RenderFinalQuad();
 	
 	//RenderCamera();
-	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+	//glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
-	
+	BlitFBO2();
+
+	RenderFlame();
 
 	RenderHUD();
 	RenderUI();

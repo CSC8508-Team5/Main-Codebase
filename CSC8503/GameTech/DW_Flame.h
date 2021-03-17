@@ -16,7 +16,11 @@ public:
 	virtual ~DW_Flame();
 	virtual void Update(const float dt);
 	virtual void SetRenderData();
+
+	void SetParticlePos(const NCL::Maths::Vector3& p) { m_particlePos = p; }
 private:
-	//const int m_VertexNum{ 300 };
+	NCL::Maths::Vector3 m_particlePos;
+
+	float DecideAlpha(const float num);
 };
 

@@ -49,6 +49,9 @@ namespace NCL {
 			}
 
 			void Update(float dt) override;
+
+			void SetIsRenderFlame(const bool flag) { m_isRenderFlame = flag; }
+
 		protected:
 			void RenderFrame()	override;
 			
@@ -75,7 +78,8 @@ namespace NCL {
 			void RenderLighting();
 			void CombineBuffer();
 
-			void BlitFBO();
+			void BlitFBO1();//from deferred rendering fbo to combine fbo
+			void BlitFBO2();//from combine fbo to default fbo
 			void RenderLights();
 			void RenderFinalQuad();
 			void BlurLights();
@@ -117,6 +121,8 @@ namespace NCL {
 			float m_exp{ 1.0f };
 			OGLShader* m_flameShader;
 			DW_Flame* m_flame;
+			bool m_isRenderFlame{true};
+
 		};
 	}
 }
