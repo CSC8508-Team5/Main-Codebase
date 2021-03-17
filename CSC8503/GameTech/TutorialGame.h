@@ -66,6 +66,7 @@ namespace NCL {
 			// Conor Level
 			void LevelThree();
 			void UpdateLevelThree();
+			std::vector<GameObject*> sliderVector;
 
 		StateGameObject* AddStateObjectToWorld(const Vector3& position);
 		  StateGameObject * testStateObject = nullptr;

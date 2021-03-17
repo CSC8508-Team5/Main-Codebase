@@ -591,12 +591,22 @@ GameObject** TutorialGame::LevelTestOne() {
 }
 
 void TutorialGame::LevelThree() {
-	GameObject* startingFloor = AddCubeToWorld(Vector3(0, 0, 0), Vector3(50, 2, 30), 0);
+
+	// Platforms 
+	GameObject* startingFloor = AddCubeToWorld(Vector3(0, 0, 0), Vector3(100, 2, 30), 0);
 	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 
-	GameObject* slope = AddCubeToWorld(Vector3(200, 20, 0), Vector3(150, 2, 30), 0);
+	GameObject* slope = AddCubeToWorld(Vector3(250, 20, 0), Vector3(150, 2, 30), 0);
 	slope->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 	slope->GetTransform().SetOrientation(Quaternion(0, 0, 0.15, 1));
+
+	GameObject* finish = AddCubeToWorld(Vector3(440, 60, 0), Vector3(50, 2, 30), 0);
+	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+	// Placeholder State Objects ("sliders")
+	sliderVector.emplace_back(AddCubeToWorld(Vector3(0, 6, 0), Vector3(1, 4, 10), 0));
+	sliderVector.emplace_back(AddCubeToWorld(Vector3(30, 6, 0), Vector3(1, 4, 10), 0));
+	sliderVector.emplace_back(AddCubeToWorld(Vector3(60, 6, 0), Vector3(1, 4, 10), 0));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
