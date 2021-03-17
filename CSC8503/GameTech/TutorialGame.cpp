@@ -235,10 +235,10 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
 	if ((!ispause) || (!isfinish)) {
-		UpdateLevelOne();
-		UpdateCoins();
+		//UpdateLevelOne();
+		//UpdateCoins();
 		UpdatePlayer(dt);
-		UpdateSpinningPlatform();
+	//	UpdateSpinningPlatform();
 	}
 
 
@@ -573,19 +573,21 @@ void TutorialGame::InitWorld() {
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
+	//-------------LV1 -------------------------------------
+	//platforms = LevelTestOne();
+	//std::vector<Vector3> poses;
+	//for (int i = 0; i < numstairs; i++)
+	//{
+	//	//std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
+	//	poses.push_back(platforms[i]->GetTransform().GetPosition());
+	//}
 
-	platforms = LevelTestOne();
-	std::vector<Vector3> poses;
-	for (int i = 0; i < numstairs; i++)
-	{
-		//std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
-		poses.push_back(platforms[i]->GetTransform().GetPosition());
-	}
-	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 
+	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	//-------------LV1 -------------------------------------
 
 	//Pendulum();
-	spinplat = 	SpinningPlatform();
+//spinplat = 	SpinningPlatform();
 	coincollected = 0;
 	//WinScreen->SetRestart(false);
 }
