@@ -17,16 +17,12 @@ namespace NCL {
 		class TriggerCollisionDispatcher : public btCollisionDispatcher
 		{
 		public:
-			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration) : btCollisionDispatcher(collisionConfiguration)
+			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration)
+				: btCollisionDispatcher(collisionConfiguration) {}
+
+
+			virtual bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
 			{
-
-			}
-
-
-			virtual bool
-				needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
-			{
-
 				btAssert(body0);
 				btAssert(body1);
 
@@ -51,7 +47,7 @@ namespace NCL {
 				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
 					needsCollision = false;
 
-				if (needsCollision)
+				/*if (needsCollision)
 				{
 					obj0->AddCollisionObject(obj1);
 					obj1->AddCollisionObject(obj0);
@@ -60,12 +56,12 @@ namespace NCL {
 				{
 					obj0->RemoveCollisionObject(obj1);
 					obj1->RemoveCollisionObject(obj0);
-				}
+				}*/
 
 				return needsCollision;
 			}
-			virtual bool
-				needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
+
+			bool needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
 			{
 				//here you can do filtering
 				bool hasResponse =
@@ -75,7 +71,6 @@ namespace NCL {
 					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
 				return hasResponse;
 			}
-
 		};
 
 		struct TriggerFilterCallback : public btOverlapFilterCallback
@@ -134,23 +129,37 @@ namespace NCL {
 			static void AddConstraint(btTypedConstraint* constraint, bool disableCollisionsBetween = false) { if (dynamicsWorld && constraint)dynamicsWorld->addConstraint(constraint, disableCollisionsBetween); }
 			static void RemoveConstraint(btTypedConstraint* constraint) { if (dynamicsWorld && constraint) dynamicsWorld->removeConstraint(constraint); }
 
-			//function for ray test of dyanmicsWorld
+			//function for raycasting of dyanmicsWorld
 			static void Raycast(btVector3 startPos, btVector3 endPos, btCollisionWorld::RayResultCallback& resultCallback) { if (dynamicsWorld) dynamicsWorld->rayTest(startPos, endPos, resultCallback); }
 			//static btCollisionWorld::ClosestRayResultCallback Raycast(Ray ray, float maxDistance) { if (dynamicsWorld) dynamicsWorld->rayTest(ray.GetPosition(), ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance, resultCallback); }
-			static bool Raycast(Ray& ray, RayCollision& collision, float maxDistance = 200.0f)
+			static bool Raycast(Ray& ray, RayCollision& collision, bool closestObject = true, float maxDistance = 200.0f)
 			{
 				btVector3 from = ray.GetPosition();
 				btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * maxDistance;
-				btCollisionWorld::ClosestRayResultCallback rcb(from, to);
-				//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
-				PhysicsSystem::Raycast(from, to, rcb);
+				bool hit;
+				if (closestObject)
+				{
+					btCollisionWorld::ClosestRayResultCallback rcb(from, to);
+					PhysicsSystem::Raycast(from, to, rcb);
 
-				collision.node = (void*)rcb.m_collisionObject;
-				collision.collidedAt = rcb.m_hitPointWorld;
-				collision.normal = rcb.m_hitNormalWorld;
-				collision.rayDistance = from.distance(to);
+					collision.node = (void*)rcb.m_collisionObject;
+					collision.collidedAt = rcb.m_hitPointWorld;
+					collision.normal = rcb.m_hitNormalWorld;
+					collision.rayDistance = from.distance(to);
+					hit = rcb.hasHit();
+				}
+				else
+				{
+					btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
+					PhysicsSystem::Raycast(from, to, rcb);
 
-				return rcb.hasHit();
+					collision.node = (void*)rcb.m_collisionObject;
+					collision.collidedAt = rcb.m_hitPointWorld.at(0);
+					collision.normal = rcb.m_hitNormalWorld.at(0);
+					collision.rayDistance = from.distance(to);
+					hit = rcb.hasHit();
+				}
+				return hit;
 			}
 
 			bool isUseBulletPhysics() const { return useBulletPhysics; }
@@ -178,6 +187,8 @@ namespace NCL {
 			void UpdateCollisionList();
 			void UpdateObjectAABBs();
 
+			void UpdateBulletCallbacks();
+			 
 			void ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const;
 
 			GameWorld& gameWorld;

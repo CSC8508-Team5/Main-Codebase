@@ -13,6 +13,8 @@ GameObject::GameObject(string objectName)	{
 	bulletPhysicsObject = nullptr;
 	renderObject	= nullptr;
 
+	isKinematic		= false;
+
 	soundSource		= nullptr;
 	m_HUD = nullptr;
 }
@@ -40,13 +42,14 @@ GameObject::~GameObject()	{
 
 void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObject)
 {
-	if (newObject == nullptr && bulletPhysicsObject != nullptr)
+	if (newObject != nullptr && bulletPhysicsObject != nullptr)
 		PhysicsSystem::RemoveBulletBody(GetBulletBody());
 	bulletPhysicsObject = newObject;
 	if (bulletPhysicsObject)
 	{
 		GetBulletBody()->setUserPointer(this);
 		PhysicsSystem::AddBulletBody(GetBulletBody(), (int)layer, layerMask);
+		SetIsKinematic(GetIsKinematic());
 	}
 }
 

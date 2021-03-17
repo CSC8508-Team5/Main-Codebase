@@ -15,6 +15,7 @@ using namespace CSC8503;
 TutorialGame::TutorialGame() {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
+	//physics engine started here
 	physics = new PhysicsSystem(*world, true);
 	//irrklang audio system
 	audio = new AudioSystem();
@@ -218,18 +219,26 @@ void TutorialGame::UpdateLevelOne() {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 1) {
 			if (position.z <= -60) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >=10) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		else if (i % 3 == 0) {
 			if(position.z <=-10) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 60) {
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+				platforms[i]->GetBulletBody()->setActivationState(true);
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 	}
@@ -250,7 +259,8 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateSpinningPlatform(){
-	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+	//spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
+	spinplat->GetBulletBody()->setAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
 	CollisionDetection::CollisionInfo info;
 	if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
 		//player->GetPhysicsObject()->SetAngularVelocity(spinplat->GetPhysicsObject()->GetAngularVelocity());
@@ -266,7 +276,8 @@ void TutorialGame::UpdateCoins() {
 	}
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
-			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
+			//coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
+			coins[i]->GetBulletBody()->setAngularVelocity(Vector3(0, 2, 0));
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(player, coins[i], info)) {
 				coincollected += 1;
@@ -314,43 +325,63 @@ void TutorialGame::UpdatePlayer(float dt) {
 		player->GetTransform().SetScale(Vector3(0,0,0));
 		InitCharaters();
 	}
+
+	float playerMoveSpeed = 10.0f;
+	btVector3 currentSpeed = player->GetBulletBody()->getLinearVelocity();
+
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Forward().Normalised() * playerMoveSpeed*dt;
+		//player->GetBulletBody()->applyCentralForce(player->GetTransform().Forward().Normalised() * 600.0f);
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised()* playerMoveSpeed);
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Forward().Normalised() * -playerMoveSpeed*dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Forward().Normalised() * -playerMoveSpeed);
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Right().Normalised() * playerMoveSpeed *dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * playerMoveSpeed);
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		currentSpeed += player->GetTransform().Right().Normalised() * -playerMoveSpeed *dt;
+		//player->GetBulletBody()->setLinearVelocity(player->GetTransform().Right().Normalised() * -playerMoveSpeed);
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 
 	//jump
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		if(!isjump){
-			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-
-			isjump = true; //Comment this if want a quick win.
-			//audio->PlaySFX("PP_Jump_1_1.wav");
-		}
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {
+		float jumpHeight = 5.0f;
+		//if(!isjump){
+			float jumpSpeed = sqrt(-2.0f * -9.8f * jumpHeight);
+			//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0))
+			currentSpeed += Vector3::Up() * jumpSpeed;
+			//player->GetBulletBody()->setLinearVelocity(Vector3(0, 20, 0));
+			isjump = true;
+		//}
 
 	}
 	else{
-		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); }
+		//player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); 
+		//player->GetBulletBody()->applyCentralForce(Vector3(0, -100, 0));
+	}
+	player->GetBulletBody()->setActivationState(true);
+	player->GetBulletBody()->setLinearVelocity(currentSpeed);
+	//player->GetBulletBody()->applyCentralForce(currentSpeed);
 
 
 	// Third person Camera
 	std::cout << yaw << endl;
 	const float Deg2Rad = 3.1415927f / 180.0f;
 	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
-	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
+	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().Backward().Normalised() * lockedDistance;
 	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
 	Matrix4 modelMat = mat.Inverse();
 
@@ -625,7 +656,7 @@ GameObject** TutorialGame::LevelTestOne() {
 	Vector3 cubeSize = Vector3(10, 5, 10);
 	Vector3 middlecubeSize = Vector3(10, 5, 20);
 
-	float invCubeMass = 0; // how heavy the middle pieces are
+	float invCubeMass = 0.1f; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
 	
 	Vector3 startPos = Vector3(-150, 5, 0);
@@ -642,17 +673,28 @@ GameObject** TutorialGame::LevelTestOne() {
 	for (int i = 1; i < numstairs-1; ++i) {
 		if (i % 3 == 1) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
+
+			platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 30));
+			platforms[i]->GetBulletBody()->setActivationState(true);
+			platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setGravity(Vector3::Zero());
+			//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1)* 5.0f+3, -20));
 		}
 		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, 0.0f);
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if(i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -30));
+			//platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			platforms[i]->GetBulletBody()->setActivationState(true);
+			platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+			platforms[i]->GetBulletBody()->setGravity(Vector3::Zero());
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1) * 5.0f+3, 20));
 		}
@@ -664,6 +706,9 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 	GameObject* coin = new GameObject();
 	coin = AddBonusToWorld(position);
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+	//coin->SetIsKinematic(false);
+	coin->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+	coin->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
 	return coin;
 }
 
@@ -671,7 +716,10 @@ GameObject* TutorialGame::SpinningPlatform() {
 	float radius = 30.0f;
 	float hight = 2.5f;
 	Vector3 position = Vector3(-150, 5, -80);
-	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
+	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 1.0f);
+	spinplat->GetBulletBody()->setGravity(Vector3::Zero());
+	spinplat->GetBulletBody()->setLinearFactor(Vector3::Zero());
+	spinplat->GetBulletBody()->setAngularFactor(Vector3::Zero());
 	spinplat->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
 	return spinplat;
 }
@@ -730,9 +778,9 @@ void TutorialGame::BridgeBulletConstraintTest() {
 
 	Vector3 startPos = Vector3(5, 100, 5);
 
-	GameObject* start = AddBulletCubeToWorld(startPos + Vector3(0, 0, 0)
+	GameObject* start = CreateBulletCube(startPos + Vector3(0, 0, 0)
 		, cubeSize, 0);
-	GameObject* end = AddBulletCubeToWorld(startPos + Vector3((numLinks + 1)
+	GameObject* end = CreateBulletCube(startPos + Vector3((numLinks + 1)
 		* cubeDistance+8, 0, 0), cubeSize, 0);
 
 	GameObject* previous = start;
@@ -747,7 +795,7 @@ void TutorialGame::BridgeBulletConstraintTest() {
 	frameInB.setOrigin(btVector3(-cubeDistance /2, 0, 0));
 
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject* block = AddBulletCubeToWorld(startPos + Vector3((i + 1) *
+		GameObject* block = CreateBulletCube(startPos + Vector3((i + 1) *
 			cubeDistance, 0, 0), cubeSize, invCubeMass);
 
 		//btPoint2PointConstraint()
@@ -792,6 +840,42 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletFloor(position);
+	else
+		return CreateFloor(position);
+}
+
+/*
+
+Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
+rigid body representation. This and the cube function will let you build a lot of 'simple'
+physics worlds. You'll probably need another function for the creation of OBB cubes too.
+
+*/
+GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletCube(position, dimensions, inverseMass);
+	else
+		return CreateCube(position, dimensions, inverseMass);
+}
+
+GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletSphere(position, radius, inverseMass);
+	else
+		return CreateSphere(position, radius, inverseMass);
+}
+
+GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
+	if (physics->isUseBulletPhysics())
+		return CreateBulletCapsule(position, halfHeight, radius, inverseMass);
+	else
+		return CreateCapsule(position, halfHeight, radius, inverseMass);
+}
+
+GameObject* NCL::CSC8503::TutorialGame::CreateFloor(const Vector3& position)
+{
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize = Vector3(200, 2, 200);
@@ -812,39 +896,8 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	return floor;
 }
 
-
-/*
-The cylinder now using the CapsuleVolume, might need to change 
-*/
-GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
-	GameObject* cylinder = new GameObject();
-
-	Vector3 cylinderSize = Vector3(radius*2, hight, radius*2);
-	AABBVolume* volume = new AABBVolume(Vector3(radius , hight, radius ));
-	cylinder->SetBoundingVolume((CollisionVolume*)volume);
-
-	cylinder->GetTransform()
-		.SetScale(cylinderSize)
-		.SetPosition(position);
-
-	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), spinplatMesh, basicTex, basicShader));
-	cylinder->SetPhysicsObject(new PhysicsObject(&cylinder->GetTransform(), cylinder->GetBoundingVolume()));
-
-	cylinder->GetPhysicsObject()->SetInverseMass(inverseMass);
-	cylinder->GetPhysicsObject()->InitSphereInertia();
-
-	world->AddGameObject(cylinder);
-
-	return cylinder;
-}
-/*
-
-Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
-rigid body representation. This and the cube function will let you build a lot of 'simple'
-physics worlds. You'll probably need another function for the creation of OBB cubes too.
-
-*/
-GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
+GameObject* NCL::CSC8503::TutorialGame::CreateSphere(const Vector3& position, float radius, float inverseMass)
+{
 	GameObject* sphere = new GameObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
@@ -866,29 +919,8 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	return sphere;
 }
 
-GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
-	GameObject* capsule = new GameObject();
-
-	CapsuleVolume* volume = new CapsuleVolume(halfHeight, radius);
-	capsule->SetBoundingVolume((CollisionVolume*)volume);
-
-	capsule->GetTransform()
-		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
-		.SetPosition(position);
-
-	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
-	capsule->SetPhysicsObject(new PhysicsObject(&capsule->GetTransform(), capsule->GetBoundingVolume()));
-
-	capsule->GetPhysicsObject()->SetInverseMass(inverseMass);
-	capsule->GetPhysicsObject()->InitCubeInertia();
-
-	world->AddGameObject(capsule);
-
-	return capsule;
-
-}
-
-GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
+GameObject* NCL::CSC8503::TutorialGame::CreateCube(const Vector3& position, Vector3 dimensions, float inverseMass)
+{
 	GameObject* cube = new GameObject();
 
 	AABBVolume* volume = new AABBVolume(dimensions);
@@ -910,7 +942,31 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 	return cube;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& position)
+GameObject* NCL::CSC8503::TutorialGame::CreateCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass)
+{
+	GameObject* capsule = new GameObject();
+
+	CapsuleVolume* volume = new CapsuleVolume(halfHeight, radius);
+	capsule->SetBoundingVolume((CollisionVolume*)volume);
+
+	capsule->GetTransform()
+		.SetScale(Vector3(radius * 2, halfHeight, radius * 2))
+		.SetPosition(position);
+
+	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
+	capsule->SetPhysicsObject(new PhysicsObject(&capsule->GetTransform(), capsule->GetBoundingVolume()));
+
+	capsule->GetPhysicsObject()->SetInverseMass(inverseMass);
+	capsule->GetPhysicsObject()->InitCubeInertia();
+
+	world->AddGameObject(capsule);
+
+	return capsule;
+}
+
+
+
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletFloor(const Vector3& position)
 {
 	GameObject* floor = new GameObject("Floor");
 
@@ -921,12 +977,10 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 		.SetPosition(position);
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
-
+	//floor->SetIsKinematic(true);
 	btCollisionShape* shape = new btBoxShape(floorSize);
-	btTransform bulletTransform;
+	btTransform bulletTransform = floor->GetTransform();
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
 
 	btScalar mass = 0.0f;
 
@@ -943,56 +997,61 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletFloorToWorld(const Vector3& pos
 	return floor;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position, Vector3 dimensions, float inverseMass)
 {
+	//Initialize Gameobject*
 	GameObject* cube = new GameObject();
 
+	//Set Gameobject world Transform
 	cube->GetTransform()
 		.SetPosition(position)
 		.SetScale(dimensions * 2);
 
+	//Set Rendering agent
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 
-	//btVector3 btDimensions(btScalar(dimensions.x), btScalar(dimensions.y), btScalar(dimensions.z));
+	//Set Object to Kinematic if you want it not affect by Gravity or Force
+	//cube->SetIsKinematic(true);
 
-
-	//btCollisionShape* shape = nullptr;
-	//shape = new btBoxShape(dimensions);
+	//Initialize shape of the collision object
 	btCollisionShape* shape = new btBoxShape(dimensions);
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
-	btTransform bulletTransform;
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
+	//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+	btTransform bulletTransform = cube->GetTransform();
+	//btTransform bulletTransform;
+	//bulletTransform.setIdentity();
+	//bulletTransform.setOrigin(position);
 
-	btScalar mass;
+	//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
+	//if mass != zero, we shall caculate the local inertia by calling bullet api
 	bool isDynamic = (mass != 0.0f);
-
 	btVector3 localInertia(0, 0, 0);
 
 	if (isDynamic)
 		shape->calculateLocalInertia(mass, localInertia);
 
+	//init motionstate from bullet transform
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
+	//init bullet rigid body
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
+	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+
+	//cube->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+	//cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
+	//add the gameobject to the world
 	world->AddGameObject(cube);
 
 	return cube;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& position, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletSphere(const Vector3& position, float radius, float inverseMass)
 {
 	GameObject* sphere = new GameObject();
 
@@ -1006,17 +1065,15 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 
 
 	btCollisionShape* shape = new btSphereShape(btScalar(radius));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
-	btTransform bulletTransform;
 
-	bulletTransform.setIdentity();
-	bulletTransform.setOrigin(position);
+	btTransform bulletTransform = sphere->GetTransform();
 
-	btScalar mass;
+	//bulletTransform.setIdentity();
+	//bulletTransform.setOrigin(position);
+
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
 	bool isDynamic = (mass != 0.0f);
 
@@ -1027,20 +1084,18 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletSphereToWorld(const Vector3& po
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
+	//sphere->SetIsKinematic(true);
 
 	world->AddGameObject(sphere);
 
 	return sphere;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass)
 {
 	GameObject* capsule = new GameObject();
 
@@ -1054,17 +1109,15 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 	capsule->SetRenderObject(new RenderObject(&capsule->GetTransform(), capsuleMesh, basicTex, basicShader));
 
 	btCollisionShape* shape = new btCapsuleShape(btScalar(radius), btScalar(halfHeight));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+
 	btTransform bulletTransform;
 
 	bulletTransform.setIdentity();
 	bulletTransform.setOrigin(position);
 
-	btScalar mass;
+	btScalar mass = 0.0f;
 	if (inverseMass != 0.0f)
 		mass = (1 / inverseMass);
-	else
-		mass = (0.0f);
 
 	bool isDynamic = (mass != 0.0f);
 
@@ -1075,11 +1128,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	capsule->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
 	world->AddGameObject(capsule);
@@ -1089,7 +1139,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCapsuleToWorld(const Vector3& p
 
 
 
-GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass)
+GameObject* NCL::CSC8503::TutorialGame::CreateBulletCylinder(const Vector3& position, float halfHeight, float radius, float inverseMass)
 {
 	GameObject* cylinder = new GameObject();
 
@@ -1100,7 +1150,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& 
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), cylinderMesh, basicTex, basicShader));
 
 	btCollisionShape* shape = new btCylinderShape(btVector3(btScalar(radius), btScalar(halfHeight), btScalar(radius)));
-	//btBoxShape* shape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+	
 	btTransform bulletTransform;
 
 	bulletTransform.setIdentity();
@@ -1121,11 +1171,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddBulletCylinderToWorld(const Vector3& 
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo* rbInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
-
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
-	//btRigidBody* body = new btRigidBody(*rbInfo);
 	cylinder->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
 	world->AddGameObject(cylinder);
@@ -1152,30 +1199,28 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
 			int randVal = rand() % 4;
 			if (randVal == 0) {
-				if (useBullet)
-					AddBulletCubeToWorld(position, cubeDims);
-				else
+				/*if (useBullet)
+					CreateBulletCube(position, cubeDims);
+				else*/
 					AddCubeToWorld(position, cubeDims);
 			}
 			else if (randVal == 1) {
-				if (useBullet)
-					AddBulletSphereToWorld(position, sphereRadius);
-				else
+				/*if (useBullet)
+					CreateBulletSphere(position, sphereRadius);
+				else*/
 					AddSphereToWorld(position, sphereRadius);
 			}
 			else if (randVal == 2)
 			{
-				if (useBullet)
-					AddBulletCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
-				else
+				/*if (useBullet)
+					CreateBulletCapsule(position, sphereRadius * 2, sphereRadius);
+				else*/
 					AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
 			}
 			else if (randVal == 3)
 			{
 				if (useBullet)
-					AddBulletCylinderToWorld(position, sphereRadius * 2, sphereRadius);
-				//else
-				//	AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
+					CreateBulletCylinder(position, sphereRadius * 2, sphereRadius);
 			}
 		}
 	}
@@ -1192,32 +1237,31 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 
 void TutorialGame::InitDefaultFloor(bool useBullet) {
 	if (useBullet)
-		AddBulletFloorToWorld(Vector3(0, -2, 0));
+		CreateBulletFloor(Vector3(0, -2, 0));
 	else
 		AddFloorToWorld(Vector3(0, -2, 0));
 }
 
 void TutorialGame::InitCharaters() {
 	player = AddPlayerToWorld(Vector3(-150, 10, 0));
-	Quaternion orientation = Quaternion(0, -1, 0, 1);
+	/*Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);
+	player->GetTransform().SetOrientation(orientation);*/
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
-	float meshSize = 3.0f;
-	float inverseMass = 0.5f;
 
 	/*std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});*/
 
-	GameObject* character = new GameObject();
-	//character->SetHUD(hud);
+	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
 
-	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
+	character->SetHUD(hud);
+
+	/*AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 
 	character->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1231,15 +1275,15 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	else {
 		character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
 	}*/
-	character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
-	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+	//character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
+	//character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
-	character->GetPhysicsObject()->SetInverseMass(inverseMass);
-	character->GetPhysicsObject()->InitSphereInertia();
+	//character->GetPhysicsObject()->SetInverseMass(inverseMass);
+	//character->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(character);
+	//world->AddGameObject(character);
 
-	//lockedObject = character;
+	//lockedObject = character;*/
 
 	return character;
 }
@@ -1248,8 +1292,8 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	GameObject* character = new GameObject();
-
+	GameObject* character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "enemy");
+		/*
 	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
 	character->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1263,6 +1307,65 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
 	character->GetPhysicsObject()->InitSphereInertia();
 
+	world->AddGameObject(character);*/
+
+	return character;
+}
+
+GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name)
+{
+	float meshSize = 3.0f;
+	float inverseMass = 0.5f;
+
+	GameObject* character = new GameObject(name);
+
+	character->GetTransform()
+		.SetScale(Vector3(meshSize, meshSize, meshSize))
+		.SetPosition(position);
+
+	character->SetRenderObject(new RenderObject(&character->GetTransform(), mesh, texture, shader));
+
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btCapsuleShape(btScalar(0.4f*meshSize), btScalar(0.9f * meshSize));
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = character->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 60.0f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		character->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+
+		//limit character angular motion
+		character->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
+		
+		//character->SetIsKinematic(false);
+	}
+	else
+	{
+		AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
+		character->SetBoundingVolume((CollisionVolume*)volume);
+		character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+
+		character->GetPhysicsObject()->SetInverseMass(inverseMass);
+		character->GetPhysicsObject()->InitSphereInertia();
+	}
+	
 	world->AddGameObject(character);
 
 	return character;
@@ -1272,17 +1375,54 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 	GameObject* apple = new GameObject();
 
-	SphereVolume* volume = new SphereVolume(1.5f);
-	apple->SetBoundingVolume((CollisionVolume*)volume);
+	btScalar radius = 0.25f;
+
 	apple->GetTransform()
-		.SetScale(Vector3(0.25, 0.25, 0.25))
+		.SetScale(Vector3(radius, radius, radius))
 		.SetPosition(position);
 
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, basicTex, basicShader));
 
-	apple->GetPhysicsObject()->SetInverseMass(0.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+	//
+
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btSphereShape(btScalar(1.25f));
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = apple->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 0.1f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		apple->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+		
+		//apple->SetIsKinematic(true);
+	}
+	else
+	{
+		SphereVolume* volume = new SphereVolume(radius);
+		apple->SetBoundingVolume((CollisionVolume*)volume);
+
+		apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+
+		apple->GetPhysicsObject()->SetInverseMass(1.0f);
+		apple->GetPhysicsObject()->InitSphereInertia();
+	}
 
 	world->AddGameObject(apple);
 	return apple;
@@ -1318,20 +1458,23 @@ bool TutorialGame::SelectObject() {
 				lockedObject = nullptr;
 			}
 
+			//Raycasting is a bit same as before, you should build ray first
 			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 
 			/*
+			//you can also form the raycasting in the other way
 			btVector3 from = ray.GetPosition();
 			btVector3 to = ray.GetPosition() + ray.GetDirection().Normalised() * 200;
 
 			btCollisionWorld::ClosestRayResultCallback rcb(from, to);
 			//btCollisionWorld::AllHitsRayResultCallback rcb(from, to);
 			PhysicsSystem::Raycast(from, to, rcb);
-		*/
+			*/
 
+			//you will get RayCollision for raycasting output as well as before
 			RayCollision closestCollision;
 			//if (world->Raycast(ray, closestCollision, true)) {
-			if (PhysicsSystem::Raycast(ray, closestCollision, 300)) {
+			if (PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
 				//if (rcb.hasHit()) {
 					//selectionObject = (GameObject*)closestCollision.node;
 					//std::cout << "Hit normal" << rcb.m_hitNormalWorld << "\n";

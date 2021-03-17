@@ -48,22 +48,29 @@ namespace NCL {
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
-			GameObject* AddBulletFloorToWorld(const Vector3& position);
-			GameObject* AddBulletCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
-			GameObject* AddBulletSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
-			GameObject* AddBulletCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
-			GameObject* AddBulletCylinderToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
+			GameObject* CreateFloor(const Vector3& position);
+			GameObject* CreateSphere(const Vector3& position, float radius, float inverseMass = 10.0f);
+			GameObject* CreateCube(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
+			GameObject* CreateCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
-
+			GameObject* CreateBulletFloor(const Vector3& position);
+			GameObject* CreateBulletCube(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
+			GameObject* CreateBulletSphere(const Vector3& position, float radius, float inverseMass = 10.0f);
+			GameObject* CreateBulletCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
+			GameObject* CreateBulletCylinder(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
 			GameObject* AddPlayerToWorld(const Vector3& position);
 			GameObject* AddEnemyToWorld(const Vector3& position);
+			GameObject* AddCharacterToWorld(const Vector3& position,OGLMesh* mesh, OGLTexture* texture, OGLShader* shader,string name="char");
 			GameObject* AddBonusToWorld(const Vector3& position);
 
 			//adding for level design
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
-			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float height, float inverseMass = 10.0f)
+			{
+				return CreateBulletCylinder(position, height, radius, inverseMass);
+			}
 			GameObject* AddCoins(const Vector3& position);
 			void Pendulum();
 			void UpdateLevelOne();
