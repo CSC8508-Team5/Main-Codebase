@@ -23,7 +23,7 @@ public:
 
 	DW_UIImage(const std::string& name, char const* path, const Rect& rect = {0.2f,0.2f}, const NCL::Maths::Vector3& pos = NCL::Maths::Vector3{}, const NCL::Maths::Vector3& color = NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }, const int priority = 0);
 
-	~DW_UIImage();
+	virtual ~DW_UIImage();
 
 	virtual void Update(const float dt);
 

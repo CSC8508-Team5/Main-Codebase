@@ -46,6 +46,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	m_finalQuadShader = new OGLShader("FinalQuadVert.glsl", "FinalQuadFrag.glsl");
 	m_gaussianShader = new OGLShader("GaussianVert.glsl", "GaussianFrag.glsl");
 	m_bloomHelper = new DW_BloomHelper(currentWidth, currentHeight );
+	m_flameShader = new OGLShader("FlameVert.glsl", "FlameFrag.glsl");
+	m_flame = new DW_Flame(Vector3{0.0f,5.0f,0.0f}, NCL::Assets::TEXTUREDIR + "fire.jpg");
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -197,6 +199,7 @@ void GameTechRenderer::RenderLighting() {
 
 void GameTechRenderer::CombineBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
+	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	BindShader(m_combineShader);
 	glUniform1i(glGetUniformLocation(m_combineShader->GetProgramID(), "diffuseTex"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -288,6 +291,48 @@ void GameTechRenderer::BlurLights() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void GameTechRenderer::RenderFlame() {
+	float screenAspect = (float)currentWidth / (float)currentHeight;
+	Matrix4 viewMatrix = gameWorld.GetMainCamera()->BuildViewMatrix();
+	Matrix4 projectionMatrix = gameWorld.GetMainCamera()->BuildProjectionMatrix(screenAspect);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_combineHelper->GetFBO());
+	glEnable(GL_BLEND);
+	//glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	BindShader(m_flameShader);
+	glUniformMatrix4fv(glGetUniformLocation(m_flameShader->GetProgramID(), "viewMatrix"), 1, false, (float*)&viewMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(m_flameShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projectionMatrix);
+
+	glUniform1i(glGetUniformLocation(m_finalQuadShader->GetProgramID(), "tex0"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_flame->GetTexture());
+
+	for (std::vector<DW_Particle*>::iterator it = m_flame->GetParticlesBegin(); it != m_flame->GetParticlesEnd(); ++it)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(m_flameShader->GetProgramID(), "modelMatrix"), 1, false, (float*)&(*it)->GetModelMatrix());
+
+		if ((*it)->GetLifeSpan() <= 0.3) {
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourRedVar"), 1.0f);
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourGreenVar"), 1.0f);
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourBlueVar"), 1.0f);
+		}
+		else {
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourGreenVar"), (*it)->GetLifeSpan() / 0.255f);
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourRedVar"), (*it)->GetLifeSpan() / -1.35f);
+			glUniform1f(glGetUniformLocation(m_flameShader->GetProgramID(), "colourBlueVar"), 0.0f);
+		}
+
+
+		glBindVertexArray(m_flame->GetVAO());
+		glDrawArrays(GL_POINTS, 0, 300);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glEnable(GL_DEPTH_TEST);
+}
+
 void GameTechRenderer::LoadSkybox() {
 	string filenames[6] = {
 		"/Cubemap/skyrender0004.png",
@@ -330,6 +375,10 @@ void GameTechRenderer::LoadSkybox() {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
+void GameTechRenderer::Update(float dt) {
+	m_flame->Update(dt);
+}
+
 void GameTechRenderer::RenderFrame() {
 	glEnable(GL_CULL_FACE);
 	BuildObjectList();
@@ -350,11 +399,15 @@ void GameTechRenderer::RenderFrame() {
 	RenderLights();
 	BlurLights();
 
+	RenderFlame();
+
 	RenderSkybox();//TODO, the color of skybox lead to the error of the color of bloom
 	RenderFinalQuad();
 	
 	//RenderCamera();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+
+	
 
 	RenderHUD();
 	RenderUI();
