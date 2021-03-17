@@ -22,6 +22,7 @@
 #include "DW_SkyboxHelper.h"
 #include "DW_RenderCombineHelper.h"
 #include "DW_BloomHelper.h"
+#include "DW_Flame.h"
 
 
 namespace NCL {
@@ -46,8 +47,11 @@ namespace NCL {
 					m_exp -= 0.01f;
 				}
 			}
+
+			void Update(float dt) override;
 		protected:
 			void RenderFrame()	override;
+			
 
 			Matrix4 SetupDebugLineMatrix()	const override;
 			Matrix4 SetupDebugStringMatrix()const override;
@@ -75,6 +79,8 @@ namespace NCL {
 			void RenderLights();
 			void RenderFinalQuad();
 			void BlurLights();
+
+			void RenderFlame();
 
 			//Matrix4 viewMatrix;
 			//Matrix4 projectionMatrix;
@@ -109,6 +115,8 @@ namespace NCL {
 			DW_BloomHelper* m_bloomHelper;
 			OGLShader* m_gaussianShader;
 			float m_exp{ 1.0f };
+			OGLShader* m_flameShader;
+			DW_Flame* m_flame;
 		};
 	}
 }
