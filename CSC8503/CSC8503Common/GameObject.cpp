@@ -15,6 +15,11 @@ GameObject::GameObject(string objectName)	{
 
 	soundSource		= nullptr;
 	m_HUD = nullptr;
+
+	beginFunc = nullptr;
+	endFunc = nullptr;
+	stayFunc = nullptr;
+	updateFunc = nullptr;
 }
 
 GameObject::~GameObject()	{

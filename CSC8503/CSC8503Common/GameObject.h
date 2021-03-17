@@ -14,6 +14,7 @@
 #include <btBulletDynamicsCommon.h>
 
 #include <vector>
+#include <functional>
 
 #define BIT(x) ( 1 <<(x)) 
 
@@ -21,6 +22,10 @@ using std::vector;
 
 namespace NCL {
 	namespace CSC8503 {
+		class GameObject;
+		typedef std::function <void(GameObject*)> CollisionReactFunc;
+		typedef std::function <void(float)> UpdateReactFunc;
+
 		class GameObject {
 		public:
 			enum class Layer {
@@ -92,14 +97,20 @@ namespace NCL {
 
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollision Begin event with "<<otherObject->GetWorldID()<<":"<<otherObject->GetName()<<"\n";
+				if (beginFunc)
+					beginFunc(otherObject);
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
+				if (endFunc)
+					endFunc(otherObject);
 				//std::cout << "OnCollision End event with " << otherObject->GetWorldID() << ":" << otherObject->GetName()<<"\n";
 			}
 
 			virtual void OnCollisionStay(GameObject* otherObject) {
 				//std::cout << "OnCollision Stay event with " << otherObject->GetWorldID() << ":" << otherObject->GetName() << "\n";
+				if (stayFunc)
+					stayFunc(otherObject);
 			}
 
 			bool GetBroadphaseAABB(Vector3& outsize) const;
@@ -201,6 +212,23 @@ namespace NCL {
 				return false;
 			}
 
+			void SetOnCollisionBeginFunction(CollisionReactFunc f)
+			{
+				beginFunc = f;
+			}
+			void SetOnCollisionEndFunction(CollisionReactFunc f)
+			{
+				endFunc = f;
+			}
+			void SetOnCollisionStayFunction(CollisionReactFunc f)
+			{
+				stayFunc = f;
+			}
+			void SetUpdateFunction(UpdateReactFunc f)
+			{
+				updateFunc = f;
+			}
+
 			virtual void Update(float dt)
 			{
 				if (soundSource)
@@ -208,6 +236,8 @@ namespace NCL {
 						soundSource->Update(transform.GetPosition(), GetBulletBody()->getLinearVelocity());
 					else
 						soundSource->Update(transform.GetPosition(), physicsObject->GetLinearVelocity());
+				if (updateFunc)
+					updateFunc(dt);
 			}
 
 		protected:
@@ -233,6 +263,11 @@ namespace NCL {
 			Vector3 broadphaseAABB;
 
 			vector<GameObject*> collisionObjects;
+
+			CollisionReactFunc beginFunc;
+			CollisionReactFunc stayFunc;
+			CollisionReactFunc endFunc;
+			UpdateReactFunc updateFunc;
 		};
 	}
 }

@@ -61,7 +61,7 @@ void NCL::CSC8503::PhysicsSystem::InitBullet()
 	broadphaseFilterCallback = new TriggerFilterCallback();
 	dynamicsWorld->getPairCache()->setOverlapFilterCallback(broadphaseFilterCallback);
 	//dispatcher->setNearCallback(TriggerNearCallback);
-	UpdateBulletGravity();
+	UpdateBulletGravity(gravity);
 	std::cout << "Bullet discrete dynamics physics world initialized.\n";
 }
 

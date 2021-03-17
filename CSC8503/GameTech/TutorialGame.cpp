@@ -687,12 +687,28 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 	
-	cube->GetBulletBody()->setLinearFactor(Vector3::Zero());
-	cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
-	cube->GetBulletBody()->setGravity(Vector3::Zero());
-	cube->GetBulletBody()->setLinearVelocity(Vector3::Forward());
+	//cube->GetBulletBody()->setLinearFactor(Vector3::Zero());
+	//cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
+	//cube->GetBulletBody()->setGravity(Vector3::Zero());
+	//cube->GetBulletBody()->setLinearVelocity(Vector3::Forward());
 	//add the gameobject to the world
 	world->AddGameObject(cube);
+
+	/*
+	cube->SetOnCollisionBeginFunction([=](GameObject* obj) {
+		if (obj->GetLayer() == GameObject::Layer::Player)
+		{
+			
+		}
+		if (obj->GetLayer() == GameObject::Layer::Enemy)
+		{
+			
+		}
+		if (obj->GetName() == "Floor")
+		{
+			std::cout << "Cube:"<<cube->GetWorldID()<<" Collided with floor\n";
+		}
+		});*/
 
 	return cube;
 }
