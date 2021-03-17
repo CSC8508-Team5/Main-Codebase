@@ -1279,8 +1279,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 		//limit character angular motion
 		character->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
 		
-		character->SetIsKinematic(false);
-
+		//character->SetIsKinematic(false);
 	}
 	else
 	{
