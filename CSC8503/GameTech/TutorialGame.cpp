@@ -1019,13 +1019,14 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 	//Set Rendering agent
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 
-	//Set Object to Kinematic if you want it not affect by Gravity or Force
+	//Set Object to Kinematic if you want it not affect by Gravity and Force
 	//cube->SetIsKinematic(true);
 
 	//Initialize shape of the collision object
 	btCollisionShape* shape = new btBoxShape(dimensions);
 
-	//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+	//Initialize bullet inner transfrom(have no scale), 
+	//you can set it from gameworld transform directly or create new bulletTransfrom
 	btTransform bulletTransform = cube->GetTransform();
 	//btTransform bulletTransform;
 	//bulletTransform.setIdentity();
@@ -1287,7 +1288,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 
 	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
 
-	character->SetHUD(hud);
+	//character->SetHUD(hud);
 
 	/*AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 
