@@ -68,7 +68,7 @@ namespace NCL {
 
 			GameObject* AddPlayerToWorld(const Vector3& position);
 			GameObject* AddEnemyToWorld(const Vector3& position);
-			GameObject* AddCharacterToWorld(const Vector3& position,OGLMesh* mesh, OGLTexture* texture, OGLShader* shader,string name="char");
+			GameObject* AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name = "char");
 			GameObject* AddBonusToWorld(const Vector3& position);
 
 			//adding for level design
@@ -76,8 +76,8 @@ namespace NCL {
 			GameObject* SpinningPlatform();
 			
 			GameObject* AddCoins(const Vector3& position);
-			DW_UIText*	 Coin_text;
-			DW_UIText*   Timer_text;
+			DW_UIText* Coin_text;
+			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			void Pendulum();
 			void UpdateLevelOne();
@@ -87,8 +87,9 @@ namespace NCL {
 			void Reload();
 			//end
 
-		StateGameObject* AddStateObjectToWorld(const Vector3& position);
-		  StateGameObject * testStateObject = nullptr;
+			StateGameObject* AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD = false, bool perpendicular = false);
+
+			StateGameObject* testStateObject = nullptr;
 
 			GameTechRenderer* renderer;
 			PhysicsSystem* physics;
@@ -120,7 +121,6 @@ namespace NCL {
 			void UpdateLevelThree(float dt);
 			bool isLevelThree = false; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
-			GameObject* AddBouncer(const Vector3& position, float radius, float height, float inverseMass = 10.0f);
 
 			GameObject* selectionObject = nullptr;
 
@@ -142,8 +142,8 @@ namespace NCL {
 			//end
 
 			//Coursework Additional functionality	
-			GameObject* lockedObject	= nullptr;
-			Vector3 lockedOffset		= Vector3(0, 14, 20);
+			GameObject* lockedObject = nullptr;
+			Vector3 lockedOffset = Vector3(0, 14, 20);
 			float lockedDistance = 15.0f;
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;

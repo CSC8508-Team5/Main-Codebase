@@ -247,6 +247,12 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 
+	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
+		for (auto i = 0; i < sliderVector.size(); ++i) {
+			sliderVector.at(i)->Update(dt);
+		}
+	}
+
 
 	DW_UIRenderer::get_instance().Update(dt);
 
@@ -292,6 +298,10 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 };
+
+void TutorialGame::UpdateLevelThree(float dt) {
+	// Not Yet Implemented
+}
 
 void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
@@ -649,8 +659,8 @@ void TutorialGame::InitWorld() {
 
 	//-------------LV3 -------------------------------------
 	/* Conor Lambert */
-	// LevelThree()
-	// isLevelThree = true;
+	//LevelThree();
+	//isLevelThree = true;
 
 	//Pendulum();
 	//spinplat = 	SpinningPlatform();
@@ -696,6 +706,34 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 	}
 	return platforms;
+}
+
+void TutorialGame::LevelThree() {
+
+	// Platforms 
+	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
+	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+
+	GameObject* finish = AddCubeToWorld(Vector3(470, 0, 0), Vector3(20, 2, 50), 0);
+	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+	// Placeholder State Objects ("sliders")
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
+
+	// Cylinder Obstacles
+
+	// Coins 
+	// Initialise coins
+	for (int i = 0; i < numcoins; ++i) {
+		coins[i] = nullptr;
+	}
+
+	coins[0] = AddCoins(Vector3(30, 4, -20));
+	coins[1] = AddCoins(Vector3(30, 4, 20));
+	coins[2] = AddCoins(Vector3(90, 4, -20));
+	coins[3] = AddCoins(Vector3(90, 4, 20));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
@@ -918,29 +956,6 @@ GameObject* TutorialGame::CreateCylinder(const Vector3& position, float radius, 
 	world->AddGameObject(cylinder);
 
 	return cylinder;
-}
-
-GameObject* TutorialGame::AddBouncer(const Vector3& position, float radius, float height, float inverseMass) {
-	GameObject* bouncer = new GameObject("Bouncer");
-
-	Vector3 cylinderSize = Vector3(radius * 2, height, radius * 2);
-	AABBVolume* volume = new AABBVolume(Vector3(radius, height, radius));
-	bouncer->SetBoundingVolume((CollisionVolume*)volume);
-
-	bouncer->GetTransform()
-		.SetScale(cylinderSize)
-		.SetPosition(position);
-
-	bouncer->SetRenderObject(new RenderObject(&bouncer->GetTransform(), spinplatMesh, basicTex, basicShader));
-	bouncer->SetPhysicsObject(new PhysicsObject(&bouncer->GetTransform(), bouncer->GetBoundingVolume()));
-
-	bouncer->GetPhysicsObject()->SetInverseMass(inverseMass);
-	bouncer->GetPhysicsObject()->InitSphereInertia();
-	bouncer->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-
-	world->AddGameObject(bouncer);
-
-	return bouncer;
 }
 
 /*
@@ -1630,23 +1645,23 @@ void TutorialGame::MoveSelectedObject() {
 
 }
 
-StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD, bool perpendicular) {
 
-	StateGameObject* apple = new StateGameObject();
+	StateGameObject* newStateObject = new StateGameObject("State Cube", switchD, perpendicular);
 
-	SphereVolume* volume = new SphereVolume(0.25f);
-	apple->SetBoundingVolume((CollisionVolume*)volume);
-	apple->GetTransform()
-		.SetScale(Vector3(0.25, 0.25, 0.25))
+	AABBVolume* volume = new AABBVolume(dimensions);
+	newStateObject->SetBoundingVolume((CollisionVolume*)volume);
+	newStateObject->GetTransform()
+		.SetScale(dimensions * 2)
 		.SetPosition(position);
 
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+	newStateObject->SetRenderObject(new RenderObject(&newStateObject->GetTransform(), cubeMesh, basicTex, basicShader));
+	newStateObject->SetPhysicsObject(new PhysicsObject(&newStateObject->GetTransform(), newStateObject->GetBoundingVolume()));
 
-	apple->GetPhysicsObject()->SetInverseMass(1.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+	newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
+	newStateObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 
-	world->AddGameObject(apple);
+	world->AddGameObject(newStateObject);
 
-	return apple;
+	return newStateObject;
 }
