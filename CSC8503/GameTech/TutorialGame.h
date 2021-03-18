@@ -52,11 +52,13 @@ namespace NCL {
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
+			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
 
 			GameObject* CreateFloor(const Vector3& position);
 			GameObject* CreateSphere(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* CreateCube(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
 			GameObject* CreateCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
+			GameObject* CreateCylinder(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
 
 			GameObject* CreateBulletFloor(const Vector3& position);
 			GameObject* CreateBulletCube(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
@@ -72,7 +74,7 @@ namespace NCL {
 			//adding for level design
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
-			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText*	 Coin_text;
 			DW_UIText*   Timer_text;

@@ -864,6 +864,14 @@ GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfH
 		return CreateCapsule(position, halfHeight, radius, inverseMass);
 }
 
+GameObject* NCL::CSC8503::TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float height, float inverseMass)
+{
+	if (physics->isUseBulletPhysics())
+		return CreateBulletCylinder(position, height, radius, inverseMass);
+	else
+		return CreateCylinder(position, radius, height, inverseMass);
+}
+
 GameObject* NCL::CSC8503::TutorialGame::CreateFloor(const Vector3& position)
 {
 	GameObject* floor = new GameObject();
@@ -890,7 +898,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateFloor(const Vector3& position)
 /*
 The cylinder now using the CapsuleVolume, might need to change 
 */
-GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass) {
+GameObject* TutorialGame::CreateCylinder(const Vector3& position, float radius, float hight, float inverseMass) {
 	GameObject* cylinder = new GameObject();
 
 	Vector3 cylinderSize = Vector3(radius*2, hight, radius*2);
