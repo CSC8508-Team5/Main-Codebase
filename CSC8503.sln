@@ -65,7 +65,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "Plugins\bulle
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jsoncpp", "Jsoncpp", "{3A85EB90-DC73-4139-AFFF-813B51AE4CA6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp_static", "Plugins\jsoncpp-master\build\src\lib_json\jsoncpp_static.vcxproj", "{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp_static", "Plugins\jsoncpp-master\sln\src\lib_json\jsoncpp_static.vcxproj", "{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -546,21 +546,24 @@ Global
 		{CC51B684-98EE-1840-9A11-06189BD97636}.RelWithDebInfo|Win32.Build.0 = Release|Win32
 		{CC51B684-98EE-1840-9A11-06189BD97636}.RelWithDebInfo|x64.ActiveCfg = Release|x64
 		{CC51B684-98EE-1840-9A11-06189BD97636}.RelWithDebInfo|x64.Build.0 = Release|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|ORBIS.ActiveCfg = Debug|x64
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|ORBIS.ActiveCfg = Debug|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|Win32.Build.0 = Debug|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|x64.ActiveCfg = Debug|x64
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Debug|x64.Build.0 = Debug|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|ORBIS.ActiveCfg = MinSizeRel|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|x64
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|ORBIS.ActiveCfg = MinSizeRel|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|x64.ActiveCfg = MinSizeRel|x64
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.MinSizeRel|x64.Build.0 = MinSizeRel|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|ORBIS.ActiveCfg = Release|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|Win32.ActiveCfg = Release|x64
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|ORBIS.ActiveCfg = Release|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|Win32.ActiveCfg = Release|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|Win32.Build.0 = Release|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|x64.ActiveCfg = Release|x64
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.Release|x64.Build.0 = Release|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|ORBIS.ActiveCfg = RelWithDebInfo|x64
-		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|x64
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|ORBIS.ActiveCfg = RelWithDebInfo|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
 		{13DA0281-C0E5-3D14-A05E-5C6ACB0764EE}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
 	EndGlobalSection
