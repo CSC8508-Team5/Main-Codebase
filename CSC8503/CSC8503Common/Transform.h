@@ -5,7 +5,7 @@
 #include "../../Common/Vector4.h"
 #include "../../Common/Quaternion.h"
 
-#include <btBulletDynamicsCommon.h>
+#include "../../Plugins/bullet3/src/LinearMath/btTransform.h"
 
 #include <vector>
 
