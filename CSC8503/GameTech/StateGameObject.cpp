@@ -65,12 +65,12 @@ StateGameObject::StateGameObject(string objectName, bool switchD, bool perpendic
 	stateMachine->AddState(stateB);
 
 	stateMachine->AddTransition(new StateTransition(stateA, stateB, [&]()->bool {
-		return this->counter > 1.0f;
+		return this->counter > 2.0f;
 		}
 	));
 
 	stateMachine->AddTransition(new StateTransition(stateB, stateA, [&]()->bool {
-		return this->counter < -1.0f;
+		return this->counter < -2.0f;
 		}
 	));
 }
@@ -84,42 +84,42 @@ void StateGameObject::Update(float dt) {
 }
 
 void StateGameObject::MoveLeft(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x - 1, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x - 0.3f, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
 	counter += dt;
 }
 
 void StateGameObject::MoveRight(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x + 1, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x + 0.3f, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
 	counter -= dt;
 }
 
 void StateGameObject::MoveLeftSwitched(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x - 1, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x - 0.3f, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
 	counter -= dt;
 }
 
 void StateGameObject::MoveRightSwitched(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x + 1, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x + 0.3f, GetTransform().GetPosition().y, GetTransform().GetPosition().z });
 	counter += dt;
 }
 
 void StateGameObject::MoveLeftP(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z - 1 });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z - 0.3f });
 	counter += dt;
 }
 
 void StateGameObject::MoveRightP(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z + 1 });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z + 0.3f });
 	counter -= dt;
 }
 
 void StateGameObject::MoveLeftSwitchedP(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z - 1 });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z - 0.3f });
 	counter -= dt;
 }
 
 void StateGameObject::MoveRightSwitchedP(float dt) {
-	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z + 1 });
+	GetTransform().SetPosition({ GetTransform().GetPosition().x, GetTransform().GetPosition().y, GetTransform().GetPosition().z + 0.3f });
 	counter += dt;
 }
 

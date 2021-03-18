@@ -13,7 +13,7 @@
 #include "HM_Option.h"
 namespace NCL {
 	namespace CSC8503 {
-		class TutorialGame		{
+		class TutorialGame {
 		public:
 			TutorialGame();
 			~TutorialGame();
@@ -35,7 +35,7 @@ namespace NCL {
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
 			void InitDefaultFloor();
 			void BridgeConstraintTest();
-	
+
 			bool SelectObject();
 			void MoveSelectedObject();
 			void DebugObjectMovement();
@@ -44,7 +44,7 @@ namespace NCL {
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
-			
+
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
 			GameObject* AddPlayerToWorld(const Vector3& position);
@@ -69,13 +69,13 @@ namespace NCL {
 			bool isLevelThree = true; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
 
-		StateGameObject* AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions);
-		  StateGameObject * testStateObject = nullptr;
+			StateGameObject* AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD = false, bool perpendicular = false);
+			StateGameObject* testStateObject = nullptr;
 
-			GameTechRenderer*	renderer;
-			PhysicsSystem*		physics;
-			GameWorld*			world;
-			AudioSystem*		audio;
+			GameTechRenderer* renderer;
+			PhysicsSystem* physics;
+			GameWorld* world;
+			AudioSystem* audio;
 			bool useGravity;
 			bool inSelectionMode;
 
@@ -97,25 +97,25 @@ namespace NCL {
 
 			GameObject* selectionObject = nullptr;
 
-			OGLMesh*	capsuleMesh = nullptr;
-			OGLMesh*	cubeMesh	= nullptr;
-			OGLMesh*	sphereMesh	= nullptr;
-			OGLTexture* basicTex	= nullptr;
-			OGLShader*	basicShader = nullptr;
+			OGLMesh* capsuleMesh = nullptr;
+			OGLMesh* cubeMesh = nullptr;
+			OGLMesh* sphereMesh = nullptr;
+			OGLTexture* basicTex = nullptr;
+			OGLShader* basicShader = nullptr;
 
 			//Coursework Meshes
-			OGLMesh*	charMeshA	= nullptr;
-			OGLMesh*	charMeshB	= nullptr;
-			OGLMesh*	enemyMesh	= nullptr;
-			OGLMesh*	bonusMesh	= nullptr;
+			OGLMesh* charMeshA = nullptr;
+			OGLMesh* charMeshB = nullptr;
+			OGLMesh* enemyMesh = nullptr;
+			OGLMesh* bonusMesh = nullptr;
 
 			//Teamwork Meshes
 			OGLMesh* spinplatMesh = nullptr;
 			//end
 
 			//Coursework Additional functionality	
-			GameObject* lockedObject	= nullptr;
-			Vector3 lockedOffset		= Vector3(0, 14, 20);
+			GameObject* lockedObject = nullptr;
+			Vector3 lockedOffset = Vector3(0, 14, 20);
 			float lockedDistance = 15.0f;
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;

@@ -602,13 +602,13 @@ void TutorialGame::LevelThree() {
 	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
 	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 
-	GameObject* finish = AddCubeToWorld(Vector3(450, 0, 0), Vector3(20, 2, 50), 0);
+	GameObject* finish = AddCubeToWorld(Vector3(470, 0, 0), Vector3(20, 2, 50), 0);
 	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
 	// Placeholder State Objects ("sliders")
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(2000, 4, 1)));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1)));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1)));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
 
 	// Coins 
 	// Initialise coins
@@ -1046,23 +1046,23 @@ void TutorialGame::MoveSelectedObject() {
 
 	}
 
-StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions) {
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD, bool perpendicular) {
 
-	StateGameObject* stateCube = new StateGameObject();
+	StateGameObject* newStateObject = new StateGameObject("State Cube", switchD, perpendicular);
 
 	AABBVolume* volume = new AABBVolume(dimensions);
-	stateCube->SetBoundingVolume((CollisionVolume*)volume);
-	stateCube->GetTransform()
-		.SetScale(Vector3(0.25, 0.25, 0.25))
+	newStateObject->SetBoundingVolume((CollisionVolume*)volume);
+	newStateObject->GetTransform()
+		.SetScale(dimensions * 2)
 		.SetPosition(position);
 
-	stateCube->SetRenderObject(new RenderObject(&stateCube->GetTransform(), cubeMesh, nullptr, basicShader));
-	stateCube->SetPhysicsObject(new PhysicsObject(&stateCube->GetTransform(), stateCube->GetBoundingVolume()));
+	newStateObject->SetRenderObject(new RenderObject(&newStateObject->GetTransform(), cubeMesh, basicTex, basicShader));
+	newStateObject->SetPhysicsObject(new PhysicsObject(&newStateObject->GetTransform(), newStateObject->GetBoundingVolume()));
 
-	stateCube->GetPhysicsObject()->SetInverseMass(0);
-	stateCube->GetPhysicsObject()->InitSphereInertia();
+	newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
+	newStateObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 
-	world->AddGameObject(stateCube);
+	world->AddGameObject(newStateObject);
 
-	return stateCube;
+	return newStateObject;
 }
