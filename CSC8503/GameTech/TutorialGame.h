@@ -55,6 +55,7 @@ namespace NCL {
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
 			GameObject* AddCylinderToWorld(const Vector3& position, float radius, float hight, float inverseMass = 10.0f);
+			GameObject* AddBouncer(const Vector3& position, float radius, float height, float inverseMass = 10.0f);
 			GameObject* AddCoins(const Vector3& position);
 			void Pendulum();
 			void UpdateLevelOne();

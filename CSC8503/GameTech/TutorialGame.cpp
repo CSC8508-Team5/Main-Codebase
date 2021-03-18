@@ -534,7 +534,7 @@ void TutorialGame::InitWorld() {
 	physics->Clear();
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	//InitCharaters();
+	InitCharaters();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
@@ -609,6 +609,9 @@ void TutorialGame::LevelThree() {
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
+
+	// Cylinder Bouncers
+	AddBouncer(Vector3(-40, 6, 0), 2, 2, 0);
 
 	// Coins 
 	// Initialise coins
@@ -732,6 +735,30 @@ GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radi
 
 	return cylinder;
 }
+
+GameObject* TutorialGame::AddBouncer(const Vector3& position, float radius, float height, float inverseMass) {
+	GameObject* bouncer = new GameObject("Bouncer");
+
+	Vector3 cylinderSize = Vector3(radius * 2, height, radius * 2);
+	AABBVolume* volume = new AABBVolume(Vector3(radius, height, radius));
+	bouncer->SetBoundingVolume((CollisionVolume*)volume);
+
+	bouncer->GetTransform()
+		.SetScale(cylinderSize)
+		.SetPosition(position);
+
+	bouncer->SetRenderObject(new RenderObject(&bouncer->GetTransform(), spinplatMesh, basicTex, basicShader));
+	bouncer->SetPhysicsObject(new PhysicsObject(&bouncer->GetTransform(), bouncer->GetBoundingVolume()));
+
+	bouncer->GetPhysicsObject()->SetInverseMass(inverseMass);
+	bouncer->GetPhysicsObject()->InitSphereInertia();
+	bouncer->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+
+	world->AddGameObject(bouncer);
+
+	return bouncer;
+}
+
 /*
 
 Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
