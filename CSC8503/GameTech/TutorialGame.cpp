@@ -1622,23 +1622,23 @@ void TutorialGame::MoveSelectedObject() {
 
 }
 
-StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD, bool perpendicular) {
 
-	StateGameObject* apple = new StateGameObject();
+	StateGameObject* newStateObject = new StateGameObject("State Cube", switchD, perpendicular);
 
-	SphereVolume* volume = new SphereVolume(0.25f);
-	apple->SetBoundingVolume((CollisionVolume*)volume);
-	apple->GetTransform()
-		.SetScale(Vector3(0.25, 0.25, 0.25))
+	AABBVolume* volume = new AABBVolume(dimensions);
+	newStateObject->SetBoundingVolume((CollisionVolume*)volume);
+	newStateObject->GetTransform()
+		.SetScale(dimensions * 2)
 		.SetPosition(position);
 
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+	newStateObject->SetRenderObject(new RenderObject(&newStateObject->GetTransform(), cubeMesh, basicTex, basicShader));
+	newStateObject->SetPhysicsObject(new PhysicsObject(&newStateObject->GetTransform(), newStateObject->GetBoundingVolume()));
 
-	apple->GetPhysicsObject()->SetInverseMass(1.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+	newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
+	newStateObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 
-	world->AddGameObject(apple);
+	world->AddGameObject(newStateObject);
 
-	return apple;
+	return newStateObject;
 }
