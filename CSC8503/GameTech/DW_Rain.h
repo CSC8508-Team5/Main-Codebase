@@ -8,6 +8,8 @@ public:
 
 	virtual void Update(const float dt);
 	virtual void SetRenderData();
+
+	void Draw();
 private:
 
 };

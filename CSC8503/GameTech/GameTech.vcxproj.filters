@@ -115,7 +115,7 @@
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="DW_Rain.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,7 +213,7 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DW_Rain.h">
-      <Filter>Header Files</Filter>
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

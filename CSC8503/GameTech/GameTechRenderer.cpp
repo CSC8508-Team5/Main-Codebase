@@ -362,8 +362,7 @@ void GameTechRenderer::RenderRain() {
 	glUniform1f(glGetUniformLocation(m_rainShader->GetProgramID(), "time"), hostWindow.GetTimer()->GetTotalTimeSeconds());
 	glUniform3f(glGetUniformLocation(m_rainShader->GetProgramID(), "color"), 100 / 255.0f, 149 / 255.0f, 237 / 255.0f);
 
-	glBindVertexArray(m_rain->GetVAO());
-	glDrawArrays(GL_POINTS, 0, 6000);
+	m_rain->Draw();
 	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
