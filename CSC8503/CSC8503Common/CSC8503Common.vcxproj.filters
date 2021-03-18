@@ -34,6 +34,15 @@
     <Filter Include="Audio\Win32">
       <UniqueIdentifier>{fadbb27b-e661-4546-8698-fc2990f697e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI\Pushdown">
+      <UniqueIdentifier>{1ac13aa7-4ab7-43e6-897c-0523643a3fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Behaviour Tree">
+      <UniqueIdentifier>{8f86d31c-cb8d-4e1f-ad39-2493b9c9477b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\StateMachine">
+      <UniqueIdentifier>{b2bb0ec1-b408-417f-a8d7-2e89de75796b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameWorld.h">
@@ -56,21 +65,6 @@
     </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>CollisionDetection</Filter>
-    </ClInclude>
-    <ClInclude Include="StateMachine.h">
-      <Filter>AI</Filter>
-    </ClInclude>
-    <ClInclude Include="StateTransition.h">
-      <Filter>AI</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>AI</Filter>
-    </ClInclude>
-    <ClInclude Include="PushdownState.h">
-      <Filter>AI</Filter>
-    </ClInclude>
-    <ClInclude Include="PushdownMachine.h">
-      <Filter>AI</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
       <Filter>Header Files</Filter>
@@ -114,29 +108,44 @@
     <ClInclude Include="PositionConstraint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourNodeWithChildren.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourSequence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio</Filter>
     </ClInclude>
     <ClInclude Include="SoundSource.h">
       <Filter>Audio</Filter>
     </ClInclude>
+    <ClInclude Include="PushdownMachine.h">
+      <Filter>AI\Pushdown</Filter>
+    </ClInclude>
+    <ClInclude Include="PushdownState.h">
+      <Filter>AI\Pushdown</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourAction.h">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourNode.h">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourNodeWithChildren.h">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
     <ClInclude Include="BehaviourParallel.h">
-      <Filter>Header Files</Filter>
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourSelector.h">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourSequence.h">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>AI\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>AI\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateTransition.h">
+      <Filter>AI\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,18 +167,6 @@
     <ClCompile Include="RenderObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StateMachine.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
-    <ClCompile Include="StateTransition.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
-    <ClCompile Include="PushdownState.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
-    <ClCompile Include="PushdownMachine.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -188,23 +185,35 @@
     <ClCompile Include="PositionConstraint.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviourNodeWithChildren.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviourSelector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviourSequence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviourAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="PushdownMachine.cpp">
+      <Filter>AI\Pushdown</Filter>
+    </ClCompile>
+    <ClCompile Include="PushdownState.cpp">
+      <Filter>AI\Pushdown</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourAction.cpp">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourNode.cpp">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourNodeWithChildren.cpp">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourSelector.cpp">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourSequence.cpp">
+      <Filter>AI\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>AI\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="StateTransition.cpp">
+      <Filter>AI\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
