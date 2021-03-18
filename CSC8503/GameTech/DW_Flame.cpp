@@ -46,15 +46,10 @@ void DW_Flame::SetRenderData() {
 	NCL::Maths::Vector3 position[num];
 	NCL::Maths::Vector4 colour[num];
 	float high = 5, low = -5;
-	//float highP = 1, lowP = -1;
 	for (int i = 0; i < num; i++) {
 		float r1 = DW_Tools::RandomFloatBetween(high, low); 
 		float r2 = DW_Tools::RandomFloatBetween(high, low);
 		float r3 = DW_Tools::RandomFloatBetween(high, low);
-
-		/*float p1 = DW_Tools::RandomFloatBetween(highP, lowP);
-		float p2 = DW_Tools::RandomFloatBetween(highP, lowP);
-		float p3 = DW_Tools::RandomFloatBetween(highP, lowP);*/
 
 		position[i] = NCL::Maths::Vector3(r1, r2, r3);
 		texture[i] = NCL::Maths::Vector2(r1, r3);

@@ -23,6 +23,7 @@
 #include "DW_RenderCombineHelper.h"
 #include "DW_BloomHelper.h"
 #include "DW_Flame.h"
+#include "DW_Rain.h"
 
 
 namespace NCL {
@@ -85,6 +86,7 @@ namespace NCL {
 			void BlurLights();
 
 			void RenderFlame();
+			void RenderRain();
 
 			//Matrix4 viewMatrix;
 			//Matrix4 projectionMatrix;
@@ -122,7 +124,8 @@ namespace NCL {
 			OGLShader* m_flameShader;
 			DW_Flame* m_flame;
 			bool m_isRenderFlame{true};
-
+			OGLShader* m_rainShader;
+			DW_Rain* m_rain;
 		};
 	}
 }

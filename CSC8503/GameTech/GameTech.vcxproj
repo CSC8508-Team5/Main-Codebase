@@ -154,6 +154,7 @@
     <ClCompile Include="DW_ParticleSystem.cpp" />
     <ClCompile Include="DW_PostEffectHelper.cpp" />
     <ClCompile Include="DW_Quad.cpp" />
+    <ClCompile Include="DW_Rain.cpp" />
     <ClCompile Include="DW_RenderCombineHelper.cpp" />
     <ClCompile Include="DW_ShadowHelper.cpp" />
     <ClCompile Include="DW_SkyboxHelper.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="DW_ParticleSystem.h" />
     <ClInclude Include="DW_PostEffectHelper.h" />
     <ClInclude Include="DW_Quad.h" />
+    <ClInclude Include="DW_Rain.h" />
     <ClInclude Include="DW_RenderCombineHelper.h" />
     <ClInclude Include="DW_ShadowHelper.h" />
     <ClInclude Include="DW_Singleton.h" />
