@@ -633,6 +633,7 @@ void TutorialGame::InitWorld() {
 	//BridgeConstraintTest();
 
 	//-------------LV1 -------------------------------------
+	/* Evie Qian */
 	//platforms = LevelTestOne();
 	//std::vector<Vector3> poses;
 	//for (int i = 0; i < numstairs; i++)
@@ -643,7 +644,13 @@ void TutorialGame::InitWorld() {
 
 
 	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
-	//-------------LV1 -------------------------------------
+	//-------------LV2 -------------------------------------
+	/* Haoming Yuan */
+
+	//-------------LV3 -------------------------------------
+	/* Conor Lambert */
+	// LevelThree()
+	// isLevelThree = true;
 
 	//Pendulum();
 	//spinplat = 	SpinningPlatform();
@@ -904,6 +911,30 @@ GameObject* TutorialGame::AddCylinderToWorld(const Vector3& position, float radi
 
 	return cylinder;
 }
+
+GameObject* TutorialGame::AddBouncer(const Vector3& position, float radius, float height, float inverseMass) {
+	GameObject* bouncer = new GameObject("Bouncer");
+
+	Vector3 cylinderSize = Vector3(radius * 2, height, radius * 2);
+	AABBVolume* volume = new AABBVolume(Vector3(radius, height, radius));
+	bouncer->SetBoundingVolume((CollisionVolume*)volume);
+
+	bouncer->GetTransform()
+		.SetScale(cylinderSize)
+		.SetPosition(position);
+
+	bouncer->SetRenderObject(new RenderObject(&bouncer->GetTransform(), spinplatMesh, basicTex, basicShader));
+	bouncer->SetPhysicsObject(new PhysicsObject(&bouncer->GetTransform(), bouncer->GetBoundingVolume()));
+
+	bouncer->GetPhysicsObject()->SetInverseMass(inverseMass);
+	bouncer->GetPhysicsObject()->InitSphereInertia();
+	bouncer->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+
+	world->AddGameObject(bouncer);
+
+	return bouncer;
+}
+
 /*
 
 Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
