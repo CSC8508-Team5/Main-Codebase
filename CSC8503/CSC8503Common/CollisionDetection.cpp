@@ -118,6 +118,89 @@ bool CollisionDetection::RayOBBIntersection(const Ray&r, const Transform& worldT
 }
 
 bool CollisionDetection::RayCapsuleIntersection(const Ray& r, const Transform& worldTransform, const CapsuleVolume& volume, RayCollision& collision) {
+	Vector3 position = worldTransform.GetPosition();
+	Quaternion orientation = worldTransform.GetOrientation();
+	Matrix3 transform = Matrix3(orientation);
+	Matrix3 invTransform = Matrix3(orientation.Conjugate());
+
+	Vector3 vecCast = position - r.GetPosition();
+
+	Vector3 vecUp = worldTransform.Up();
+	Vector3 vecRight = Vector3::Cross(vecCast, vecUp);
+
+	float capHeight = volume.GetHalfHeight();
+	float capRadius = volume.GetRadius();
+
+	OBBVolume tempVolume = OBBVolume(Vector3(capRadius, capHeight, capRadius));
+
+	//check if ray is in an obb of capsule
+	if (!RayOBBIntersection(r, worldTransform, tempVolume, collision))
+		return false;
+
+	Vector3 planeNormal = Vector3::Cross(vecUp, vecRight);
+
+	Plane tempPlane = Plane(planeNormal, 0);
+	RayCollision planeHitInfo;
+	//as plane is defined as unit plane in the code base, so do the test just as in OBB which tranfer the world space pos to relative space pos
+	Vector3 localRayPos = r.GetPosition() - position;
+	Ray tempRay(invTransform * localRayPos, invTransform * r.GetDirection());
+	if (RayPlaneIntersection(tempRay, tempPlane, planeHitInfo))
+	{
+		Vector3 planeCollidedPos = transform * planeHitInfo.collidedAt + position;
+		//Debug::DrawLine(planeCollidedPos, planeCollidedPos + Vector3(3, 0, 0),Debug::WHITE,60.0f);
+		Vector3 topPos = position + worldTransform.Up().Normalised() * (capHeight - capRadius); //center of top and bottom hemishpere
+		Vector3 bottomPos = position - worldTransform.Up().Normalised() * (capHeight - capRadius);
+		//Debug::DrawLine(topPos+Vector3(0.5,0,0.5), bottomPos + Vector3(0.5, 0, 0.5), Debug::WHITE, 60.0f);
+
+
+		Vector3 vAUp = planeCollidedPos - topPos; //A is the project(hit) point of ray on the plane
+		Vector3 vADown = planeCollidedPos - bottomPos;
+		if (Vector3::Dot(vAUp, -worldTransform.Up()) < 0)
+		{
+
+			Vector3 dir = topPos - r.GetPosition();
+			float sphereProj = Vector3::Dot(dir, r.GetDirection());
+			if (sphereProj < 0.0f)
+				return false;
+
+			Vector3 point = r.GetPosition() + (r.GetDirection() * sphereProj);
+			float sphereDist = (point - topPos).Length();
+			float offset = sqrt((capRadius * capRadius) - (sphereDist * sphereDist));
+			collision.rayDistance = sphereProj - offset;
+			collision.collidedAt = r.GetPosition() + (r.GetDirection() * collision.rayDistance);
+			//Debug::DrawLine(collision.collidedAt, collision.collidedAt - r.GetDirection().Normalised() * 2,Debug::WHITE,30.0f);
+			return true;
+		}
+		else if (Vector3::Dot(vADown, worldTransform.Up()) < 0)
+		{
+			Vector3 dir = bottomPos - r.GetPosition();
+			float sphereProj = Vector3::Dot(dir, r.GetDirection());
+			if (sphereProj < 0.0f)
+				return false;
+
+			Vector3 point = r.GetPosition() + (r.GetDirection() * sphereProj);
+			float sphereDist = (point - bottomPos).Length();
+			float offset = sqrt((capRadius * capRadius) - (sphereDist * sphereDist));
+			collision.rayDistance = sphereProj - offset;
+			collision.collidedAt = r.GetPosition() + (r.GetDirection() * collision.rayDistance);
+			//Debug::DrawLine(collision.collidedAt, collision.collidedAt - r.GetDirection().Normalised() * 2, Debug::WHITE, 30.0f);
+			return true;
+		}
+		else
+		{
+			Vector3 d = position + worldTransform.Up().Normalised() * (Vector3::Dot(planeCollidedPos - position, worldTransform.Up()));
+			float testLength = (d - planeCollidedPos).Length();
+			if (testLength > capRadius)
+			{
+				return false;
+			}
+
+			float offset = sqrt((capRadius * capRadius) - (testLength * testLength));
+			collision.rayDistance = ((planeCollidedPos - r.GetPosition()).Length() - offset);
+			collision.collidedAt = r.GetPosition() + (r.GetDirection() * collision.rayDistance);
+			return true;
+		}
+	}
 	return false;
 }
 
