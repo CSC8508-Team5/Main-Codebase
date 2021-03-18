@@ -145,6 +145,7 @@
     <ClInclude Include="BehaviourAction.h" />
     <ClInclude Include="BehaviourNode.h" />
     <ClInclude Include="BehaviourNodeWithChildren.h" />
+    <ClInclude Include="BehaviourParallel.h" />
     <ClInclude Include="BehaviourSelector.h" />
     <ClInclude Include="BehaviourSequence.h" />
     <ClInclude Include="CapsuleVolume.h" />

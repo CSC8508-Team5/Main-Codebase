@@ -135,6 +135,9 @@
     <ClInclude Include="SoundSource.h">
       <Filter>Audio</Filter>
     </ClInclude>
+    <ClInclude Include="BehaviourParallel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWorld.cpp">
