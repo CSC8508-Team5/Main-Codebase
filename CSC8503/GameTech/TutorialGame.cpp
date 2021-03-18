@@ -243,6 +243,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateLevelOne();
 		//UpdateCoins();
 		UpdatePlayer(dt);
+		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(),Vector3::Up(),dt);
 		//UpdateSpinningPlatform();
 	}
 
@@ -384,22 +385,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 	}
 	else{
 		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); }
-
-
-	// Third person Camera
-	std::cout << yaw << endl;
-	const float Deg2Rad = 3.1415927f / 180.0f;
-	float cameraYOffset = lockedDistance * sin(-pitch * Deg2Rad);
-	Vector3 camerTargetPos = playerposition + Vector3(0, cameraYOffset, 0) + player->GetTransform().GetMatrix().GetColumn(2).Normalised() * lockedDistance;
-	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, playerposition, Vector3(0, 1, 0));
-	Matrix4 modelMat = mat.Inverse();
-
-	Quaternion q(modelMat);
-	Vector3 angles = q.ToEuler(); //nearly there now!
-
-	world->GetMainCamera()->SetPosition(camerTargetPos+Vector3(0,3,0));//Adding a distance on Y
-	world->GetMainCamera()->SetPitch(angles.x);
-	world->GetMainCamera()->SetYaw(angles.y);
 }
 
 void TutorialGame::UpdateKeys() {

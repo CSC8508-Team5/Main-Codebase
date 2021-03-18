@@ -49,6 +49,31 @@ void Camera::UpdateCamera(float dt) {
 	}
 }
 
+void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float dt)
+{
+	pitch -= (Window::GetMouse()->GetRelativePosition().y);
+
+	pitch = std::min(pitch, 89.0f);
+	pitch = std::max(pitch, -89.0f);
+
+	float cameraDistance = 15.0f;
+	float cameraYOffset = cameraDistance * sin(-pitch * Camera::Deg2Rad);
+	float cameraXOffset = cameraDistance * cos(-pitch * Camera::Deg2Rad);
+	Vector3 camerTargetPos = target.GetPosition()
+		+ Vector3(0, cameraYOffset, 0)
+		+ target.Backward().Normalised() * cameraXOffset;
+
+	Matrix4 mat = Matrix4::BuildViewMatrix(camerTargetPos, target.GetPosition(), Vector3(0, 1, 0));
+	Matrix4 modelMat = mat.Inverse();
+
+	Quaternion q(modelMat);
+	Vector3 angles = q.ToEuler();
+
+	SetPosition(camerTargetPos + offset);
+	SetPitch(angles.x);
+	SetYaw(angles.y);
+}
+
 /*
 Generates a view matrix for the camera's viewpoint. This matrix can be sent
 straight to the shader...it's already an 'inverse camera' matrix.

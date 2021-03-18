@@ -1,6 +1,7 @@
 #pragma once
 #include "Matrix4.h"
 #include "Vector3.h"
+#include "../CSC8503/CSC8503Common/Transform.h"
 
 namespace NCL {
 	using namespace NCL::Maths;
@@ -42,6 +43,8 @@ namespace NCL {
 		~Camera(void) {};
 
 		void UpdateCamera(float dt);
+
+		void UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float dt);
 
 		float GetFieldOfVision() const {
 			return fov;
@@ -88,6 +91,9 @@ namespace NCL {
 		float	GetPitch() const { return pitch; }
 		//Sets pitch, in degrees
 		void	SetPitch(float p) { pitch = p; }
+
+		const float Deg2Rad = 3.1415926f / 180.0f;
+		const float Rad2Deg = 180.0f / 3.1415926f;
 
 		static Camera BuildPerspectiveCamera(const Vector3& pos, float pitch, float yaw, float fov, float near, float far);
 		static Camera BuildOrthoCamera(const Vector3& pos, float pitch, float yaw, float left, float right, float top, float bottom, float near, float far);
