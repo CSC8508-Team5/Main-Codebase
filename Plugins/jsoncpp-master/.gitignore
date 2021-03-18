@@ -15,6 +15,9 @@
 # MSVC project files:
 *.sln
 *.vcxproj
+!jsoncpp_static.vcxproj
+!jsoncpp_lib.vcxproj
+!jsoncpp_object.vcxproj
 *.filters
 *.user
 *.sdf
