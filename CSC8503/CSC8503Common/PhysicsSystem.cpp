@@ -431,6 +431,10 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 
 	float cRestitution = 0.66f; // disperse some kinectic energy
 
+	if (a.GetName() == "Bouncer" || b.GetName() == "Bouncer") {
+		cRestitution = 1.5f;
+	}
+
 	float j = (-(1.0f + cRestitution) * impulseForce) /
 		(totalMass + angularEffect);
 
