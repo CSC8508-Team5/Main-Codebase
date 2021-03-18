@@ -243,7 +243,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateLevelOne();
 		//UpdateCoins();
 		UpdatePlayer(dt);
-	//	UpdateSpinningPlatform();
+		//UpdateSpinningPlatform();
 	}
 
 
@@ -661,7 +661,7 @@ void TutorialGame::InitWorld() {
 	//-------------LV1 -------------------------------------
 
 	//Pendulum();
-//spinplat = 	SpinningPlatform();
+	//spinplat = 	SpinningPlatform();
 	coincollected = 0;
 	//WinScreen->SetRestart(false);
 }
@@ -926,7 +926,6 @@ rigid body representation. This and the cube function will let you build a lot o
 physics worlds. You'll probably need another function for the creation of OBB cubes too.
 
 */
-GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
 GameObject* NCL::CSC8503::TutorialGame::CreateSphere(const Vector3& position, float radius, float inverseMass)
 {
 	GameObject* sphere = new GameObject();
@@ -1309,12 +1308,12 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 
 	/*std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f});*/
-	std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
-	DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
+	///std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
+	//DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
 
 	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
 
-	GameObject* character = new GameObject();
+	//GameObject* character = new GameObject();
 	//character->SetHUD(hud);
 
 	/*AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
@@ -1331,13 +1330,13 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	else {
 		character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
 	}*/
-	character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
-	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+	//character->SetRenderObject(new RenderObject(&character->GetTransform(), charMeshB, nullptr, basicShader));
+	//character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
-	character->GetPhysicsObject()->SetInverseMass(inverseMass);
-	character->GetPhysicsObject()->InitSphereInertia();
+	//character->GetPhysicsObject()->SetInverseMass(inverseMass);
+	//character->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(character);
+	//world->AddGameObject(character);
 
 	//lockedObject = character;*/
 
@@ -1469,16 +1468,17 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	}
 	else
 	{
-		SphereVolume* volume = new SphereVolume(radius);
+		SphereVolume* volume = new SphereVolume(1.5f);
 		apple->SetBoundingVolume((CollisionVolume*)volume);
 
 		apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
 
-	apple->GetPhysicsObject()->SetInverseMass(0.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+		apple->GetPhysicsObject()->SetInverseMass(0.0f);
+		apple->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(apple);
-	return apple;
+		world->AddGameObject(apple);
+		return apple;
+	}
 }
 
 /*
