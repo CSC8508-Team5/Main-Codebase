@@ -214,8 +214,14 @@
     <CopyFileToFolders Include="..\..\bin_x64\ikpMP3.dll">
       <Filter>Audio\x64</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\..\bin\ikpFlac.dll" />
-    <CopyFileToFolders Include="..\..\bin\ikpMP3.dll" />
-    <CopyFileToFolders Include="..\..\bin\irrKlang.dll" />
+    <CopyFileToFolders Include="..\..\bin\ikpFlac.dll">
+      <Filter>Audio\Win32</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\bin\ikpMP3.dll">
+      <Filter>Audio\Win32</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\bin\irrKlang.dll">
+      <Filter>Audio\Win32</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -285,13 +285,24 @@ rocket launcher, gaining a point when the player hits the gold coin, and so on).
 void PhysicsSystem::UpdateCollisionList() {
 	for (std::set<CollisionDetection::CollisionInfo>::iterator i = allCollisions.begin(); i != allCollisions.end(); ) {
 		if ((*i).framesLeft == numCollisionFrames) {
+			/*
 			i->a->OnCollisionBegin(i->b);
 			i->b->OnCollisionBegin(i->a);
+			*/
+			//change behaviour of collision trigger
+			i->a->AddCollisionObject(i->b);
+			i->b->AddCollisionObject(i->a);
 		}
 		(*i).framesLeft = (*i).framesLeft - 1;
 		if ((*i).framesLeft < 0) {
+			/*
 			i->a->OnCollisionEnd(i->b);
 			i->b->OnCollisionEnd(i->a);
+			*/
+			//change behaviour of collision trigger
+			i->a->RemoveCollisionObject(i->b);
+			i->b->RemoveCollisionObject(i->a);
+
 			i = allCollisions.erase(i);
 		}
 		else {
@@ -311,7 +322,6 @@ void PhysicsSystem::UpdateObjectAABBs() {
 	gameWorld.GetObjectIterators(first, last);
 	for (auto i = first; i != last; ++i) {
 		(*i)->UpdateBroadphaseAABB();
-
 	}
 }
 
@@ -371,7 +381,7 @@ void PhysicsSystem::BasicCollisionDetection() {
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
 				//std::cout << " Collision between " << (*i) -> GetName()
-				   // << " and " << (*j) -> GetName() << std::endl;
+				// << " and " << (*j) -> GetName() << std::endl;
 				//info.framesLeft = numCollisionFrames;
 				//allCollisions.insert(info);
 
@@ -473,10 +483,15 @@ void PhysicsSystem::BroadPhase() {
 				for (auto i = data.begin(); i != data.end(); ++i) {
 					for (auto j = std::next(i); j != data.end(); ++j) {
 						// is this pair of items already in the collision set -
-							// if the same pair is in another quadtree node together etc
-						info.a = min((*i).object, (*j).object);
-						info.b = max((*i).object, (*j).object);
-						broadphaseCollisions.insert(info);
+						// if the same pair is in another quadtree node together etc
+						bool collided = ((unsigned int)(*i).object->GetLayer() & (*j).object->GetLayerMask()) != 0;
+						collided = collided && ((unsigned int)(*j).object->GetLayer() & (*i).object->GetLayerMask());
+						if(collided)
+						{
+							info.a = min((*i).object, (*j).object);
+							info.b = max((*i).object, (*j).object);
+							broadphaseCollisions.insert(info);
+						}
 
 					}
 
