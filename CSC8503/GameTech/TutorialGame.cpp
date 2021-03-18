@@ -98,6 +98,7 @@ void TutorialGame::InitialiseAssets() {
 	
 	InitWorld();
 	InitCamera();
+	glDisable(GL_DEBUG_OUTPUT);
 	
 }
 
@@ -125,6 +126,7 @@ TutorialGame::~TutorialGame()	{
 }
 
 void TutorialGame::UpdateGame(float dt) {
+	
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/

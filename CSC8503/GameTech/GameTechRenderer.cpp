@@ -1,9 +1,11 @@
+
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/GameObject.h"
 #include "../../Common/Camera.h"
 #include "../../Common/Vector2.h"
 #include "../../Common/Vector3.h"
 #include "../../Common/TextureLoader.h"
+#pragma warning
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -113,7 +115,7 @@ void GameTechRenderer::FillGBuffer() {
 		BindMesh((*i).GetMesh());
 		int layerCount = (*i).GetMesh()->GetSubMeshCount();
 		for (int i = 0; i < layerCount; ++i) {
-			DrawBoundMesh(i);
+			DrawBoundMesh(i);																															
 		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
