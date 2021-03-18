@@ -9,6 +9,8 @@ https://research.ncl.ac.uk/game/
 #pragma once
 #include <iostream>
 
+#include "../Plugins/bullet3/src/LinearMath/btQuaternion.h"
+
 namespace NCL {
 	namespace Maths {
 		class Matrix3;
@@ -30,6 +32,12 @@ namespace NCL {
 			Quaternion(void);
 			Quaternion(float x, float y, float z, float w);
 			Quaternion(const Vector3& vector, float w);
+			Quaternion(btQuaternion q){
+				x = q.x();
+				y = q.y();
+				z = q.z();
+				w = q.w();
+			};
 
 			Quaternion(const Matrix3 &m);
 			Quaternion(const Matrix4 &m);
@@ -108,6 +116,11 @@ namespace NCL {
 
 			inline float operator [](const int i) const {
 				return array[i];
+			}
+
+			operator btQuaternion()
+			{
+				return btQuaternion(btScalar(x), btScalar(y), btScalar(z), btScalar(w));
 			}
 
 			inline friend std::ostream& operator <<(std::ostream& o, const Quaternion& q);
