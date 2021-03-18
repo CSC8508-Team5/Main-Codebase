@@ -722,8 +722,7 @@ void TutorialGame::LevelThree() {
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
 
-	// Cylinder Bouncers
-	AddBouncer(Vector3(-40, 6, 0), 2, 2, 0);
+	// Cylinder Obstacles
 
 	// Coins 
 	// Initialise coins

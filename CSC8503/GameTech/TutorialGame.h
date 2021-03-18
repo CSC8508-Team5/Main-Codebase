@@ -121,7 +121,6 @@ namespace NCL {
 			void UpdateLevelThree(float dt);
 			bool isLevelThree = false; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
-			GameObject* AddBouncer(const Vector3& position, float radius, float height, float inverseMass = 10.0f);
 
 			GameObject* selectionObject = nullptr;
 
