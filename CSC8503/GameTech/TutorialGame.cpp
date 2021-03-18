@@ -659,8 +659,8 @@ void TutorialGame::InitWorld() {
 
 	//-------------LV3 -------------------------------------
 	/* Conor Lambert */
-	// LevelThree()
-	// isLevelThree = true;
+	//LevelThree();
+	//isLevelThree = true;
 
 	//Pendulum();
 	//spinplat = 	SpinningPlatform();
@@ -957,29 +957,6 @@ GameObject* TutorialGame::CreateCylinder(const Vector3& position, float radius, 
 	world->AddGameObject(cylinder);
 
 	return cylinder;
-}
-
-GameObject* TutorialGame::AddBouncer(const Vector3& position, float radius, float height, float inverseMass) {
-	GameObject* bouncer = new GameObject("Bouncer");
-
-	Vector3 cylinderSize = Vector3(radius * 2, height, radius * 2);
-	AABBVolume* volume = new AABBVolume(Vector3(radius, height, radius));
-	bouncer->SetBoundingVolume((CollisionVolume*)volume);
-
-	bouncer->GetTransform()
-		.SetScale(cylinderSize)
-		.SetPosition(position);
-
-	bouncer->SetRenderObject(new RenderObject(&bouncer->GetTransform(), spinplatMesh, basicTex, basicShader));
-	bouncer->SetPhysicsObject(new PhysicsObject(&bouncer->GetTransform(), bouncer->GetBoundingVolume()));
-
-	bouncer->GetPhysicsObject()->SetInverseMass(inverseMass);
-	bouncer->GetPhysicsObject()->InitSphereInertia();
-	bouncer->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-
-	world->AddGameObject(bouncer);
-
-	return bouncer;
 }
 
 /*
