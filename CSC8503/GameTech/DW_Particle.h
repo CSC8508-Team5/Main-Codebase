@@ -7,7 +7,12 @@
 class DW_Particle
 {
 public:
-	DW_Particle(const NCL::Maths::Vector3& pos);
+	enum ParticleType {
+		Flame,
+		Rain
+	};
+
+	DW_Particle(const ParticleType type, const NCL::Maths::Vector3& pos);
 	~DW_Particle();
 
 	NCL::Maths::Vector3 GetPosition() { return m_position; }
@@ -25,6 +30,7 @@ public:
 	void Update(const float dt);
 	static bool SortParticles(DW_Particle* particleA, DW_Particle* particleB);
 private:
+	ParticleType m_type;
 	float m_lifespan;
 	NCL::Maths::Vector3 m_position;
 	NCL::Maths::Vector3 m_velocity;
@@ -33,6 +39,6 @@ private:
 
 	float GenerateRandomFloat();
 	void InitFlameData(const NCL::Maths::Vector3& pos);
-	
+	void InitRainData();
 };
 
