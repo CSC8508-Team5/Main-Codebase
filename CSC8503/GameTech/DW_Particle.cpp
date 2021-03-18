@@ -2,8 +2,21 @@
 #include "DW_Tools.h"
 
 
-DW_Particle::DW_Particle(const NCL::Maths::Vector3& pos) {
-	InitFlameData(pos);
+DW_Particle::DW_Particle(const ParticleType type, const NCL::Maths::Vector3& pos) 
+	:m_type{type}
+{
+	switch (m_type)
+	{
+	case ParticleType::Flame:
+		InitFlameData(pos);
+		break;
+	case ParticleType::Rain:
+		InitRainData();
+		break;
+	default:
+		break;
+	}
+	
 }
 
 
@@ -33,4 +46,8 @@ void DW_Particle::InitFlameData(const NCL::Maths::Vector3& pos) {
 	m_velocity = newVelocity;
 	m_acceleration = NCL::Maths::Vector3(-0.8 * newVelocity.x, 0, -0.8 * newVelocity.z);
 	m_modelMatrix = NCL::Maths::Matrix4::Translation(m_position);
+}
+
+void DW_Particle::InitRainData() {
+
 }
