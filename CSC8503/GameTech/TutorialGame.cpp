@@ -9,12 +9,14 @@
 #include <algorithm>
 #include <math.h>
 
+
 using namespace NCL;
 using namespace CSC8503;
 
 TutorialGame::TutorialGame()	{
 	world		= new GameWorld();
 	renderer	= new GameTechRenderer(*world);
+	renderer->SetIsRenderFlame(false);
 	physics		= new PhysicsSystem(*world);
 	//irrklang audio system
 	audio		= new AudioSystem();
@@ -31,6 +33,7 @@ TutorialGame::TutorialGame()	{
 	useGravity		= true;
 	inSelectionMode = false;
 
+
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject*[17];
@@ -39,8 +42,11 @@ TutorialGame::TutorialGame()	{
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
-	isjump = false;
+	isjump = false; 
+	//gamestate
 	isfinish = false;
+	ispause = false;
+	//gamestate
 	numstairs = 14;
 	numcoins = 25; // Upper limit of coins
 	coincollected = 0;
@@ -63,10 +69,17 @@ TutorialGame::TutorialGame()	{
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
-
-	
+//--------------------------------------------------In Game UI------------------------------------------//
+	InGameUI = new DW_UIPanel("InGameUI");
+	Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Timer_text = new DW_UIText("Timertext", "Time :  " , 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	InGameUI->AddComponent(Coin_text);
+	InGameUI->AddComponent(Timer_text);
+	DW_UIRenderer::get_instance().AddPanel(InGameUI);
+	InGameUI->SetPanelIsEnable(false);
 //-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
+
 
 /*
 
@@ -118,6 +131,8 @@ TutorialGame::~TutorialGame()	{
 	delete[] coins;
 	delete spinplat;
 	delete player;
+	delete InGameUI;
+	delete Coin_text;
 
 	delete physics;
 	delete renderer;
@@ -125,26 +140,62 @@ TutorialGame::~TutorialGame()	{
 	delete audio;
 }
 
+//Return Game state
+bool TutorialGame::IfRestart() {
+	if (WinScreen->IfRestart()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void TutorialGame::Reload() {
+	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
+	Quaternion orientation = Quaternion(0, -1, 0, 1);
+	orientation.Normalise();
+	player->GetTransform().SetOrientation(orientation);
+	SphereVolume* volume = new SphereVolume(1.5f);
+	for (int i = 0; i < numcoins; ++i) {
+		if (coins[i] != nullptr) {
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+		}
+	}
+	coincollected = 0;
+	audio->StopAll();
+	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
+}
+
 void TutorialGame::UpdateGame(float dt) {
 	
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-
+	Timer_text->SetText("Timer : " + std::to_string((int)(dt*10))+ " s"); //unfinished timer
+	if (WinScreen->IfRestart()) {
+		isfinish = false;
+		Reload();
+		WinScreen->SetRestart(false);
+		//platforms = LevelTestOne();
+	}
 	UpdateKeys();
-	if (StartMenu->GetPanelIsEnable()||PauseMenu->GetPanelIsEnable()||WinScreen->GetPanelIsEnable()||LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
+		InGameUI->SetPanelIsEnable(false);
 	}
 	else {
+		ispause = false;
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
-
-	} 
+		InGameUI->SetPanelIsEnable(true);
+	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-		
+
 		WinScreen->SetPanelActive(true);
-		
+
 		//Debug::Print("You Win", Vector2(45, 25));
 	}
 
@@ -177,8 +228,8 @@ void TutorialGame::UpdateGame(float dt) {
 		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);
 	}
 	if (testStateObject) {
-		 testStateObject -> Update(dt);
-		
+		 testStateObject->Update(dt);
+
 	}
 
 	world->UpdateWorld(dt);
@@ -186,11 +237,11 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
-	if (!isfinish) {
-		UpdateLevelOne();
-		UpdateCoins();
+	if ((!ispause) || (!isfinish)) {
+		//UpdateLevelOne();
+		//UpdateCoins();
 		UpdatePlayer(dt);
-		UpdateSpinningPlatform();
+	//	UpdateSpinningPlatform();
 	}
 
 
@@ -225,13 +276,14 @@ void TutorialGame::UpdateLevelOne() {
 		CollisionDetection::CollisionInfo info;
 		for (int i = 0; i < numstairs; ++i) {
 			if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
+				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0,0,0));
 				player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 				isjump = false;
 			}
 			//finish
 			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 				isfinish = true;
-
+				ispause = true;
 				audio->StopAll();
 				audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
 			}
@@ -249,10 +301,7 @@ void TutorialGame::UpdateSpinningPlatform(){
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	if (!StartMenu->GetPanelIsEnable() &&!PauseMenu->GetPanelIsEnable() && 
-		!WinScreen->GetPanelIsEnable() && !LoseScreen->GetPanelIsEnable() && !OptionMenu->GetPanelIsEnable()) {
-		Debug::Print("Number of Coins collected: " + std::to_string(coincollected), Vector2(10, 20));
-	}
+	Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
@@ -327,7 +376,6 @@ void TutorialGame::UpdatePlayer(float dt) {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
 			//isjump = true; //Comment this if want a quick win.
-			isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
@@ -528,19 +576,23 @@ void TutorialGame::InitWorld() {
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
+	//-------------LV1 -------------------------------------
+	//platforms = LevelTestOne();
+	//std::vector<Vector3> poses;
+	//for (int i = 0; i < numstairs; i++)
+	//{
+	//	//std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
+	//	poses.push_back(platforms[i]->GetTransform().GetPosition());
+	//}
 
-	platforms = LevelTestOne();
-	std::vector<Vector3> poses;
-	for (int i = 0; i < numstairs; i++)
-	{
-		poses.push_back(platforms[i]->GetTransform().GetPosition());
-	}
-	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 
+	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	//-------------LV1 -------------------------------------
 
 	//Pendulum();
-	spinplat = 	SpinningPlatform();
+//spinplat = 	SpinningPlatform();
 	coincollected = 0;
+	//WinScreen->SetRestart(false);
 }
 
 GameObject** TutorialGame::LevelTestOne() {

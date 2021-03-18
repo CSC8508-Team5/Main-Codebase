@@ -22,6 +22,8 @@
 #include "DW_SkyboxHelper.h"
 #include "DW_RenderCombineHelper.h"
 #include "DW_BloomHelper.h"
+#include "DW_Flame.h"
+#include "DW_Rain.h"
 
 
 namespace NCL {
@@ -46,8 +48,14 @@ namespace NCL {
 					m_exp -= 0.01f;
 				}
 			}
+
+			void Update(float dt) override;
+
+			void SetIsRenderFlame(const bool flag) { m_isRenderFlame = flag; }
+
 		protected:
 			void RenderFrame()	override;
+			
 
 			Matrix4 SetupDebugLineMatrix()	const override;
 			Matrix4 SetupDebugStringMatrix()const override;
@@ -71,10 +79,14 @@ namespace NCL {
 			void RenderLighting();
 			void CombineBuffer();
 
-			void BlitFBO();
+			void BlitFBO1();//from deferred rendering fbo to combine fbo
+			void BlitFBO2();//from combine fbo to default fbo
 			void RenderLights();
 			void RenderFinalQuad();
 			void BlurLights();
+
+			void RenderFlame();
+			void RenderRain();
 
 			//Matrix4 viewMatrix;
 			//Matrix4 projectionMatrix;
@@ -109,6 +121,11 @@ namespace NCL {
 			DW_BloomHelper* m_bloomHelper;
 			OGLShader* m_gaussianShader;
 			float m_exp{ 1.0f };
+			OGLShader* m_flameShader;
+			DW_Flame* m_flame;
+			bool m_isRenderFlame{true};
+			OGLShader* m_rainShader;
+			DW_Rain* m_rain;
 		};
 	}
 }

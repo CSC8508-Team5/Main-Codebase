@@ -2,6 +2,7 @@
 
 #include "../CSC8503Common/AudioSystem.h"
 
+
 HM_Win::HM_Win() {
 	//1.create many ui components if you need! (they must have a name)
 
@@ -61,17 +62,18 @@ HM_Win::~HM_Win() {
 }
 
 void HM_Win::ClickFunc(const std::string& str) {
+
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 		this->SetPanelActive(false);
-
+		restart = true;
 	}
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		StartMenu = new HM_StartMenu();
-		
+		restart = false;
 	}
 
 
