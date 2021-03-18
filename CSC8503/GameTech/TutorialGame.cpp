@@ -247,6 +247,12 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 
+	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
+		for (auto i = 0; i < sliderVector.size(); ++i) {
+			sliderVector.at(i)->Update(dt);
+		}
+	}
+
 
 	DW_UIRenderer::get_instance().Update(dt);
 
@@ -292,6 +298,10 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 };
+
+void TutorialGame::UpdateLevelThree(float dt) {
+	// Not Yet Implemented
+}
 
 void TutorialGame::UpdateSpinningPlatform(){
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
@@ -696,6 +706,35 @@ GameObject** TutorialGame::LevelTestOne() {
 		}
 	}
 	return platforms;
+}
+
+void TutorialGame::LevelThree() {
+
+	// Platforms 
+	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
+	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+
+	GameObject* finish = AddCubeToWorld(Vector3(470, 0, 0), Vector3(20, 2, 50), 0);
+	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+	// Placeholder State Objects ("sliders")
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
+
+	// Cylinder Bouncers
+	AddBouncer(Vector3(-40, 6, 0), 2, 2, 0);
+
+	// Coins 
+	// Initialise coins
+	for (int i = 0; i < numcoins; ++i) {
+		coins[i] = nullptr;
+	}
+
+	coins[0] = AddCoins(Vector3(30, 4, -20));
+	coins[1] = AddCoins(Vector3(30, 4, 20));
+	coins[2] = AddCoins(Vector3(90, 4, -20));
+	coins[3] = AddCoins(Vector3(90, 4, 20));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
