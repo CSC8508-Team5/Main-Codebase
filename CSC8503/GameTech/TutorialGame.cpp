@@ -189,7 +189,13 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateCoins();
 		//UpdatePlayer(dt);
 		//UpdateSpinningPlatform();
-		UpdateLevelThree();
+		//UpdateLevelThree(dt);
+	}
+
+	if (isLevelThree && !isfinish && sliderVector.size() > 0) {
+		for (auto i = 0; i < sliderVector.size(); ++i) {
+			sliderVector.at(i)->Update(dt);
+		}
 	}
 
 
@@ -237,8 +243,8 @@ void TutorialGame::UpdateLevelOne() {
 		}
 };
 
-void TutorialGame::UpdateLevelThree() {
-
+void TutorialGame::UpdateLevelThree(float dt) {
+	
 }
 
 void TutorialGame::UpdateSpinningPlatform(){
@@ -593,20 +599,27 @@ GameObject** TutorialGame::LevelTestOne() {
 void TutorialGame::LevelThree() {
 
 	// Platforms 
-	GameObject* startingFloor = AddCubeToWorld(Vector3(0, 0, 0), Vector3(100, 2, 30), 0);
+	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
 	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 
-	GameObject* slope = AddCubeToWorld(Vector3(250, 20, 0), Vector3(150, 2, 30), 0);
-	slope->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-	slope->GetTransform().SetOrientation(Quaternion(0, 0, 0.15, 1));
-
-	GameObject* finish = AddCubeToWorld(Vector3(440, 60, 0), Vector3(50, 2, 30), 0);
+	GameObject* finish = AddCubeToWorld(Vector3(450, 0, 0), Vector3(20, 2, 50), 0);
 	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
 	// Placeholder State Objects ("sliders")
-	sliderVector.emplace_back(AddCubeToWorld(Vector3(0, 6, 0), Vector3(1, 4, 10), 0));
-	sliderVector.emplace_back(AddCubeToWorld(Vector3(30, 6, 0), Vector3(1, 4, 10), 0));
-	sliderVector.emplace_back(AddCubeToWorld(Vector3(60, 6, 0), Vector3(1, 4, 10), 0));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(2000, 4, 1)));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1)));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1)));
+
+	// Coins 
+	// Initialise coins
+	for (int i = 0; i < numcoins; ++i) {
+		coins[i] = nullptr;
+	}
+
+	coins[0] = AddCoins(Vector3(30, 4, -20));
+	coins[1] = AddCoins(Vector3(30, 4, 20));
+	coins[2] = AddCoins(Vector3(90, 4, -20));
+	coins[3] = AddCoins(Vector3(90, 4, 20));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
@@ -694,7 +707,6 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 
 	return floor;
 }
-
 
 /*
 The cylinder now using the CapsuleVolume, might need to change 
@@ -1034,23 +1046,23 @@ void TutorialGame::MoveSelectedObject() {
 
 	}
 
-StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions) {
 
-	StateGameObject* apple = new StateGameObject();
+	StateGameObject* stateCube = new StateGameObject();
 
-	SphereVolume* volume = new SphereVolume(0.25f);
-	apple->SetBoundingVolume((CollisionVolume*)volume);
-	apple->GetTransform()
+	AABBVolume* volume = new AABBVolume(dimensions);
+	stateCube->SetBoundingVolume((CollisionVolume*)volume);
+	stateCube->GetTransform()
 		.SetScale(Vector3(0.25, 0.25, 0.25))
 		.SetPosition(position);
 
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+	stateCube->SetRenderObject(new RenderObject(&stateCube->GetTransform(), cubeMesh, nullptr, basicShader));
+	stateCube->SetPhysicsObject(new PhysicsObject(&stateCube->GetTransform(), stateCube->GetBoundingVolume()));
 
-	apple->GetPhysicsObject()->SetInverseMass(1.0f);
-	apple->GetPhysicsObject()->InitSphereInertia();
+	stateCube->GetPhysicsObject()->SetInverseMass(0);
+	stateCube->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(apple);
+	world->AddGameObject(stateCube);
 
-	return apple;
+	return stateCube;
 }

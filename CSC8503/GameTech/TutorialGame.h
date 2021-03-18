@@ -65,10 +65,11 @@ namespace NCL {
 
 			// Conor Level
 			void LevelThree();
-			void UpdateLevelThree();
+			void UpdateLevelThree(float dt);
+			bool isLevelThree = true; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
 
-		StateGameObject* AddStateObjectToWorld(const Vector3& position);
+		StateGameObject* AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions);
 		  StateGameObject * testStateObject = nullptr;
 
 			GameTechRenderer*	renderer;
