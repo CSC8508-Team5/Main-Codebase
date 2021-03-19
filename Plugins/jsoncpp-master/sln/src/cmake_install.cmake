@@ -34,9 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("F:/Projects/CSC8508/jsoncpp-master/build/src/lib_json/cmake_install.cmake")
-  include("F:/Projects/CSC8508/jsoncpp-master/build/src/jsontestrunner/cmake_install.cmake")
-  include("F:/Projects/CSC8508/jsoncpp-master/build/src/test_lib_json/cmake_install.cmake")
+  include("F:/Projects/CSC8508/jsoncpp-master/sln/src/lib_json/cmake_install.cmake")
 
 endif()
 

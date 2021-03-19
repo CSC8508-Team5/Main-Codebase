@@ -5,7 +5,7 @@
 
 # Configuration directories and files
 SourceDirectory: F:/Projects/CSC8508/jsoncpp-master
-BuildDirectory: F:/Projects/CSC8508/jsoncpp-master/build
+BuildDirectory: F:/Projects/CSC8508/jsoncpp-master/sln
 
 # Where to place the cost data store
 CostDataFile: 

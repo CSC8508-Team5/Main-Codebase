@@ -34,37 +34,37 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/Debug/jsoncpp.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/Debug/jsoncpp.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/Release/jsoncpp.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/Release/jsoncpp.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/MinSizeRel/jsoncpp.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/MinSizeRel/jsoncpp.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/RelWithDebInfo/jsoncpp.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/RelWithDebInfo/jsoncpp.lib")
   endif()
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/bin/Debug/jsoncpp.dll")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/bin/Debug/jsoncpp.dll")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/bin/Release/jsoncpp.dll")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/bin/Release/jsoncpp.dll")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/bin/MinSizeRel/jsoncpp.dll")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/bin/MinSizeRel/jsoncpp.dll")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/bin/RelWithDebInfo/jsoncpp.dll")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/bin/RelWithDebInfo/jsoncpp.dll")
   endif()
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/Debug/jsoncpp_static.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/Debug/jsoncpp_static.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/Release/jsoncpp_static.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/Release/jsoncpp_static.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/MinSizeRel/jsoncpp_static.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/MinSizeRel/jsoncpp_static.lib")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/build/lib/RelWithDebInfo/jsoncpp_static.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "F:/Projects/CSC8508/jsoncpp-master/sln/lib/RelWithDebInfo/jsoncpp_static.lib")
   endif()
 endif()
 
@@ -74,25 +74,25 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
       "json_reader.obj"
       "json_value.obj"
       "json_writer.obj"
-      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/build/src/lib_json/jsoncpp_object.dir/Debug/")
+      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/sln/src/lib_json/jsoncpp_object.dir/Debug/")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
     file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/objects-Release/jsoncpp_object" TYPE FILE FILES
       "json_reader.obj"
       "json_value.obj"
       "json_writer.obj"
-      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/build/src/lib_json/jsoncpp_object.dir/Release/")
+      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/sln/src/lib_json/jsoncpp_object.dir/Release/")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
     file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/objects-MinSizeRel/jsoncpp_object" TYPE FILE FILES
       "json_reader.obj"
       "json_value.obj"
       "json_writer.obj"
-      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/build/src/lib_json/jsoncpp_object.dir/MinSizeRel/")
+      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/sln/src/lib_json/jsoncpp_object.dir/MinSizeRel/")
   elseif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
     file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/objects-RelWithDebInfo/jsoncpp_object" TYPE FILE FILES
       "json_reader.obj"
       "json_value.obj"
       "json_writer.obj"
-      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/build/src/lib_json/jsoncpp_object.dir/RelWithDebInfo/")
+      FILES_FROM_DIR "F:/Projects/CSC8508/jsoncpp-master/sln/src/lib_json/jsoncpp_object.dir/RelWithDebInfo/")
   endif()
 endif()
 

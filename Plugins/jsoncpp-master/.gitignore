@@ -1,4 +1,4 @@
-#/build/
+/build/
 /build-*/
 *.pyc
 *.swp
@@ -14,10 +14,10 @@
 
 # MSVC project files:
 *.sln
+jsoncpp_static.vcxproj
+jsoncpp_lib.vcxproj
+jsoncpp_object.vcxproj
 *.vcxproj
-!jsoncpp_static.vcxproj
-!jsoncpp_lib.vcxproj
-!jsoncpp_object.vcxproj
 *.filters
 *.user
 *.sdf
