@@ -108,6 +108,14 @@ void TutorialGame::InitialiseAssets() {
 	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 	
+
+	whiteTex = (OGLTexture*)TextureLoader::LoadAPITexture("white.png");
+	greyTex = (OGLTexture*)TextureLoader::LoadAPITexture("grey.png");
+	greenTex = (OGLTexture*)TextureLoader::LoadAPITexture("green.png");
+	redTex = (OGLTexture*)TextureLoader::LoadAPITexture("red.png");
+	yellowTex = (OGLTexture*)TextureLoader::LoadAPITexture("yellow.png");
+	finishTex = (OGLTexture*)TextureLoader::LoadAPITexture("finish.png");
+
 	InitWorld();
 	InitCamera();
 	
@@ -347,7 +355,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	}
 	if (playerposition.y <= -5) {
 		player->GetTransform().SetScale(Vector3(0,0,0));
-		InitCharaters();
+		InitCharaters(Vector3(-150, 10, 0));
 	}
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
@@ -567,30 +575,245 @@ void TutorialGame::InitWorld() {
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
-	//testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
+	InitLevel1();
+	//InitLevel2();
+	
+}
+void TutorialGame::InitLevel1() {
+	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	InitCharaters();
+	InitCharaters(Vector3(-150, 10, 0));
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
 	//-------------LV1 -------------------------------------
-	//platforms = LevelTestOne();
-	//std::vector<Vector3> poses;
-	//for (int i = 0; i < numstairs; i++)
-	//{
-	//	//std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
-	//	poses.push_back(platforms[i]->GetTransform().GetPosition());
-	//}
-
-
-	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	platforms = LevelTestOne();
+	std::vector<Vector3> poses;
+	for (int i = 0; i < numstairs; i++)
+	{
+		//std::cout << platforms[i]->GetTransform().GetPosition() << "\n";
+		poses.push_back(platforms[i]->GetTransform().GetPosition());
+	}
+	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	//-------------LV1 -------------------------------------
 
-	//Pendulum();
-//spinplat = 	SpinningPlatform();
+	Pendulum();
+	spinplat = SpinningPlatform();
 	coincollected = 0;
 	//WinScreen->SetRestart(false);
 }
+void TutorialGame::InitLevel2() {	
+	InitCharaters(Vector3(0, 0, -320));
+	InitLevel2design();
+}
+void TutorialGame::InitLevel2design() {
+	AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floot	
+	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
+	AddWallToWorld(Vector3(56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
+	AddWallToWorld(Vector3(0, 10, 351), 56, 11,1, whiteTex, "frontwall");  //frontwall
+	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
+	AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
+	
+	//AddWallToWorld(Vector3(-99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(-93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddDoorToWorld(Vector3(-83, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddWallToWorld(Vector3(-77, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-71, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddDoorToWorld(Vector3(-61, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddWallToWorld(Vector3(-55, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-49, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddDoorToWorld(Vector3(-39, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddWallToWorld(Vector3(-33, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddWallToWorld(Vector3(-11, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddWallToWorld(Vector3(11, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddWallToWorld(Vector3(33, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar
+	//AddDoorToWorld(Vector3(39, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddDoorToWorld(Vector3(49, 10, -290), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddWallToWorld(Vector3(55, 9, -290), 1, 8, 1, greenTex, "pillar");  //pillar
+	//AddDoorToWorld(Vector3(61, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddDoorToWorld(Vector3(71, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddWallToWorld(Vector3(77, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(83, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
+	//AddDoorToWorld(Vector3(93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
+	//AddWallToWorld(Vector3(99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar	
+	
+	AddWallToWorld(Vector3(-55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(-39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-22, 9, -220), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(0, 9, -220), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(22, 9, -220), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar
+	AddDoorToWorld(Vector3(39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddDoorToWorld(Vector3(49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar
+
+	AddWallToWorld(Vector3(-55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-22, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-11, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-5, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(5, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(11, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 	
+	AddWallToWorld(Vector3(22, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
+	//AddDoorToWorld(Vector3(39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
+	
+	AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
+	AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	AddWallToWorld(Vector3(-43, 9, -100), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-22, 9, -100), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(22, 9, -100), 10, 8, 1, redTex, "block"); //block
+
+	//AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(-33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(-11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddWallToWorld(Vector3(33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
+	//AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
+	
+	//---------------------------------5-------------------------------
+	
+	AddWallToWorld(Vector3(0, 9, -40), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(22, 9, -40), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(-44, 9, -40), 12, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-27, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(-17, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-11, 9, -40), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(11, 9, -40), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(44, 9, -40), 12, 8, 1, greenTex, "pillar");  //pillar
+
+
+	AddWallToWorld(Vector3(-22, 9, 20), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(0, 9, 20), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(-44, 9, 20), 12, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-11, 9, 20), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(11, 9, 20), 1, 8, 1, greenTex, "pillar");  //pillar		
+	AddDoorToWorld(Vector3(17, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddDoorToWorld(Vector3(27, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(44, 9, 20), 12, 8, 1, greenTex, "pillar");  //pillar
+
+	AddWallToWorld(Vector3(-22, 9, 80), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(22, 9, 80), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-44, 9, 80), 12, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(-11, 9, 80), 1, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-5, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(5, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(11, 9, 80), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(44, 9, 80), 12, 8, 1, greenTex, "pillar");  //pillar
+
+	//AddWallToWorld(Vector3(-44, 9, 200), 12, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(-11, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(11, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddWallToWorld(Vector3(44, 9, 200), 12, 8, 1, greenTex, "pillar");  //pillar
+
+	//AddWallToWorld(Vector3(-44, 9, 150), 12, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-27, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-17, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(-11, 9, 150), 1, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-5, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(5, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddWallToWorld(Vector3(11, 9, 150), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(17, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(27, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddWallToWorld(Vector3(44, 9, 150), 12, 8, 1, greenTex, "pillar");  //pillar
+
+	AddWallToWorld(Vector3(-11, 9, 140), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(-38.5, 9, 140), 18, 8, 1, greenTex, "pillar");  //pillar	
+	//AddDoorToWorld(Vector3(-16, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	//AddDoorToWorld(Vector3(-6, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(0, 9, 140), 1, 8, 1, greenTex, "pillar");  //pillar		
+	AddDoorToWorld(Vector3(6, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddDoorToWorld(Vector3(16, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(38.5, 9, 140), 18, 8, 1, greenTex, "pillar");  //pillar
+
+	AddWallToWorld(Vector3(11, 9, 200), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(-38.5, 9, 200), 18, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-16, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(-6, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(0, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(6, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(16, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(38.5, 9, 200), 18, 8, 1, greenTex, "pillar");  //pillar
+
+	AddWallToWorld(Vector3(11, 9, 260), 10, 8, 1, redTex, "block"); //block	
+	AddWallToWorld(Vector3(-38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar	
+	AddDoorToWorld(Vector3(-16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddDoorToWorld(Vector3(-6, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	AddWallToWorld(Vector3(0, 9, 260), 1, 8, 1, greenTex, "pillar");  //pillar		
+	//AddDoorToWorld(Vector3(6, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	//AddDoorToWorld(Vector3(16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	AddWallToWorld(Vector3(38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar
+
+}
+
 
 GameObject** TutorialGame::LevelTestOne() {
 	Vector3 PlatformSize = Vector3(10, 5, 50);
@@ -858,8 +1081,8 @@ void TutorialGame::InitDefaultFloor() {
 	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
-void TutorialGame::InitCharaters() {
-	player = AddPlayerToWorld(Vector3(-150, 10, 0));
+void TutorialGame::InitCharaters(Vector3 position) {
+	player = AddPlayerToWorld(position);
 	Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
@@ -1076,4 +1299,38 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
 	world->AddGameObject(apple);
 
 	return apple;
+}
+
+GameObject* TutorialGame::AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name) { //lv2 design
+	GameObject* wall = new GameObject(name);
+	Vector3 wallSize = Vector3(x, y, z);
+	AABBVolume* volume = new AABBVolume(wallSize);
+	wall->SetBoundingVolume((CollisionVolume*)volume);
+	wall->GetTransform().SetScale(wallSize * 2).SetPosition(position);
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), cubeMesh, tempTex, basicShader));
+	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
+	wall->GetPhysicsObject()->SetInverseMass(0);
+	wall->GetPhysicsObject()->InitCubeInertia();
+	world->AddGameObject(wall);
+	return wall;
+}
+
+GameObject* TutorialGame::AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass) {
+	GameObject* cube = new GameObject(name);
+
+	AABBVolume* volume = new AABBVolume(dimensions);
+
+	cube->SetBoundingVolume((CollisionVolume*)volume);
+
+	cube->GetTransform().SetPosition(position).SetScale(dimensions * 2);
+
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, tempTex, basicShader));
+	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
+	cube->GetPhysicsObject()->InitCubeInertia();
+
+	world->AddGameObject(cube);
+
+	return cube;
 }

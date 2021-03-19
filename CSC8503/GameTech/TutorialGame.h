@@ -33,7 +33,13 @@ namespace NCL {
 
 			void InitWorld();
 
-			void InitCharaters();
+			void InitLevel2();
+			void InitLevel2design();
+			
+
+			void InitLevel1();
+		
+			void InitCharaters(Vector3 position);
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
@@ -56,6 +62,8 @@ namespace NCL {
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
+			GameObject* AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name);
+			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 10.0f);
 			//adding for level design
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
@@ -107,7 +115,13 @@ namespace NCL {
 			OGLMesh*	sphereMesh	= nullptr;
 			OGLTexture* basicTex	= nullptr;
 			OGLShader*	basicShader = nullptr;
-
+			OGLTexture* whiteTex = nullptr;
+			OGLTexture* greyTex = nullptr;
+			OGLTexture* greenTex = nullptr;
+			OGLTexture* redTex = nullptr;
+			OGLTexture* yellowTex = nullptr;
+			OGLTexture* finishTex = nullptr;
+			
 			//Coursework Meshes
 			OGLMesh*	charMeshA	= nullptr;
 			OGLMesh*	charMeshB	= nullptr;
