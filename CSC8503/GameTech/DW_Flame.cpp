@@ -33,7 +33,7 @@ void DW_Flame::Update(const float dt) {
 		(*it)->Update(dt);
 
 	for (int i = 0; i < dt * 1000; ++i) 
-		m_particles.push_back(new DW_Particle(DW_Particle::ParticleType::Flame,m_particlePos));
+		m_particles.push_back(new DW_Particle(DW_Particle::ParticleType::Flame,m_particlePos,0.0f));
 
 	std::sort(this->m_particles.begin(), this->m_particles.end(), DW_Particle::SortParticles);
 }

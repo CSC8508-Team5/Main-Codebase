@@ -13,12 +13,41 @@ DW_Rain::~DW_Rain() {
 }
 
 void DW_Rain::Update(const float dt) {
+	for (std::vector<DW_Particle*>::iterator it = m_particles.begin(); it != m_particles.end();)
+	{
+		(*it)->SetVelocity(DW_Tools::ComputeVelocity((*it)->GetVelocity(), (*it)->GetAcceleration() + m_gravity, dt));
+		(*it)->SetOriginPos((*it)->GetVelocity() * dt + (*it)->GetOriginPos());
+		//(*it)->SetPosition(DW_Tools::ComputeEuler((*it)->GetPosition(), (*it)->GetVelocity(), (*it)->GetAcceleration() + m_gravity, dt));
+		//(*it)->SetDeltMove(DW_Tools::ComputeVelocity((*it)->GetVelocity(), (*it)->GetAcceleration() + m_gravity, dt));
+		(*it)->ModifyLifeSpan(-dt);
+		if ((*it)->GetLifeSpan() <= 0.0f)
+		{
+			delete (*it);
+			(*it) = nullptr;
+			it = m_particles.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 
+	for (std::vector<DW_Particle*>::iterator it = m_particles.begin(); it != m_particles.end(); ++it)
+		(*it)->Update(dt);
+
+	m_time += dt;
+	//std::cout << "time:" << m_time << "\n";
+
+	//if (m_particles.size()<20)
+	//{
+		for (int i = 0; i <2; ++i)
+			m_particles.push_back(new DW_Particle(DW_Particle::ParticleType::Rain, NCL::Maths::Vector3{}, m_time));
+	//}
+	
 }
 
 
 void DW_Rain::SetRenderData() {
-	const int maxParticles = 3000;
+	const int maxParticles = 10;
 	GLfloat particlesContainter[maxParticles];
 
 	for (int i = 0; i < maxParticles - 3; i += 3)
@@ -41,5 +70,5 @@ void DW_Rain::SetRenderData() {
 
 void DW_Rain::Draw() {
 	glBindVertexArray(m_VAO);
-	glDrawArrays(GL_POINTS, 0, 3000);
+	glDrawArrays(GL_POINTS, 0, 10);
 }

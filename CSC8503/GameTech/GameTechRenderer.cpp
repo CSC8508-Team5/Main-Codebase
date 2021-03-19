@@ -51,8 +51,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	m_flameShader = new OGLShader("FlameVert.glsl", "FlameFrag.glsl");
 	m_flame = new DW_Flame(Vector3{0.0f,1.0f,0.0f}, NCL::Assets::TEXTUREDIR + "fire.jpg");
 	m_flame->SetParticlePos(NCL::Maths::Vector3(-150.0f, 20.f, -30.0f));
-	m_rainShader = new OGLShader("rainVert.glsl", "rainFrag.glsl");
-	m_rain = new DW_Rain();
+	m_rainShader = new OGLShader("rainVert.glsl", "rainFrag.glsl","rainGeom.glsl");
+	m_rain = new DW_Rain(Vector3{ 0.0f,-0.2f,0.0f });
 }
 
 GameTechRenderer::~GameTechRenderer()	{
@@ -359,10 +359,21 @@ void GameTechRenderer::RenderRain() {
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	BindShader(m_rainShader);
 	
-	glUniform1f(glGetUniformLocation(m_rainShader->GetProgramID(), "time"), hostWindow.GetTimer()->GetTotalTimeSeconds());
+	//glUniform1f(glGetUniformLocation(m_rainShader->GetProgramID(), "time"), hostWindow.GetTimer()->GetTotalTimeSeconds());
 	glUniform3f(glGetUniformLocation(m_rainShader->GetProgramID(), "color"), 100 / 255.0f, 149 / 255.0f, 237 / 255.0f);
 
-	m_rain->Draw();
+	for (std::vector<DW_Particle*>::iterator it = m_rain->GetParticlesBegin(); it != m_rain->GetParticlesEnd(); ++it) {
+
+		Vector2 temp{ 0.0f,0.0f };
+		glUniform2fv(glGetUniformLocation(m_rainShader->GetProgramID(), "offset"), 1, (float*)&(*it)->GetPosition());
+
+		glUniform2fv(glGetUniformLocation(m_rainShader->GetProgramID(), "move"), 1, (float*)&(*it)->GetOriginPos());
+		m_rain->Draw();
+	}
+
+	
+
+	
 	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
@@ -411,6 +422,7 @@ void GameTechRenderer::LoadSkybox() {
 void GameTechRenderer::Update(float dt) {
 	//std::cout << "T:" << hostWindow.GetTimer()->GetTotalTimeSeconds() << "\n";
 	m_flame->Update(dt);
+	m_rain->Update(dt);
 }
 
 void GameTechRenderer::RenderFrame() {

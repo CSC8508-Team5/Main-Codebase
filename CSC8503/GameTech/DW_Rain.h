@@ -1,5 +1,6 @@
 #pragma once
 #include "DW_ParticleSystem.h"
+#include "DW_Tools.h"
 class DW_Rain : public DW_ParticleSystem
 {
 public:
@@ -11,6 +12,6 @@ public:
 
 	void Draw();
 private:
-
+	float m_time;
 };
 
