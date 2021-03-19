@@ -165,8 +165,11 @@ using namespace CSC8503;
 //
 //
 //
+//tutorials can be found here:
+//http://open-source-parsers.github.io/jsoncpp-docs/doxygen/index.html
 bool JsonTest()
 {
+
 	Json::Value root;
 	//Json::Reader reader;
 	std::ifstream ifs(Assets::DATADIR+"settings.json", std::ifstream::binary);
@@ -180,12 +183,12 @@ bool JsonTest()
 	Json::CharReaderBuilder builder;
 	builder["collectComments"] = true;
 	JSONCPP_STRING errs;
-	if (!parseFromStream(builder, ifs, &root, &errs)) {
+	if (!parseFromStream(builder, ifs, &root["Settings"], &errs)) {
 		std::cout << errs << std::endl;
 		return false;
 	}
 	std::cout << "Encoding:" << root.get("encoding", "None").asString()<<std::endl;
-
+	std::cout << "Encoding in sub tree:" << root["Settings"].get("encoding", "None").asString() << std::endl;
 	return true;
 }
 
