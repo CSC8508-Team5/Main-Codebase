@@ -13,6 +13,13 @@
 #include "../CSC8503Common/BehaviourNodeWithChildren.h"
 #include "../CSC8503Common/BehaviourSelector.h"
 #include "../CSC8503Common/BehaviourSequence.h"
+
+#include <json/json.h>
+
+#include <fstream>
+#include <iostream>
+
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -158,9 +165,29 @@ using namespace CSC8503;
 //
 //
 //
+bool JsonTest()
+{
+	Json::Value root;
+	//Json::Reader reader;
+	std::ifstream ifs(Assets::DATADIR+"settings.json", std::ifstream::binary);
 
+	/*if (!reader.parse("c:/settings.json", root, false))
+	{
+		return false;
+	}*/
+	//ifs >> root;
+	
+	Json::CharReaderBuilder builder;
+	builder["collectComments"] = true;
+	JSONCPP_STRING errs;
+	if (!parseFromStream(builder, ifs, &root, &errs)) {
+		std::cout << errs << std::endl;
+		return false;
+	}
+	std::cout << "Encoding:" << root.get("encoding", "None").asString()<<std::endl;
 
-
+	return true;
+}
 
 void PrintLogo()
 {
@@ -207,14 +234,14 @@ void TestStateMachine() {
 	int data = 0;
 	State* A = new State([&](float dt) -> void
 		{
-			std::cout << "I��m in state A!\n";
+			std::cout << "I'm in state A!\n";
 			data++;
 		}
 	);
 
 	State* B = new State([&](float dt) -> void
 		{
-			std::cout << "I��m in state B!\n";
+			std::cout << "I'm in state B!\n";
 			data--;
 		}
 	);
@@ -346,6 +373,8 @@ hide or show the
 int main() {
 	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
 	
+	//JsonTest();
+
 	PrintLogo();
 	//TestPushdownAutomata(w);
 	if (!w->HasInitialised()) {
