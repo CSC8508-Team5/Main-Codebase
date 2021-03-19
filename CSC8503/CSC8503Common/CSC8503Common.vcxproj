@@ -75,21 +75,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,6 +97,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>BT_THREADSAFE=1;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -105,6 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>BT_THREADSAFE=1;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,6 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>BT_THREADSAFE=1;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -129,6 +132,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>BT_THREADSAFE=1;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -141,6 +145,7 @@
     <ClInclude Include="BehaviourAction.h" />
     <ClInclude Include="BehaviourNode.h" />
     <ClInclude Include="BehaviourNodeWithChildren.h" />
+    <ClInclude Include="BehaviourParallel.h" />
     <ClInclude Include="BehaviourSelector.h" />
     <ClInclude Include="BehaviourSequence.h" />
     <ClInclude Include="CapsuleVolume.h" />

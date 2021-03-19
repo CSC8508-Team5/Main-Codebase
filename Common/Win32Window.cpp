@@ -193,7 +193,7 @@ void Win32Window::CheckMessages(MSG &msg)	{
 				thisWindow->winMouse->UpdateRAW(raw);
 			}
 
-			delete lpb;
+			delete[] lpb;
 		}break;
 
 		default: {								// If Not, Deal With Window Messages

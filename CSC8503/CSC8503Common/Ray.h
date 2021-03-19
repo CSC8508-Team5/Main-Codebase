@@ -8,6 +8,7 @@ namespace NCL {
 			void*		node;			//Node that was hit
 			Vector3		collidedAt;		//WORLD SPACE position of the collision!
 			float		rayDistance;
+			Vector3		normal;
 
 			RayCollision() {
 				node			= nullptr;

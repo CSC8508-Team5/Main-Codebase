@@ -1,5 +1,5 @@
 #include "HM_StartMenu.h"
-
+#include "../../Common/Window.h"
 #include "../CSC8503Common/AudioSystem.h"
 
 HM_StartMenu::HM_StartMenu() {
@@ -73,6 +73,7 @@ void HM_StartMenu::ClickFunc(const std::string& str) {
 	
 	}
 	if (str == "QuitButton") {
+		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::StopAll();
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		exit(0);

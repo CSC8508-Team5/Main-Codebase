@@ -25,3 +25,10 @@ NCL::Maths::Vector3::Vector3(const irrklang::vec3df v3)
 	y = v3.Y;
 	z = v3.Z;
 }
+
+NCL::Maths::Vector3::Vector3(const btVector3 v3)
+{
+	x = v3.x();
+	y = v3.y();
+	z = v3.z();
+}

@@ -5,6 +5,8 @@
 #include "../../Common/Vector4.h"
 #include "../../Common/Quaternion.h"
 
+#include "../../Plugins/bullet3/src/LinearMath/btTransform.h"
+
 #include <vector>
 
 using std::vector;
@@ -17,11 +19,18 @@ namespace NCL {
 		{
 		public:
 			Transform();
+			Transform(btTransform btTrans) 
+			{
+				this->SetOrientation(btTrans.getRotation());
+				this->SetPosition(btTrans.getOrigin());
+			};
+
 			~Transform();
 
 			Transform& SetPosition(const Vector3& worldPos);
 			Transform& SetScale(const Vector3& worldScale);
 			Transform& SetOrientation(const Quaternion& newOr);
+
 			
 			Vector3 Up() const
 			{
@@ -69,6 +78,25 @@ namespace NCL {
 				return matrix;
 			}
 			void UpdateMatrix();
+
+			operator btTransform()
+			{
+				/*btScalar data[16] = { 0 };
+				Matrix4 mat = matrix;
+				for (int i = 0; i < 16; i++)
+				{
+					data[i] = mat.array[i];
+				}
+				btTransform bT;
+				bT.setFromOpenGLMatrix(data);
+				return bT;*/
+
+
+				btTransform bT;
+				bT.setOrigin(position);
+				bT.setRotation(orientation);
+				return bT;
+			}
 		protected:
 			Matrix4		matrix;
 			Quaternion	orientation;

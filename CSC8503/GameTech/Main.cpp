@@ -162,7 +162,17 @@ using namespace CSC8503;
 
 
 
-
+void PrintLogo()
+{
+	std::cout << " _________  _______   ________  _____ ______           ________      " << std::endl;
+	std::cout << "|\\___   ___\\\\  ___ \\ |\\   __  \\|\\   _ \\  _   \\        |\\   ____\\     " << std::endl;
+	std::cout << "\\|___ \\  \\_\\ \\   __/|\\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\       \\ \\  \\___|_    " << std::endl;
+	std::cout << "     \\ \\  \\ \\ \\  \\_|/_\\ \\   __  \\ \\  \\\\|__| \\  \\       \\ \\_____  \\   " << std::endl;
+	std::cout << "      \\ \\  \\ \\ \\  \\_|\\ \\ \\  \\ \\  \\ \\  \\    \\ \\  \\       \\|____|\\  \\  " << std::endl;
+	std::cout << "       \\ \\__\\ \\ \\_______\\ \\__\\ \\__\\ \\__\\    \\ \\__\\        ____\\_\\  \\ " << std::endl;
+	std::cout << "        \\|__|  \\|_______|\\|__|\\|__|\\|__|     \\|__|       |\\_________\\" << std::endl;
+	std::cout << "                                                         \\|_________|" << std::endl;
+}
 
 vector <Vector3> testNodes;
 void TestPathfinding() {
@@ -336,7 +346,7 @@ hide or show the
 int main() {
 	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
 	
-	
+	PrintLogo();
 	//TestPushdownAutomata(w);
 	if (!w->HasInitialised()) {
 		return -1;

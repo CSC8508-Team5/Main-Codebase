@@ -107,7 +107,7 @@ void	OGLShader::PrintCompileLog(GLuint object) {
 		char* tempData = new char[logLength];
 		glGetShaderInfoLog(object, logLength, NULL, tempData);
 		std::cout << "Compile Log:\n" << tempData << std::endl;
-		delete tempData;
+		delete[] tempData;
 	}
 }
 
@@ -119,6 +119,6 @@ void	OGLShader::PrintLinkLog(GLuint program) {
 		char* tempData = new char[logLength];
 		glGetProgramInfoLog(program, logLength, NULL, tempData);
 		std::cout << "Link Log:\n" << tempData << std::endl;
-		delete tempData;
+		delete[] tempData;
 	}
 }

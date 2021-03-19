@@ -114,6 +114,9 @@
     <ClCompile Include="DW_Flame.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="DW_Rain.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -207,6 +210,9 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DW_Flame.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DW_Rain.h">
       <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
