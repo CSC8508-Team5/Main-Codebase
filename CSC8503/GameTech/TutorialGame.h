@@ -3,7 +3,7 @@
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "../CSC8503Common/AudioSystem.h"
 #include "StateGameObject.h"
-
+#include "StateAi.h"
 #include "../../Common/Vector3.h"
 #include "../../Common/Assets.h"
 #include "DW_UIRenderer.h"
@@ -35,10 +35,24 @@ namespace NCL {
 
 			void InitLevel2();
 			void InitLevel2design();
-			
+
+
+
+			//AI
+
+			void InitAiEnemy1();
+			StateAi* AddAiEnemyToWorld(const Vector3& position);
+			StateAi* testEnemy = nullptr;
+			int checkAitime = 0;
+			int checkAitime1 = 0;
+			int checknum = 1;
+
+
+
+
 
 			void InitLevel1();
-		
+
 			void InitCharaters(Vector3 position);
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
@@ -82,7 +96,7 @@ namespace NCL {
 			//adding for level design
 			GameObject** LevelTestOne();
 			GameObject* SpinningPlatform();
-			
+
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Coin_text;
 			DW_UIText* Timer_text;
@@ -133,18 +147,18 @@ namespace NCL {
 			GameObject* selectionObject = nullptr;
 
 
-			OGLMesh*	capsuleMesh = nullptr;
-			OGLMesh*	cubeMesh	= nullptr;
-			OGLMesh*	sphereMesh	= nullptr;
-			OGLTexture* basicTex	= nullptr;
-			OGLShader*	basicShader = nullptr;
+			OGLMesh* capsuleMesh = nullptr;
+			OGLMesh* cubeMesh = nullptr;
+			OGLMesh* sphereMesh = nullptr;
+			OGLTexture* basicTex = nullptr;
+			OGLShader* basicShader = nullptr;
 			OGLTexture* whiteTex = nullptr;
 			OGLTexture* greyTex = nullptr;
 			OGLTexture* greenTex = nullptr;
 			OGLTexture* redTex = nullptr;
 			OGLTexture* yellowTex = nullptr;
 			OGLTexture* finishTex = nullptr;
-			
+
 
 			//Coursework Meshes
 			OGLMesh* charMeshA = nullptr;
@@ -156,6 +170,10 @@ namespace NCL {
 			OGLMesh* spinplatMesh = nullptr;
 			OGLMesh* cylinderMesh = nullptr;
 			//end
+
+			//AI
+			GameObject* enemy = nullptr;
+			GameTimer  gametime;
 
 			//Coursework Additional functionality	
 			GameObject* lockedObject = nullptr;

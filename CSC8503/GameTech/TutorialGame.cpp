@@ -4,6 +4,7 @@
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
+#include "../../Common/GameTimer.h"
 #include "../CSC8503Common/PositionConstraint.h"
 #include <list>
 #include <algorithm>
@@ -13,11 +14,11 @@
 using namespace NCL;
 using namespace CSC8503;
 
-TutorialGame::TutorialGame()	{
-	world		= new GameWorld();
-	renderer	= new GameTechRenderer(*world);
+TutorialGame::TutorialGame() {
+	world = new GameWorld();
+	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics		= new PhysicsSystem(*world);
+	physics = new PhysicsSystem(*world);
 	//irrklang audio system
 	audio = new AudioSystem();
 
@@ -29,20 +30,20 @@ TutorialGame::TutorialGame()	{
 	//audio->PlayAudio("Funky Chill 2 loop.flac");
 	//audio->PlayAudio("keyboardcat.mp3");
 
-	forceMagnitude	= 10.0f;
-	useGravity		= true;
+	forceMagnitude = 10.0f;
+	useGravity = true;
 	inSelectionMode = false;
 
 
 	//adding for level design
 	platformtimer = 0.0f;
-	platforms = new GameObject*[17];
+	platforms = new GameObject * [17];
 	coins = new GameObject * [25];
 	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
-	isjump = false; 
+	isjump = false;
 	//gamestate
 	isfinish = false;
 	ispause = false;
@@ -51,33 +52,33 @@ TutorialGame::TutorialGame()	{
 	numcoins = 25; // Upper limit of coins
 	coincollected = 0;
 	//end 
-	
+
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
-//-----------------------------------------------------Ui-----------------------------------------------------------------------//
-	
-	
+	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+
+
 	StartMenu = new HM_StartMenu(); // main menu
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
 	OptionMenu = new HM_Option(audio); // option menu
-	
+
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
-//--------------------------------------------------In Game UI------------------------------------------//
+	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
 	Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Timer_text = new DW_UIText("Timertext", "Time :  " , 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Coin_text);
 	InGameUI->AddComponent(Timer_text);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
 	InGameUI->SetPanelIsEnable(false);
-//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
 
@@ -107,9 +108,9 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("Cylinder.msh", &spinplatMesh);
 
 	renderer->SetSphereMesh(sphereMesh);
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
+	basicTex = (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
-	
+
 
 	whiteTex = (OGLTexture*)TextureLoader::LoadAPITexture("white.png");
 	greyTex = (OGLTexture*)TextureLoader::LoadAPITexture("grey.png");
@@ -121,7 +122,7 @@ void TutorialGame::InitialiseAssets() {
 	InitWorld();
 	InitCamera();
 	glDisable(GL_DEBUG_OUTPUT);
-	
+
 }
 
 TutorialGame::~TutorialGame() {
@@ -168,8 +169,8 @@ void TutorialGame::Reload() {
 	SphereVolume* volume = new SphereVolume(1.5f);
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
-				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+			coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+			coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
 		}
 	}
 	coincollected = 0;
@@ -178,11 +179,11 @@ void TutorialGame::Reload() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
-	
+
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	Timer_text->SetText("Timer : " + std::to_string((int)(dt*10))+ " s"); //unfinished timer
+	Timer_text->SetText("Timer : " + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
 	if (WinScreen->IfRestart()) {
 		isfinish = false;
 		Reload();
@@ -190,6 +191,40 @@ void TutorialGame::UpdateGame(float dt) {
 		//platforms = LevelTestOne();
 	}
 	UpdateKeys();
+
+
+
+
+
+	//AI
+
+	if (testEnemy) {
+		if (checknum == 1) {
+			checkAitime = gametime.GetTotalTimeSeconds();
+			checknum = 0;
+		}
+		else {
+			checkAitime1 = gametime.GetTotalTimeSeconds();
+			if (checkAitime1 - checkAitime >= 5) {
+				world->RemoveGameObject(testEnemy);
+				Vector3 enemyp = player->GetTransform().GetPosition() + Vector3(0, 0, -5);
+				testEnemy = AddAiEnemyToWorld(enemyp);
+				checknum = 1;
+			}
+			else {
+				checknum = 0;
+			}
+		}
+
+
+	}
+
+
+
+
+
+
+
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
@@ -238,7 +273,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);
 	}
 	if (testStateObject) {
-		 testStateObject->Update(dt);
+		testStateObject->Update(dt);
 
 	}
 
@@ -251,7 +286,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateLevelOne();
 		//UpdateCoins();
 		UpdatePlayer(dt);
-		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(),Vector3::Up(),dt);
+		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 		//UpdateSpinningPlatform();
 	}
 
@@ -271,18 +306,18 @@ void TutorialGame::UpdateGame(float dt) {
 
 void TutorialGame::UpdateLevelOne() {
 	float speed = 30.0f;
-		for (int i = 1; i < numstairs-1; ++i) {
+	for (int i = 1; i < numstairs - 1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 1) {
 			if (position.z <= -60) {
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
-			else if (position.z >=10) {
+			else if (position.z >= 10) {
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		else if (i % 3 == 0) {
-			if(position.z <=-10) {
+			if (position.z <= -10) {
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 60) {
@@ -290,28 +325,28 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 	}
-		CollisionDetection::CollisionInfo info;
-		for (int i = 0; i < numstairs; ++i) {
-			if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
-				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0,0,0));
-				player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
-				isjump = false;
-			}
-			//finish
-			if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
-				isfinish = true;
-				ispause = true;
-				audio->StopAll();
-				audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-			}
+	CollisionDetection::CollisionInfo info;
+	for (int i = 0; i < numstairs; ++i) {
+		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
+			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
+			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
+			isjump = false;
 		}
+		//finish
+		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
+			isfinish = true;
+			ispause = true;
+			audio->StopAll();
+			audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+		}
+	}
 };
 
 void TutorialGame::UpdateLevelThree(float dt) {
 	// Not Yet Implemented
 }
 
-void TutorialGame::UpdateSpinningPlatform(){
+void TutorialGame::UpdateSpinningPlatform() {
 	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
 	CollisionDetection::CollisionInfo info;
 	if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
@@ -353,24 +388,24 @@ void TutorialGame::UpdatePlayer(float dt) {
 		pitch = -90.0f;
 	}
 	if (pitch > 90.0f) {
-		pitch =90.0f;
+		pitch = 90.0f;
 	}
 	float frameSpeed = 50 * dt;
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
 	double turnsin, turncos;
-	turnsin = sin((3.1415927 / 2) * ((yaw/9-45)/2));
-	turncos = cos((3.1415927 / 2) * ((yaw/9-45)/ 2));
-	orientation = Quaternion(0,turnsin,0,turncos);
+	turnsin = sin((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
+	turncos = cos((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
+	orientation = Quaternion(0, turnsin, 0, turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
-	
+
 	if (isfinish) {
 		WinScreen->SetPanelActive(true);
 		//Debug::Print("You Win", Vector2(45, 25));
 	}
 	if (playerposition.y <= -5) {
-		player->GetTransform().SetScale(Vector3(0,0,0));
+		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 	}
 	//player movement
@@ -393,7 +428,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		if(!isjump){
+		if (!isjump) {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
 			//isjump = true; //Comment this if want a quick win.
@@ -401,8 +436,9 @@ void TutorialGame::UpdatePlayer(float dt) {
 		}
 
 	}
-	else{
-		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0)); }
+	else {
+		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0));
+	}
 }
 
 void TutorialGame::UpdateKeys() {
@@ -507,7 +543,7 @@ void TutorialGame::LockedObjectMovement() {
 			selectionObject->GetBulletBody()->applyCentralImpulse(-rightAxis * force);
 		}
 		else
-		lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
+			lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
@@ -517,7 +553,7 @@ void TutorialGame::LockedObjectMovement() {
 			selectionObject->GetBulletBody()->applyCentralImpulse(rightAxis * force);
 		}
 		else
-		lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
+			lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
@@ -525,10 +561,10 @@ void TutorialGame::LockedObjectMovement() {
 		{
 			selectionObject->GetBulletBody()->activate();
 			//selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
-			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis*5);
+			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis * 5);
 		}
 		else
-		lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
+			lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
@@ -539,7 +575,7 @@ void TutorialGame::LockedObjectMovement() {
 			selectionObject->GetBulletBody()->setLinearVelocity(-fwdAxis * 5);
 		}
 		else
-		lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
+			lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
@@ -549,7 +585,7 @@ void TutorialGame::LockedObjectMovement() {
 			selectionObject->GetBulletBody()->applyCentralImpulse(Vector3(0, -10, 0));
 		}
 		else
-		lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
+			lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
 	}
 }
 
@@ -636,7 +672,7 @@ void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetFarPlane(500.0f);
 	world->GetMainCamera()->SetPitch(-5.0f);
 	world->GetMainCamera()->SetYaw(270.0f);
-	world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition()+Vector3(-15,5,0));
+	world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition() + Vector3(-15, 5, 0));
 	lockedObject = nullptr;
 }
 
@@ -646,12 +682,13 @@ void TutorialGame::InitWorld() {
 	physics->Clear();
 	InitLevel1();       // start lv1 
 	//InitLevel2();  // start lv2 
-	
+
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	InitCharaters(Vector3(-150, 10, 0));
+	InitAiEnemy1();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
@@ -681,7 +718,7 @@ void TutorialGame::InitLevel1() {
 
 
 	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
-	
+
 	//-------------LV3 -------------------------------------
 	/* Conor Lambert */
 	//LevelThree();
@@ -693,7 +730,7 @@ void TutorialGame::InitLevel1() {
 	coincollected = 0;
 	//WinScreen->SetRestart(false);
 }
-void TutorialGame::InitLevel2() {	
+void TutorialGame::InitLevel2() {
 	InitCharaters(Vector3(0, 0, -320));
 	InitLevel2design();
 }
@@ -701,10 +738,10 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floot	
 	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
-	AddWallToWorld(Vector3(0, 10, 351), 56, 11,1, whiteTex, "frontwall");  //frontwall
+	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
 	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
 	AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
-	
+
 	//AddWallToWorld(Vector3(-99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar		
 	//AddDoorToWorld(Vector3(-93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
 	//AddDoorToWorld(Vector3(-83, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
@@ -733,7 +770,7 @@ void TutorialGame::InitLevel2design() {
 	//AddDoorToWorld(Vector3(83, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door
 	//AddDoorToWorld(Vector3(93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
 	//AddWallToWorld(Vector3(99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar	
-	
+
 	AddWallToWorld(Vector3(-55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -774,7 +811,7 @@ void TutorialGame::InitLevel2design() {
 	//AddDoorToWorld(Vector3(49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(43, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
-	
+
 	AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
 	//AddDoorToWorld(Vector3(-49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddDoorToWorld(Vector3(-39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -811,9 +848,9 @@ void TutorialGame::InitLevel2design() {
 	//AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	//AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
-	
+
 	//---------------------------------5-------------------------------
-	
+
 	AddWallToWorld(Vector3(0, 9, -40), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(22, 9, -40), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(-44, 9, -40), 12, 8, 1, greenTex, "pillar");  //pillar	
@@ -913,11 +950,11 @@ GameObject** TutorialGame::LevelTestOne() {
 
 	float invCubeMass = 0; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
-	
+
 	Vector3 startPos = Vector3(-150, 5, 0);
 
 	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0), PlatformSize, 0);
-	platforms[numstairs-1]= AddCubeToWorld(startPos + Vector3((numstairs-1) * cubeDistance, (numstairs-1)* 5.0f, 0), PlatformSize, 0);
+	platforms[numstairs - 1] = AddCubeToWorld(startPos + Vector3((numstairs - 1) * cubeDistance, (numstairs - 1) * 5.0f, 0), PlatformSize, 0);
 	platforms[0]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 	platforms[numstairs - 1]->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 	//initial coins
@@ -925,22 +962,22 @@ GameObject** TutorialGame::LevelTestOne() {
 		coins[i] = nullptr;
 	}
 
-	for (int i = 1; i < numstairs-1; ++i) {
+	for (int i = 1; i < numstairs - 1; ++i) {
 		if (i % 3 == 1) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0,30));
+			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1)* 5.0f+3, -20));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
 		}
 		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
 			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 		}
-		else if(i % 3 == 0) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i* cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
+		else if (i % 3 == 0) {
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
 			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i+1) * 5.0f+3, 20));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
 		}
 	}
 	return platforms;
@@ -994,7 +1031,7 @@ void TutorialGame::Pendulum() {
 	float sphereradius = 5.0f;
 	float cylinderhalfhight = 10.0f;
 	Vector3 cylinderposition = Vector3(10, 20, 10);
-	Vector3 sphereposition = cylinderposition - Vector3(0, 10 , 0);
+	Vector3 sphereposition = cylinderposition - Vector3(0, 10, 0);
 	GameObject* sphere = AddSphereToWorld(sphereposition, sphereradius, 0.0f);
 	GameObject* cylinder = AddCylinderToWorld(cylinderposition, 0.5f, cylinderhalfhight, 0.0f);
 
@@ -1047,7 +1084,7 @@ void TutorialGame::BridgeBulletConstraintTest() {
 	GameObject* start = CreateBulletCube(startPos + Vector3(0, 0, 0)
 		, cubeSize, 0);
 	GameObject* end = CreateBulletCube(startPos + Vector3((numLinks + 1)
-		* cubeDistance+8, 0, 0), cubeSize, 0);
+		* cubeDistance + 8, 0, 0), cubeSize, 0);
 
 	GameObject* previous = start;
 
@@ -1056,9 +1093,9 @@ void TutorialGame::BridgeBulletConstraintTest() {
 	btTransform frameInB;
 
 	frameInA.setIdentity();
-	frameInA.setOrigin(btVector3(cubeDistance /2, 0, 0));
+	frameInA.setOrigin(btVector3(cubeDistance / 2, 0, 0));
 	frameInB.setIdentity();
-	frameInB.setOrigin(btVector3(-cubeDistance /2, 0, 0));
+	frameInB.setOrigin(btVector3(-cubeDistance / 2, 0, 0));
 
 	for (int i = 0; i < numLinks; ++i) {
 		GameObject* block = CreateBulletCube(startPos + Vector3((i + 1) *
@@ -1067,7 +1104,7 @@ void TutorialGame::BridgeBulletConstraintTest() {
 		//btPoint2PointConstraint()
 		//btHingeConstraint* constraint = new btHingeConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), previous->GetTransform().GetPosition(), block->GetTransform().GetPosition(), btVector3(1, 1, 1), btVector3(1, 1, 1));
 		//btFixedConstraint* constraint = new btFixedConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB);
-		btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB,true);
+		btGeneric6DofSpringConstraint* constraint = new btGeneric6DofSpringConstraint(*previous->GetBulletBody(), *block->GetBulletBody(), frameInA, frameInB, true);
 		constraint->setLinearUpperLimit(btVector3(0, 0, 0));
 		constraint->setLinearLowerLimit(btVector3(0, 0, 0));
 		constraint->setAngularLowerLimit(btVector3(0, -1, -1));
@@ -1085,7 +1122,7 @@ void TutorialGame::BridgeBulletConstraintTest() {
 		//constraint->setLinearUpperLimit(btVector3(1, 1, 0));
 		//PositionConstraint* constraint = new PositionConstraint(previous,
 		//	block, maxDistance);
-		
+
 		physics->AddConstraint(constraint);
 		previous = block;
 
@@ -1172,13 +1209,13 @@ GameObject* NCL::CSC8503::TutorialGame::CreateFloor(const Vector3& position)
 
 
 /*
-The cylinder now using the CapsuleVolume, might need to change 
+The cylinder now using the CapsuleVolume, might need to change
 */
 GameObject* TutorialGame::CreateCylinder(const Vector3& position, float radius, float hight, float inverseMass) {
 	GameObject* cylinder = new GameObject();
 
-	Vector3 cylinderSize = Vector3(radius*2, hight, radius*2);
-	AABBVolume* volume = new AABBVolume(Vector3(radius , hight, radius ));
+	Vector3 cylinderSize = Vector3(radius * 2, hight, radius * 2);
+	AABBVolume* volume = new AABBVolume(Vector3(radius, hight, radius));
 	cylinder->SetBoundingVolume((CollisionVolume*)volume);
 
 	cylinder->GetTransform()
@@ -1199,7 +1236,7 @@ GameObject* TutorialGame::CreateCylinder(const Vector3& position, float radius, 
 /*
 
 Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
-rigid body representation. This and the cube function will let you build a lot of 'simple' 
+rigid body representation. This and the cube function will let you build a lot of 'simple'
 physics worlds. You'll probably need another function for the creation of OBB cubes too.
 
 */
@@ -1349,7 +1386,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 
 	//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 	cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+
 	//cube->GetBulletBody()->setLinearFactor(Vector3::Zero());
 	//cube->GetBulletBody()->setAngularFactor(Vector3::Zero());
 	//cube->GetBulletBody()->setGravity(Vector3::Zero());
@@ -1361,11 +1398,11 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 	cube->SetOnCollisionBeginFunction([=](GameObject* obj) {
 		if (obj->GetLayer() == GameObject::Layer::Player)
 		{
-			
+
 		}
 		if (obj->GetLayer() == GameObject::Layer::Enemy)
 		{
-			
+
 		}
 		if (obj->GetName() == "Floor")
 		{
@@ -1412,7 +1449,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletSphere(const Vector3& positi
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
 	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+
 	//sphere->SetIsKinematic(true);
 
 	world->AddGameObject(sphere);
@@ -1476,7 +1513,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCylinder(const Vector3& posi
 	cylinder->SetRenderObject(new RenderObject(&cylinder->GetTransform(), cylinderMesh, basicTex, basicShader));
 
 	btCollisionShape* shape = new btCylinderShape(btVector3(btScalar(radius), btScalar(halfHeight), btScalar(radius)));
-	
+
 	btTransform bulletTransform;
 
 	bulletTransform.setIdentity();
@@ -1500,7 +1537,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCylinder(const Vector3& posi
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
 
 	cylinder->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-	
+
 	world->AddGameObject(cylinder);
 
 	return cylinder;
@@ -1528,20 +1565,20 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 				/*if (useBullet)
 					CreateBulletCube(position, cubeDims);
 				else*/
-					AddCubeToWorld(position, cubeDims);
+				AddCubeToWorld(position, cubeDims);
 			}
 			else if (randVal == 1) {
 				/*if (useBullet)
 					CreateBulletSphere(position, sphereRadius);
 				else*/
-					AddSphereToWorld(position, sphereRadius);
+				AddSphereToWorld(position, sphereRadius);
 			}
 			else if (randVal == 2)
 			{
 				/*if (useBullet)
 					CreateBulletCapsule(position, sphereRadius * 2, sphereRadius);
 				else*/
-					AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
+				AddCapsuleToWorld(position, sphereRadius * 2, sphereRadius);
 			}
 			else if (randVal == 3)
 			{
@@ -1625,21 +1662,21 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	float inverseMass = 0.5f;
 
 	GameObject* character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "enemy");
-		/*
-	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
-	character->SetBoundingVolume((CollisionVolume*)volume);
+	/*
+AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
+character->SetBoundingVolume((CollisionVolume*)volume);
 
-	character->GetTransform()
-		.SetScale(Vector3(meshSize, meshSize, meshSize))
-		.SetPosition(position);
+character->GetTransform()
+	.SetScale(Vector3(meshSize, meshSize, meshSize))
+	.SetPosition(position);
 
-	character->SetRenderObject(new RenderObject(&character->GetTransform(), enemyMesh, nullptr, basicShader));
-	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+character->SetRenderObject(new RenderObject(&character->GetTransform(), enemyMesh, nullptr, basicShader));
+character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
-	character->GetPhysicsObject()->SetInverseMass(inverseMass);
-	character->GetPhysicsObject()->InitSphereInertia();
+character->GetPhysicsObject()->SetInverseMass(inverseMass);
+character->GetPhysicsObject()->InitSphereInertia();
 
-	world->AddGameObject(character);*/
+world->AddGameObject(character);*/
 
 	return character;
 }
@@ -1659,7 +1696,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 
 	if (physics->isUseBulletPhysics())
 	{
-		btCollisionShape* shape = new btCapsuleShape(btScalar(0.4f*meshSize), btScalar(0.9f * meshSize));
+		btCollisionShape* shape = new btCapsuleShape(btScalar(0.4f * meshSize), btScalar(0.9f * meshSize));
 
 		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
 		btTransform bulletTransform = character->GetTransform();
@@ -1696,7 +1733,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 		character->GetPhysicsObject()->SetInverseMass(inverseMass);
 		character->GetPhysicsObject()->InitSphereInertia();
 	}
-	
+
 	world->AddGameObject(character);
 
 	return character;
@@ -1936,4 +1973,32 @@ GameObject* TutorialGame::AddDoorToWorld(const Vector3& position, Vector3 dimens
 	world->AddGameObject(cube);
 
 	return cube;
+}
+
+//AI
+StateAi* TutorialGame::AddAiEnemyToWorld(const Vector3& position) {
+	float meshSize = 3.0f;
+	float inverseMass = 0.5f;
+
+	StateAi* character = new StateAi();
+
+	AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
+	character->SetBoundingVolume((CollisionVolume*)volume);
+
+	character->GetTransform()
+		.SetScale(Vector3(meshSize, meshSize, meshSize))
+		.SetPosition(position);
+
+	character->SetRenderObject(new RenderObject(&character->GetTransform(), enemyMesh, nullptr, basicShader));
+	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
+
+	character->GetPhysicsObject()->SetInverseMass(inverseMass);
+	character->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(character);
+	enemy = character;
+	return character;
+}
+void TutorialGame::InitAiEnemy1() {
+	testEnemy = AddAiEnemyToWorld(Vector3(-150, 10, 0));
 }
