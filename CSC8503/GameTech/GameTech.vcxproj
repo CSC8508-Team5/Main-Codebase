@@ -71,23 +71,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)\libs\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)\libs\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)\libs_x64\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)\libs_x64\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\OpenGLRendering;$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\FreeType;$(SolutionDir)\Plugins\eventpp;$(IncludePath);$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -101,7 +101,7 @@
     </ClCompile>
     <Link />
     <Link>
-      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;jsoncpp_static.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
@@ -118,7 +118,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;User32.lib;Gdi32.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;jsoncpp_static.lib;User32.lib;Gdi32.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>
@@ -139,7 +139,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;jsoncpp_static.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ProjectReference>
@@ -159,7 +159,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;User32.lib;Gdi32.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CSC8503Common.lib;Common.lib;OpenGLRendering.lib;Networking-ENet.lib;ws2_32.lib;Winmm.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;jsoncpp_static.lib;User32.lib;Gdi32.lib;freetyped.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>

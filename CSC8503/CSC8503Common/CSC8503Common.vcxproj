@@ -75,20 +75,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Plugins\Networking-ENet\include;$(SolutionDir)\Plugins\irrKlang\include;$(SolutionDir)\Plugins\bullet3\src;$(SolutionDir)\Plugins\jsoncpp-master\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs_x64\;$(LibraryPath);$(SolutionDir)$(Platform)\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
