@@ -399,27 +399,25 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\config.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\forwards.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\json_features.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\value.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\reader.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\version.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\writer.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\include\json\assertions.h" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\src\lib_json\json_tool.h" />
-    <ClCompile Include="F:\Projects\CSC8508\jsoncpp-master\src\lib_json\json_reader.cpp" />
-    <ClInclude Include="F:\Projects\CSC8508\jsoncpp-master\src\lib_json\json_valueiterator.inl" />
-    <ClCompile Include="F:\Projects\CSC8508\jsoncpp-master\src\lib_json\json_value.cpp" />
-    <ClCompile Include="F:\Projects\CSC8508\jsoncpp-master\src\lib_json\json_writer.cpp" />
+    <ClInclude Include="..\..\..\include\json\allocator.h" />
+    <ClInclude Include="..\..\..\include\json\assertions.h" />
+    <ClInclude Include="..\..\..\include\json\config.h" />
+    <ClInclude Include="..\..\..\include\json\forwards.h" />
+    <ClInclude Include="..\..\..\include\json\json.h" />
+    <ClInclude Include="..\..\..\include\json\json_features.h" />
+    <ClInclude Include="..\..\..\include\json\reader.h" />
+    <ClInclude Include="..\..\..\include\json\value.h" />
+    <ClInclude Include="..\..\..\include\json\version.h" />
+    <ClInclude Include="..\..\..\include\json\writer.h" />
+    <ClInclude Include="..\..\..\src\lib_json\json_tool.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:\Projects\CSC8508\jsoncpp-master\sln\ZERO_CHECK.vcxproj">
-      <Project>{56B44DA4-6E34-342C-ADC8-ED5F5F5F47A1}</Project>
-      <Name>ZERO_CHECK</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </ProjectReference>
+    <ClCompile Include="..\..\..\src\lib_json\json_reader.cpp" />
+    <ClCompile Include="..\..\..\src\lib_json\json_value.cpp" />
+    <ClCompile Include="..\..\..\src\lib_json\json_writer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\src\lib_json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
