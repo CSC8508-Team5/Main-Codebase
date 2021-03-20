@@ -599,19 +599,41 @@ GameObject** TutorialGame::LevelTestOne() {
 void TutorialGame::LevelThree() {
 
 	// Platforms 
-	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
+	GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
 	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 
-	GameObject* finish = AddCubeToWorld(Vector3(470, 0, 0), Vector3(20, 2, 50), 0);
+	GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
-	// Placeholder State Objects ("sliders")
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
+	// State Objects ("sliders")
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), true, true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), false, true));
 
-	// Cylinder Bouncers
-	AddBouncer(Vector3(-40, 6, 0), 2, 2, 0);
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, -30), Vector3(1, 4, 15), false));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, 0), Vector3(1, 4, 15), true));
+	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, 30), Vector3(1, 4, 15), false));
+
+	// Cylinder Obstacles
+	// First Row
+	AddCylinderToWorld(Vector3(100, 3, 0), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(100, 3, -20), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(100, 3, -40), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(100, 3, 20), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(100, 3, 40), 2, 3, 0.0f);
+
+	// Second Row
+	AddCylinderToWorld(Vector3(120, 3, 10), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(120, 3, 30), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(120, 3, -10), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(120, 3, -30), 2, 3, 0.0f);
+
+	// Third Row
+	AddCylinderToWorld(Vector3(140, 3, 0), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(140, 3, -20), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(140, 3, -40), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(140, 3, 20), 2, 3, 0.0f);
+	AddCylinderToWorld(Vector3(140, 3, 40), 2, 3, 0.0f);
 
 	// Coins 
 	// Initialise coins
@@ -619,10 +641,12 @@ void TutorialGame::LevelThree() {
 		coins[i] = nullptr;
 	}
 
-	coins[0] = AddCoins(Vector3(30, 4, -20));
-	coins[1] = AddCoins(Vector3(30, 4, 20));
-	coins[2] = AddCoins(Vector3(90, 4, -20));
-	coins[3] = AddCoins(Vector3(90, 4, 20));
+	coins[0] = AddCoins(Vector3(-30, 4, 20));
+	coins[1] = AddCoins(Vector3(-30, 4, -20));
+	coins[2] = AddCoins(Vector3(30, 4, -20));
+	coins[3] = AddCoins(Vector3(30, 4, 20));
+	coins[4] = AddCoins(Vector3(90, 4, -20));
+	coins[5] = AddCoins(Vector3(90, 4, 20));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
