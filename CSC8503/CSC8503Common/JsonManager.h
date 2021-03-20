@@ -26,28 +26,28 @@ namespace NCL
 			else
 				data = m_dataRoot[subTree].get(key, (T)0).as<T>();
 		}
-		static bool GetBool(string key, string subTree, bool defaultValue = false) 
-		{ 
+		static bool GetBool(string key, bool defaultValue = false, string subTree = "")
+		{
 			if (subTree.empty())
-				return m_dataRoot.get(key, defaultValue).asBool(); 
+				return m_dataRoot.get(key, defaultValue).asBool();
 			else
 				return m_dataRoot[subTree].get(key, defaultValue).asBool();
 		}
-		static int GetInt(string key, string subTree, int defaultValue = 0) 
+		static int GetInt(string key, int defaultValue = 0, string subTree = "")
 		{ 
 			if (subTree.empty())
 			return m_dataRoot.get(key, defaultValue).asInt();
 			else
 				return m_dataRoot[subTree].get(key, defaultValue).asInt();
 		}
-		static float GetFloat(string key, string subTree,float defaultValue = 0.0f)
+		static float GetFloat(string key,float defaultValue = 0.0f, string subTree = "")
 		{ 
 			if (subTree.empty())
 			return m_dataRoot.get(key, defaultValue).asFloat(); 
 			else
 				return m_dataRoot[subTree].get(key, defaultValue).asFloat();
 		}
-		static string GetString(string key, string subTree,string defaultValue = "null") 
+		static string GetString(string key,string defaultValue = "null", string subTree = "")
 		{ 
 			if (subTree.empty())
 				return m_dataRoot.get(key, defaultValue).asString(); 
