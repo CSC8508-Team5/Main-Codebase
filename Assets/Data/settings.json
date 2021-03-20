@@ -1,12 +1,10 @@
 {
-    "encoding": "UTF-8",
-    "plug-ins": [
-        "python",
-        "c++",
-        "ruby"
-    ],
-    "indent": {
-        "length": 3,
-        "use_space": true
-    }
+	"full-screen" : false,
+	"language" : "cn",
+	"resolution" : 
+	{
+		"height" : 720,
+		"width" : 1280
+	},
+	"volume" : 0.5
 }

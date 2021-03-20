@@ -43,6 +43,9 @@
     <Filter Include="AI\StateMachine">
       <UniqueIdentifier>{b2bb0ec1-b408-417f-a8d7-2e89de75796b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{138a9361-c2e2-4b1c-8abc-51fe1d0cf0c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameWorld.h">
@@ -147,6 +150,12 @@
     <ClInclude Include="StateTransition.h">
       <Filter>AI\StateMachine</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWorld.cpp">
@@ -214,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="StateTransition.cpp">
       <Filter>AI\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonManager.cpp">
+      <Filter>Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

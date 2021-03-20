@@ -149,12 +149,14 @@
     <ClInclude Include="BehaviourSelector.h" />
     <ClInclude Include="BehaviourSequence.h" />
     <ClInclude Include="CapsuleVolume.h" />
+    <ClInclude Include="JsonManager.h" />
     <ClInclude Include="NavigationGrid.h" />
     <ClInclude Include="NavigationMap.h" />
     <ClInclude Include="NavigationMesh.h" />
     <ClInclude Include="NavigationPath.h" />
     <ClInclude Include="OBBVolume.h" />
     <ClInclude Include="PositionConstraint.h" />
+    <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="SoundSource.h" />
     <ClInclude Include="SphereVolume.h" />
     <ClInclude Include="CollisionVolume.h" />
@@ -186,6 +188,7 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="NavigationGrid.cpp" />
     <ClCompile Include="NavigationMesh.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />

@@ -16,6 +16,8 @@
 
 #include <json/json.h>
 
+#include "../CSC8503Common/SettingsManager.h"
+
 #include <fstream>
 #include <iostream>
 
@@ -374,7 +376,15 @@ hide or show the
 
 */
 int main() {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
+	SettingsManager* s = new SettingsManager();
+
+	//bool fullScreen = s->GetBool("full-screen");
+	bool fullScreen = s->GetFullScreen();
+	//s->GetData("full-screen", fullScreen);
+	Vector2 rect = s->GetResolution();
+	s->SetFullScreen(false);
+
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", rect.x, rect.y, fullScreen);
 	
 	//JsonTest();
 
@@ -422,6 +432,7 @@ int main() {
 		//DisplayPathfinding();
 	}
 
-
+	delete s;
+	
 	Window::DestroyGameWindow();
 }
