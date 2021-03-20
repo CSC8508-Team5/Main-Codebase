@@ -382,7 +382,7 @@ int main() {
 	bool fullScreen = s->GetFullScreen();
 	//s->GetData("full-screen", fullScreen);
 	Vector2 rect = s->GetResolution();
-	s->SetFullScreen(false);
+	//s->SetFullScreen(false);
 
 	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", rect.x, rect.y, fullScreen);
 	
