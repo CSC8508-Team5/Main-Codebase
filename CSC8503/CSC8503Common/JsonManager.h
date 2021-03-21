@@ -55,7 +55,14 @@ namespace NCL
 				return m_dataRoot[subTree].get(key, defaultValue).asString();
 		}
 
+		template <typename T>
+		static void SetData(string key, T& data, string subTree = "")
+		{
+			m_dataRoot[subTree][key] = data;
+		}
+
 		void ForceSave() { save(m_fileName); }
+		void ForceAndReset() { save(m_fileName); m_dataRoot.clear();}
 
 		virtual void ConstructDefault() 
 		{
