@@ -44,7 +44,7 @@ TutorialGame::TutorialGame() {
 	yaw = 0.0f;
 	pitch = 0.0f;
 	isjump = false;
-	timer = 1F21;
+	timer = 121;
 	pausetime = 0;
 	//gamestate
 	isfinish = false;
