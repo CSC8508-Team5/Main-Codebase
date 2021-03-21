@@ -28,6 +28,8 @@ namespace NCL
 
 		static float GetVolume() { return GetFloat("volume",1.0f); }
 		static void SetVolume(float vol) { vol = max(vol, 0.0f); vol = min(vol, 1.0f); m_dataRoot["volume"] = vol; }
+		static void SetVolume(double vol) { vol = max(vol, 0.0); vol = min(vol, 1.0); m_dataRoot["volume"] = vol; }
+
 	};
 }
 
