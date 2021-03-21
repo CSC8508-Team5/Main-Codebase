@@ -680,9 +680,9 @@ void TutorialGame::InitWorld() {
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
-	InitLevel1();       // start lv1 
+	//InitLevel1();       // start lv1 
 	//InitLevel2();  // start lv2 
-	//InitLevel3(); // Start Level 3
+	InitLevel3(); // Start Level 3
 
 }
 void TutorialGame::InitLevel1() {
@@ -938,6 +938,7 @@ void TutorialGame::InitLevel2design() {
 
 }
 void TutorialGame::InitLevel3() {
+	InitCharaters(Vector3(0, 0, -320));
 	LevelThree();
 	isLevelThree = true;
 }

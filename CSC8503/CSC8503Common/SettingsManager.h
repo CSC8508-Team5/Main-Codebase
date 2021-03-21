@@ -27,7 +27,7 @@ namespace NCL
 		static void SetLanguage(string lang) { m_dataRoot["language"] = lang; }
 
 		static float GetVolume() { return GetFloat("volume",1.0f); }
-		static void SetVolume(float vol) { vol = min(vol, 0.0f); vol = max(vol, 1.0f); m_dataRoot["volume"] = vol; }
+		static void SetVolume(float vol) { vol = max(vol, 0.0f); vol = min(vol, 1.0f); m_dataRoot["volume"] = vol; }
 	};
 }
 

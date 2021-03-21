@@ -47,6 +47,13 @@ namespace NCL
 			else
 				return m_dataRoot[subTree].get(key, defaultValue).asFloat();
 		}
+		static double GetDouble(string key, float defaultValue = 0.0f, string subTree = "")
+		{
+			if (subTree.empty())
+				return m_dataRoot.get(key, defaultValue).asDouble();
+			else
+				return m_dataRoot[subTree].get(key, defaultValue).asDouble();
+		}
 		static string GetString(string key,string defaultValue = "null", string subTree = "")
 		{ 
 			if (subTree.empty())

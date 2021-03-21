@@ -3,7 +3,7 @@
 HM_Option::HM_Option(NCL::CSC8503::AudioSystem* audio) {
 	// Passing in Global Audio
 	globalAudio = audio;
-
+	volume = audio->GetGlobalVolume();
 	//1.create many ui components if you need! (they must have a name)
 	Option_text = new DW_UIText("Optiontext", "Option", 1.5f, NCL::Maths::Vector3{ 550.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // option text	
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
@@ -73,9 +73,9 @@ void HM_Option::ClickFunc(const std::string& str) {
 	}
 	else if (str == "VolumeUpButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("CGM3_Cute_Chirpy_Button_02_4.wav");
-		if (volume < 1.0f)
+		if (volume < 1.0)
 		{
-			volume += 0.1f;
+			volume += 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
 			globalAudio->SetGlobalVolume(volume);
 		}
@@ -85,16 +85,16 @@ void HM_Option::ClickFunc(const std::string& str) {
 		NCL::CSC8503::AudioSystem::PlaySFX("CGM3_Cute_Chirpy_Button_02_4.wav");
 		if (volume > 0)
 		{
-			volume -= 0.1f;
+			volume -= 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
 			globalAudio->SetGlobalVolume(volume);
 		}
-
+		/*
 		if (abs(0.1f - volume) < epsilon) {
 			volume = 0;
 			Volume_text->SetText("Volume : " + std::to_string(0));
 			globalAudio->SetGlobalVolume(volume);
-		}
+		}*/
 	}
 	std::cout << str << "\n";
 }

@@ -29,6 +29,8 @@ Please not:
 #include "../CSC8503Common/Transform.h"
 #include "../../Common/Assets.h"
 
+#include "SettingsManager.h"
+
 #include <irrKlang.h>
 #include <string>
 
@@ -73,8 +75,9 @@ namespace NCL {
 			static void RemoveSourceSFX(string filename);
 
 			//global settings
-			static void SetGlobalVolume(float vol) { engine->setSoundVolume(vol); }
-			static float GetGlobalVolume() { return engine->getSoundVolume(); }
+			static void SetGlobalVolume(float vol) { vol = min(vol, 1.0f); vol = max(vol, 0.0f); engine->setSoundVolume(vol); SettingsManager::SetVolume(vol); }
+			static void SetGlobalVolume(double vol) { vol = min(vol, 1.0); vol = max(vol, 0.0); engine->setSoundVolume(vol); SettingsManager::SetVolume(vol); }
+			static float GetGlobalVolume() { return (float)engine->getSoundVolume(); }
 
 			static void SetDefaultMinDistance(float d) { engine->setDefault3DSoundMinDistance(d); }
 			static void SetDefaultMaxDistance(float d) { engine->setDefault3DSoundMaxDistance(d); }
@@ -90,7 +93,6 @@ namespace NCL {
 
 		private:
 			static ISoundEngine* engine;
-			float volumeVar = 1.0f;
 		};
 	}
 }

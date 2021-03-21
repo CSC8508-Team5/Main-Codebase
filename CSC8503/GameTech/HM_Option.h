@@ -22,7 +22,7 @@ public:
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
-	float volume = 1.0f;
+	double volume;
 private:
 	DW_UIImage* m_bg;
 
