@@ -150,7 +150,6 @@ namespace NCL {
 			// Conor Level (Level Three)
 			void LevelThree();
 			void UpdateLevelThree(float dt);
-			bool isLevelThree = false; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
 
 			GameObject* selectionObject = nullptr;

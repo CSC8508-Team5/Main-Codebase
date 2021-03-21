@@ -35,7 +35,7 @@ TutorialGame::TutorialGame() {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 1;
+	currentLevel = 3;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -292,8 +292,16 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
 	if ((!ispause) && (!isfinish)&&(!isdead)) {
-		if (currentLevel == 1) {
+		if (currentLevel == 1) {//Update level 1
 			UpdateLevelOne();
+		}
+		else if (currentLevel == 3) { //Update level 3
+			UpdateLevelThree(dt);
+			if (sliderVector.size() > 0) {
+				for (auto i = 0; i < sliderVector.size(); ++i) {
+					sliderVector.at(i)->Update(dt);
+				}
+			}
 		}
 		UpdatePlayer(dt);
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
@@ -303,18 +311,6 @@ void TutorialGame::UpdateGame(float dt) {
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
-	}
-
-	if (isLevelThree) {
-		UpdateLevelThree(dt);
-		UpdateCoins();
-		UpdatePlayer(dt);
-	}
-
-	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
-		for (auto i = 0; i < sliderVector.size(); ++i) {
-			sliderVector.at(i)->Update(dt);
-		}
 	}
 
 
@@ -365,6 +361,7 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateLevelThree(float dt) {
+	UpdateCoins();
 	CollisionDetection::CollisionInfo info;
 	//finish
 	if (CollisionDetection::ObjectIntersection(player, finishLine, info) && !isfinish) {
@@ -709,12 +706,14 @@ void TutorialGame::InitWorld() {
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
-	if(currentLevel ==1)
+	if (currentLevel == 1)
 		InitLevel1();       // start lv1 
-	else if(currentLevel == 2)
+	else if (currentLevel == 2)
 		InitLevel2();  // start lv2 
-	else if(currentLevel ==3)
+	else if (currentLevel == 3)
 		InitLevel3(); // Start Level 3
+	else //Just make sure nobody write number more than 3 for now
+		currentLevel = 1;
 	startTime = ::GetTickCount();
 }
 void TutorialGame::InitLevel1() {
@@ -972,7 +971,6 @@ void TutorialGame::InitLevel2design() {
 void TutorialGame::InitLevel3() {
 	InitCharaters(Vector3(-150, 10, 0));
 	LevelThree();
-	isLevelThree = true;
 }
 
 GameObject** TutorialGame::LevelTestOne() {
