@@ -304,6 +304,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 	if (isLevelThree) {
 		UpdateLevelThree(dt);
+		UpdateCoins();
+		UpdatePlayer(dt);
 	}
 
 	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
@@ -1010,7 +1012,7 @@ void TutorialGame::LevelThree() {
 
 		// Platforms 
 		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-		startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
 		finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 		finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
