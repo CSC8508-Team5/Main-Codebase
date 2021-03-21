@@ -1,6 +1,7 @@
 #include "JsonManager.h"
 
 Json::Value NCL::JsonManager::m_dataRoot;
+std::string NCL::JsonManager::m_fileName;
 
 NCL::JsonManager::JsonManager(string filename, bool autoSaveOnDelete)
 {

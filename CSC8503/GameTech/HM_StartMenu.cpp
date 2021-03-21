@@ -76,7 +76,8 @@ void HM_StartMenu::ClickFunc(const std::string& str) {
 		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::StopAll();
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		exit(0);
+		NCL::SettingsManager::ForceSave();
+		exit(EXIT_SUCCESS);
 	}
 
 	std::cout << str << "\n";

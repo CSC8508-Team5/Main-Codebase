@@ -68,8 +68,8 @@ namespace NCL
 			m_dataRoot[subTree][key] = data;
 		}
 
-		void ForceSave() { save(m_fileName); }
-		void ForceAndReset() { save(m_fileName); m_dataRoot.clear();}
+		static void ForceSave() { save(m_fileName); }
+		static void ForceAndReset() { save(m_fileName); m_dataRoot.clear();}
 
 		virtual void ConstructDefault() 
 		{
@@ -92,10 +92,10 @@ namespace NCL
 	protected:
 
 		bool load(string filename);
-		bool save(string filename);
+		static bool save(string filename);
 		bool m_initialized = false;
 		bool m_autoSave;
-		string m_fileName;
+		static string m_fileName;
 		static Json::Value m_dataRoot;
 
 	};
