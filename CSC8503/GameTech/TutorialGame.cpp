@@ -34,6 +34,8 @@ TutorialGame::TutorialGame() {
 	useGravity = true;
 	inSelectionMode = false;
 
+	//current level
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -290,8 +292,9 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
 	if ((!ispause) && (!isfinish)&&(!isdead)) {
-		UpdateLevelOne();
-		UpdateCoins();
+		if (currentLevel == 1) {
+			UpdateLevelOne();
+		}
 		UpdatePlayer(dt);
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 		//UpdateSpinningPlatform();
@@ -317,6 +320,7 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::UpdateLevelOne() {
+	UpdateCoins();
 	float speed = 30.0f;
 	for (int i = 1; i < numstairs - 1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
@@ -443,7 +447,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 		if (!isjump) {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
-			//isjump = true; //Comment this if want a quick win.
+			isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
@@ -692,9 +696,12 @@ void TutorialGame::InitWorld() {
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
-	InitLevel1();       // start lv1 
-	//InitLevel2();  // start lv2 
-	//InitLevel3(); // Start Level 3
+	if(currentLevel ==1)
+		InitLevel1();       // start lv1 
+	else if(currentLevel == 2)
+		InitLevel2();  // start lv2 
+	else if(currentLevel ==3)
+		InitLevel3(); // Start Level 3
 	startTime = ::GetTickCount();
 }
 void TutorialGame::InitLevel1() {
@@ -957,9 +964,9 @@ void TutorialGame::InitLevel3() {
 
 
 GameObject** TutorialGame::LevelTestOne() {
-	Vector3 PlatformSize = Vector3(10, 5, 50);
-	Vector3 cubeSize = Vector3(10, 5, 10);
-	Vector3 middlecubeSize = Vector3(10, 5, 20);
+	Vector3 PlatformSize = Vector3(10, 4, 50);
+	Vector3 cubeSize = Vector3(10, 4, 10);
+	Vector3 middlecubeSize = Vector3(10, 4, 20);
 
 	float invCubeMass = 0; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links

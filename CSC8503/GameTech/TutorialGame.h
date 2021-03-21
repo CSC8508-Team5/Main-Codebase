@@ -21,7 +21,8 @@ namespace NCL {
 		public:
 			TutorialGame();
 			~TutorialGame();
-
+			int GetCurrentLevel() { return currentLevel; }
+			void SetCurrentLevel(int level) { currentLevel = level; }
 			virtual void UpdateGame(float dt);
 
 		protected:
@@ -131,6 +132,7 @@ namespace NCL {
 			bool		isfinish;
 			bool		ispause;
 			bool		isdead;
+			int			currentLevel = 1;
 			int			numstairs;
 			int			numcoins;
 			int			coincollected;
