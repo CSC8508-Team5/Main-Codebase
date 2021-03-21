@@ -102,7 +102,9 @@ namespace NCL {
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
 			DW_UIText* Timer_text;
+			DW_UIText* Loading_text;
 			DW_UIPanel* InGameUI;
+			DW_UIPanel* LoadingUI;
 			void Pendulum();
 			void UpdateLevelOne();
 			void UpdateCoins();
@@ -110,6 +112,8 @@ namespace NCL {
 			void UpdatePlayer(float dt);
 			void Reload();
 			//end
+
+			bool createUIelements();
 
 			StateGameObject* AddStateObjectToWorld(const Vector3& position, const Vector3& dimensions, bool switchD = false, bool perpendicular = false);
 

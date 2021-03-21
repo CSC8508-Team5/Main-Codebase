@@ -62,13 +62,7 @@ TutorialGame::TutorialGame() {
 
 	InitialiseAssets();
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
-
-
-	StartMenu = new HM_StartMenu(); // main menu
-	PauseMenu = new HM_PauseMenu(); // Pause menu
-	WinScreen = new HM_Win(); // wining screen
-	LoseScreen = new HM_Lose(); // lose screen
-	OptionMenu = new HM_Option(audio); // option menu
+	createUIelements();
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
@@ -76,7 +70,10 @@ TutorialGame::TutorialGame() {
 	LoseScreen->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
 	//--------------------------------------------------In Game UI------------------------------------------//
+
+	
 	InGameUI = new DW_UIPanel("InGameUI");
+
 	Score_text = new DW_UIText("Scoretext", "Score : " + std::to_string((int)(timer*10 + coincollected*50)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Score_text);
@@ -85,7 +82,16 @@ TutorialGame::TutorialGame() {
 	InGameUI->SetPanelIsEnable(false);
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
+bool NCL::CSC8503::TutorialGame::createUIelements()
+{
+	StartMenu = new HM_StartMenu(); // main menu
+	PauseMenu = new HM_PauseMenu(); // Pause menu
+	WinScreen = new HM_Win(); // wining screen
+	LoseScreen = new HM_Lose(); // lose screen
+	OptionMenu = new HM_Option(audio); // option menu
 
+	return true;
+}
 
 /*
 
@@ -127,6 +133,7 @@ void TutorialGame::InitialiseAssets() {
 	InitWorld();
 	InitCamera();
 	glDisable(GL_DEBUG_OUTPUT);
+
 
 }
 
@@ -177,10 +184,12 @@ void TutorialGame::Reload() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
-
+	
+	//renderer->Render();
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
+
 	if (timer <= 0) {
 		LoseScreen->SetPanelActive(true);
 	}
@@ -315,7 +324,6 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 	DW_UIRenderer::get_instance().Update(dt);
-
 	audio->Update(*world->GetMainCamera());
 
 	renderer->Render();
