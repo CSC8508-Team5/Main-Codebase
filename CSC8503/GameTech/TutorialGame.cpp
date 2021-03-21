@@ -938,6 +938,7 @@ void TutorialGame::InitLevel2design() {
 
 }
 void TutorialGame::InitLevel3() {
+	InitCharaters(Vector3(-150, 10, 0));
 	LevelThree();
 	isLevelThree = true;
 }
@@ -991,6 +992,8 @@ void TutorialGame::LevelThree() {
 
 		GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 		finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+		finish->SetName("Finish");
 
 		// State Objects ("sliders")
 		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
