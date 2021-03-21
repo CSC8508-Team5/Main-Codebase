@@ -36,6 +36,8 @@ namespace NCL {
 			void InitLevel2();
 			void InitLevel2design();
 
+			void InitLevel3();
+
 
 
 			//AI
