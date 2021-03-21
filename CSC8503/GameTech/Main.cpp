@@ -8,6 +8,7 @@
 #include "../CSC8503Common/PushdownState.h"
 #include "../CSC8503Common/PushdownMachine.h"
 #include "TutorialGame.h"
+#include "Loading.h"
 #include "../CSC8503Common/BehaviourAction.h"
 #include "../CSC8503Common/BehaviourNode.h"
 #include "../CSC8503Common/BehaviourNodeWithChildren.h"
@@ -20,6 +21,7 @@
 
 #include <fstream>
 #include <iostream>
+
 
 
 using namespace NCL;
@@ -396,6 +398,11 @@ int main() {
 	srand(time(NULL));
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
+
+	Loading* L = new Loading();
+	w->UpdateWindow();
+	float dt0 = w->GetTimer()->GetTimeDeltaSeconds();
+	L->UpdateGame(dt0);
 	TutorialGame* g = new TutorialGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 

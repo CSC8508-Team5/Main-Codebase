@@ -26,6 +26,9 @@ namespace NCL {
 		private:
 			void InitCamera();
 			void InitialAssets();
+			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
+
+
 
 			GameObject* player;
 			GameTechRenderer* renderer;
@@ -34,6 +37,7 @@ namespace NCL {
 			float		yaw;
 			float		pitch;
 
+			HM_StartMenu* StartMenu;
 			OGLTexture* basicTex = nullptr;
 			OGLShader* basicShader = nullptr;
 			OGLMesh* cubeMesh = nullptr;

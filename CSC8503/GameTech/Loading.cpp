@@ -43,6 +43,8 @@ void Loading::InitCamera() {
 
 
 void Loading::InitialAssets() {
+
+	//cube````````````````````````````````````````````
 	auto loadFunc = [](const string& name, OGLMesh** into) {
 		*into = new OGLMesh(name);
 		(*into)->SetPrimitiveType(GeometryPrimitive::Triangles);
@@ -54,7 +56,14 @@ void Loading::InitialAssets() {
 
 	basicTex = (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
+	//cube````````````````````````````````````````````
 
+
+
+	//UI````````````````````````````````````````````
+	StartMenu = new HM_StartMenu(); // main menu
+	StartMenu->SetPanelActive(true);
+	//UI````````````````````````````````````````````
 
 
 
@@ -66,13 +75,20 @@ void Loading::InitialAssets() {
 
 void NCL::CSC8503::Loading::UpdateGame(float dt)
 {
+
+
 	Window::GetWindow()->ShowOSPointer(false);
 	Window::GetWindow()->LockMouseToWindow(true);
 
+	StartMenu->GetPanelIsEnable();	///?
+
+
 	world->UpdateWorld(dt);
 	renderer->Update(dt);
-
 	Debug::FlushRenderables(dt);
 
+
+
+	DW_UIRenderer::get_instance().Update(dt);
 	renderer->Render();
 }

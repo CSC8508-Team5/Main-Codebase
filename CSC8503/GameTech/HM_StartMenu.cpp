@@ -4,8 +4,8 @@
 
 HM_StartMenu::HM_StartMenu() {
 	//1.create many ui components if you need! (they must have a name)
-	NCL::CSC8503::AudioSystem::StopAll();
-	NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
+	//NCL::CSC8503::AudioSystem::StopAll();
+	//NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
 
 	GameName_text = new DW_UIText("GameNameText", "Game Name", 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
