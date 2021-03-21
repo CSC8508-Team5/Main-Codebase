@@ -68,6 +68,21 @@ namespace NCL {
 				return inverseInteriaTensor;
 			}
 
+			float GetLinearDamping() const { return linearDamping; }
+			void SetLinearDamping(float damp) { linearDamping = damp; }
+
+			float GetAngularDamping() const { return angularDamping; }
+			void SetAngularDamping(float damp) { angularDamping = damp; }
+
+			bool GetTrigger() const { return this->isTrigger; }
+			void SetTrigger(bool t) { isTrigger = t; }
+
+			bool GetUseGravity() const { return this->useGravity; }
+			void SetUseGravity(bool g) { useGravity = g; }
+
+			float GetElasticity() const { return elasticity; }
+			void SetElasticity(float e) { elasticity = e; }
+
 		protected:
 			const CollisionVolume* volume;
 			Transform*		transform;
@@ -76,16 +91,20 @@ namespace NCL {
 			float elasticity;
 			float friction;
 
+			bool isTrigger;
+			bool useGravity;
+
 			//linear stuff
 			Vector3 linearVelocity;
 			Vector3 force;
-			
+			float linearDamping;
 
 			//angular stuff
 			Vector3 angularVelocity;
 			Vector3 torque;
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
+			float angularDamping;
 		};
 	}
 }

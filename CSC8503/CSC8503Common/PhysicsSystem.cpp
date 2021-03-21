@@ -405,6 +405,9 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Transform& transformA = a.GetTransform();
 	Transform& transformB = b.GetTransform();
 
+	if (physA->GetTrigger() || physB->GetTrigger())
+		return;
+
 	float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
 
 	if (totalMass == 0) {
@@ -439,7 +442,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 		Vector3::Cross(relativeB, p.normal), relativeB);
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
 
-	float cRestitution = 0.66f; // disperse some kinectic energy
+	/*float cRestitution = 0.66f; // disperse some kinectic energy
 
 	float j = (-(1.0f + cRestitution) * impulseForce) /
 		(totalMass + angularEffect);
@@ -449,8 +452,27 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	physB->ApplyLinearImpulse(fullImpulse);
 
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
-	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
+	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));*/
 
+	float totalEffect = 1.0f / (totalMass + angularEffect);
+	float jA = (-(1.0f + physA->GetElasticity()) * impulseForce) * totalEffect;
+	float jB = (-(1.0f + physB->GetElasticity()) * impulseForce) * totalEffect;
+
+	//Vector3 fullImpulse = p.normal * j;
+	Vector3 fullImpulseA = p.normal * jA;
+	Vector3 fullImpulseB = p.normal * jB;
+
+	physA->ApplyLinearImpulse(-fullImpulseA);
+	physB->ApplyLinearImpulse(fullImpulseB);
+	//without GetElasticity
+	//physA->ApplyLinearImpulse(-fullImpulse);
+	//physB->ApplyLinearImpulse(fullImpulse);
+
+	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulseA));
+	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulseB));
+	//without GetElasticity
+	//physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
+	//physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
 }
 
 /*
@@ -544,7 +566,7 @@ void PhysicsSystem::IntegrateAccel(float dt) {
 		Vector3 force = object->GetForce();
 		Vector3 accel = force * inverseMass;
 
-		if (applyGravity && inverseMass > 0) {
+		if (applyGravity && inverseMass > 0 && object->GetUseGravity()) {
 			accel += gravity; // don ¡¯t move infinitely heavy things
 
 		}
@@ -575,7 +597,7 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
 	std::vector < GameObject* >::const_iterator first;
 	std::vector < GameObject* >::const_iterator last;
 	gameWorld.GetObjectIterators(first, last);
-	float frameLinearDamping = 1.0f - (0.4f * dt);
+	
 	for (auto i = first; i != last; ++i) {
 		PhysicsObject* object = (*i)->GetPhysicsObject();
 		if (object == nullptr) {
@@ -589,6 +611,8 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
 		position += linearVel * dt;
 		transform.SetPosition(position);
 		// Linear Damping
+		//float frameLinearDamping = 1.0f - (0.4f * dt);
+		float frameLinearDamping = 1.0f - (object->GetLinearDamping() * dt);
 		linearVel = linearVel * frameLinearDamping;
 		object->SetLinearVelocity(linearVel);
 
@@ -603,7 +627,8 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
 		transform.SetOrientation(orientation);
 
 		// Damp the angular velocity too
-		float frameAngularDamping = 1.0f - (0.4f * dt);
+		//float frameAngularDamping = 1.0f - (0.4f * dt);
+		float frameAngularDamping = 1.0f - (object->GetAngularDamping() * dt);
 		angVel = angVel * frameAngularDamping;
 		object->SetAngularVelocity(angVel);
 
