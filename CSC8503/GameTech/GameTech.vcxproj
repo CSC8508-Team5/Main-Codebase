@@ -197,6 +197,7 @@
     <ClCompile Include="HM_PauseMenu.cpp" />
     <ClCompile Include="HM_StartMenu.cpp" />
     <ClCompile Include="HM_Win.cpp" />
+    <ClCompile Include="Loading.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateAi.cpp" />
     <ClCompile Include="StateGameObject.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="HM_PauseMenu.h" />
     <ClInclude Include="HM_StartMenu.h" />
     <ClInclude Include="HM_Win.h" />
+    <ClInclude Include="Loading.h" />
     <ClInclude Include="StateAi.h" />
     <ClInclude Include="StateGameObject.h" />
     <ClInclude Include="TutorialGame.h" />

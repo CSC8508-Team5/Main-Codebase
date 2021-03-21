@@ -9,6 +9,7 @@
 #include <list>
 #include <algorithm>
 #include <math.h>
+#include<thread>
 
 
 using namespace NCL;
@@ -61,8 +62,9 @@ TutorialGame::TutorialGame() {
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
-	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 	createUIelements();
+	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
+
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
