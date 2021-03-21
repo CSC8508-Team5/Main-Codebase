@@ -44,9 +44,12 @@ TutorialGame::TutorialGame() {
 	yaw = 0.0f;
 	pitch = 0.0f;
 	isjump = false;
+	timer = 121;
+	pausetime = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
+	isdead = false;
 	//gamestate
 	numstairs = 14;
 	numcoins = 25; // Upper limit of coins
@@ -72,9 +75,9 @@ TutorialGame::TutorialGame() {
 	OptionMenu->SetPanelActive(false);
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
-	Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Score_text = new DW_UIText("Scoretext", "Score : " + std::to_string((int)(timer*10 + coincollected*50)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	InGameUI->AddComponent(Coin_text);
+	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
 	InGameUI->SetPanelIsEnable(false);
@@ -143,7 +146,7 @@ TutorialGame::~TutorialGame() {
 	delete spinplat;
 	delete player;
 	delete InGameUI;
-	delete Coin_text;
+	delete Score_text;
 
 	delete physics;
 	delete renderer;
@@ -151,17 +154,9 @@ TutorialGame::~TutorialGame() {
 	delete audio;
 }
 
-//Return Game state
-bool TutorialGame::IfRestart() {
-	if (WinScreen->IfRestart()) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 void TutorialGame::Reload() {
+	timer = 120;
+	isdead = false;
 	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
 	Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
@@ -176,6 +171,7 @@ void TutorialGame::Reload() {
 	coincollected = 0;
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
+	startTime = ::GetTickCount();
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -183,12 +179,20 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	Timer_text->SetText("Timer : " + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
-	if (WinScreen->IfRestart()) {
+	if (timer <= 0) {
+		LoseScreen->SetPanelActive(true);
+	}
+	if ((int(::GetTickCount() - startTime)>=1000)&&(pausetime ==0) ){
+		timer -= 1;
+		startTime = ::GetTickCount();
+		pausetime = 0;
+	}
+	Timer_text->SetText("Timer : " + std::to_string(timer) + " s");
+	if (WinScreen->IfRestart()||LoseScreen->IfRestart()) {
 		isfinish = false;
 		Reload();
 		WinScreen->SetRestart(false);
-		//platforms = LevelTestOne();
+		LoseScreen->SetRestart(false);
 	}
 	UpdateKeys();
 
@@ -224,14 +228,17 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 
-
+	
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+		pauseStart = ::GetTickCount();
+		pausetime = int(pauseStart);
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
 		InGameUI->SetPanelIsEnable(false);
 	}
 	else {
+		pausetime = 0;
 		ispause = false;
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
@@ -282,12 +289,17 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
-	if ((!ispause) || (!isfinish)) {
-		//UpdateLevelOne();
-		//UpdateCoins();
+	if ((!ispause) && (!isfinish)&&(!isdead)) {
+		UpdateLevelOne();
+		UpdateCoins();
 		UpdatePlayer(dt);
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 		//UpdateSpinningPlatform();
+	}
+	if (isdead) {//reset player
+		player->GetTransform().SetScale(Vector3(0, 0, 0));
+		InitCharaters(Vector3(-150, 10, 0));
+		isdead = false;
 	}
 
 	if (isLevelThree) {
@@ -368,7 +380,7 @@ void TutorialGame::UpdateSpinningPlatform() {
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
+	Score_text->SetText("Score : " + std::to_string((int)(timer * 10 + coincollected*50)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
@@ -415,9 +427,9 @@ void TutorialGame::UpdatePlayer(float dt) {
 		WinScreen->SetPanelActive(true);
 		//Debug::Print("You Win", Vector2(45, 25));
 	}
-	if (playerposition.y <= -5) {
-		player->GetTransform().SetScale(Vector3(0, 0, 0));
-		InitCharaters(Vector3(-150, 10, 0));
+	if (playerposition.y <= -1) {
+		isdead = true;
+		timer = timer - 5;
 	}
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
@@ -694,7 +706,7 @@ void TutorialGame::InitWorld() {
 	InitLevel1();       // start lv1 
 	//InitLevel2();  // start lv2 
 	//InitLevel3(); // Start Level 3
-
+	startTime = ::GetTickCount();
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));

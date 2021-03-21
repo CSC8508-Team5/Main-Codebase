@@ -24,6 +24,10 @@ class  HM_Lose
 public:
 	HM_Lose();
 	~HM_Lose();
+	bool IfRestart() { return restart; }
+	void SetRestart(const bool flag) {
+		restart = flag;
+	}
 
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);
@@ -49,6 +53,7 @@ private:
 	DW_UIPanel* m_panel;
 	HM_StartMenu* StartMenu;
 	bool m_isEnable;
+	bool restart;
 	void ClickFunc(const std::string& str);
 
 };

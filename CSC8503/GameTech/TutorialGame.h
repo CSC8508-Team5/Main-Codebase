@@ -21,7 +21,6 @@ namespace NCL {
 		public:
 			TutorialGame();
 			~TutorialGame();
-			bool IfRestart();
 
 			virtual void UpdateGame(float dt);
 
@@ -100,7 +99,7 @@ namespace NCL {
 			GameObject* SpinningPlatform();
 
 			GameObject* AddCoins(const Vector3& position);
-			DW_UIText* Coin_text;
+			DW_UIText* Score_text;
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			void Pendulum();
@@ -131,9 +130,14 @@ namespace NCL {
 			bool		isjump;
 			bool		isfinish;
 			bool		ispause;
+			bool		isdead;
 			int			numstairs;
 			int			numcoins;
 			int			coincollected;
+			int			timer;
+			int			pausetime;
+			DWORD startTime;
+			DWORD pauseStart;
 			GameObject** platforms;
 			GameObject** coins;
 			GameObject* spinplat;
