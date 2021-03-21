@@ -1,5 +1,5 @@
 #include "HM_Lose.h"
-
+#include "../CSC8503Common/AudioSystem.h"
 
 
 HM_Lose::HM_Lose() {
@@ -65,10 +65,14 @@ void HM_Lose::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
 		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
+		restart = true;
 	}
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		StartMenu = new HM_StartMenu();
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
+		restart = false;
 	}
 
 
