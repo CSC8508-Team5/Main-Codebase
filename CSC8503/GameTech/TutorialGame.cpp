@@ -694,6 +694,7 @@ void TutorialGame::InitWorld() {
 	physics->Clear();
 	InitLevel1();       // start lv1 
 	//InitLevel2();  // start lv2 
+	//InitLevel3(); // Start Level 3
 	startTime = ::GetTickCount();
 }
 void TutorialGame::InitLevel1() {
@@ -730,11 +731,6 @@ void TutorialGame::InitLevel1() {
 
 
 	//renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
-
-	//-------------LV3 -------------------------------------
-	/* Conor Lambert */
-	//LevelThree();
-	//isLevelThree = true;
 
 	//Pendulum();
 	//spinplat = 	SpinningPlatform();
@@ -953,6 +949,11 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar
 
 }
+void TutorialGame::InitLevel3() {
+	InitCharaters(Vector3(-150, 10, 0));
+	LevelThree();
+	isLevelThree = true;
+}
 
 
 GameObject** TutorialGame::LevelTestOne() {
@@ -997,30 +998,58 @@ GameObject** TutorialGame::LevelTestOne() {
 
 void TutorialGame::LevelThree() {
 
-	// Platforms 
-	GameObject* startingFloor = AddCubeToWorld(Vector3(150, 0, 0), Vector3(300, 2, 50), 0);
-	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+		// Platforms 
+		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
+		startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 
-	GameObject* finish = AddCubeToWorld(Vector3(470, 0, 0), Vector3(20, 2, 50), 0);
-	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+		GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
+		finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
-	// Placeholder State Objects ("sliders")
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), false, true));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), true, true));
-	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(120, 6, 0), Vector3(20, 4, 1), false, true));
+		finish->SetName("Finish");
 
-	// Cylinder Obstacles
+		// State Objects ("sliders")
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), true, true));
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), false, true));
 
-	// Coins 
-	// Initialise coins
-	for (int i = 0; i < numcoins; ++i) {
-		coins[i] = nullptr;
-	}
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, -30), Vector3(1, 4, 15), false));
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, 0), Vector3(1, 4, 15), true));
+		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(200, 6, 30), Vector3(1, 4, 15), false));
 
-	coins[0] = AddCoins(Vector3(30, 4, -20));
-	coins[1] = AddCoins(Vector3(30, 4, 20));
-	coins[2] = AddCoins(Vector3(90, 4, -20));
-	coins[3] = AddCoins(Vector3(90, 4, 20));
+		// Cylinder Obstacles
+		// First Row
+		AddCylinderToWorld(Vector3(100, 3, 0), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(100, 3, -20), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(100, 3, -40), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(100, 3, 20), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(100, 3, 40), 2, 3, 0.0f);
+
+		// Second Row
+		AddCylinderToWorld(Vector3(120, 3, 10), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(120, 3, 30), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(120, 3, -10), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(120, 3, -30), 2, 3, 0.0f);
+
+		// Third Row
+		AddCylinderToWorld(Vector3(140, 3, 0), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(140, 3, -20), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(140, 3, -40), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(140, 3, 20), 2, 3, 0.0f);
+		AddCylinderToWorld(Vector3(140, 3, 40), 2, 3, 0.0f);
+
+		// Coins 
+		// Initialise coins
+		for (int i = 0; i < numcoins; ++i) {
+			coins[i] = nullptr;
+		}
+
+		coins[0] = AddCoins(Vector3(-30, 4, 20));
+		coins[1] = AddCoins(Vector3(-30, 4, -20));
+		coins[2] = AddCoins(Vector3(30, 4, -20));
+		coins[3] = AddCoins(Vector3(30, 4, 20));
+		coins[4] = AddCoins(Vector3(90, 4, -20));
+		coins[5] = AddCoins(Vector3(90, 4, 20));
+
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
