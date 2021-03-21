@@ -156,6 +156,9 @@
     <ClInclude Include="JsonManager.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="LanguageManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWorld.cpp">
