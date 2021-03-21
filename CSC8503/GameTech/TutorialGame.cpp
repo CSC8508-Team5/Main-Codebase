@@ -305,6 +305,12 @@ void TutorialGame::UpdateGame(float dt) {
 		isdead = false;
 	}
 
+	if (isLevelThree) {
+		UpdateLevelThree(dt);
+		UpdateCoins();
+		UpdatePlayer(dt);
+	}
+
 	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
 		for (auto i = 0; i < sliderVector.size(); ++i) {
 			sliderVector.at(i)->Update(dt);
@@ -359,7 +365,14 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateLevelThree(float dt) {
-	// Not Yet Implemented
+	CollisionDetection::CollisionInfo info;
+	//finish
+	if (CollisionDetection::ObjectIntersection(player, finishLine, info) && !isfinish) {
+		isfinish = true;
+		ispause = true;
+		audio->StopAll();
+		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
 }
 
 void TutorialGame::UpdateSpinningPlatform() {
@@ -962,7 +975,6 @@ void TutorialGame::InitLevel3() {
 	isLevelThree = true;
 }
 
-
 GameObject** TutorialGame::LevelTestOne() {
 	Vector3 PlatformSize = Vector3(10, 4, 50);
 	Vector3 cubeSize = Vector3(10, 4, 10);
@@ -1007,12 +1019,12 @@ void TutorialGame::LevelThree() {
 
 		// Platforms 
 		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-		startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
-		GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
-		finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+		finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
+		finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
-		finish->SetName("Finish");
+		finishLine->SetName("Finish");
 
 		// State Objects ("sliders")
 		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
