@@ -138,6 +138,7 @@ namespace NCL {
 			GameObject** coins;
 			GameObject* spinplat;
 			GameObject* player;
+			GameObject* finishLine;
 			//end
 
 			// Conor Level (Level Three)
