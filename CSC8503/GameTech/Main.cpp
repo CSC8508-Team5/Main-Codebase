@@ -165,6 +165,8 @@ using namespace CSC8503;
 
 
 vector <Vector3> testNodes;
+bool loadingFinished = false;
+
 void TestPathfinding() {
 	NavigationGrid grid("TestGrid1.txt");
 
@@ -229,7 +231,6 @@ void TestStateMachine() {
 	}
 
 }
-
 
 class PauseScreen : public PushdownState {
 	PushdownResult OnUpdate(float dt,
@@ -307,6 +308,7 @@ class IntroScreen : public PushdownState {
 	}
 
 };
+
 void TestPushdownAutomata(Window* w) {
 	PushdownMachine machine(new IntroScreen());
 	while (w->UpdateWindow())
@@ -345,7 +347,10 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
+	cout << "I am Loading!" << endl;
 	TutorialGame* g = new TutorialGame();
+	cout << "I have finished Loading!" << endl;
+
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
 	//TestPathfinding();
