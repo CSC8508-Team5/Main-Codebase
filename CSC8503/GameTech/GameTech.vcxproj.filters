@@ -120,6 +120,12 @@
     <ClCompile Include="StateAi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HM_NextLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStatusManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -219,6 +225,12 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="StateAi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_NextLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStatusManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

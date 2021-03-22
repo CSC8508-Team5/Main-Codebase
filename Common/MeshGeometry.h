@@ -17,7 +17,7 @@ namespace NCL {
 	}
 	using namespace Maths;
 
-	enum GeometryPrimitive {
+	enum class GeometryPrimitive {
 		Points,
 		Lines,
 		Triangles,

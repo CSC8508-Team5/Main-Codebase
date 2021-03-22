@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 2;
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -77,12 +77,14 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
-	OptionMenu = new HM_Option(audio, s); // option menu
+	NextLevel = new HM_NextLevel(); // next level
+	OptionMenu = new HM_Option(audio); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
+	NextLevel->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
@@ -173,25 +175,26 @@ TutorialGame::~TutorialGame() {
 void TutorialGame::Reload() {
 	timer = 120;
 	isdead = false;
-	if (currentLevel == 2) {
-		player->GetTransform().SetPosition(Vector3(0, 0, -320));
+
+	if (currentLevel == 3) {
+
+		player->GetTransform().SetPosition(Vector3(-150, 10, 0));
 		Quaternion orientation = Quaternion(0, -1, 0, 1);
 		orientation.Normalise();
 		player->GetTransform().SetOrientation(orientation);
+		SphereVolume* volume = new SphereVolume(1.5f);
+		for (int i = 0; i < numcoins; ++i) {
+			if (coins[i] != nullptr) {
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+			}
+		}
+		coincollected = 0;
 	}
 	else {
-			player->GetTransform().SetPosition(Vector3(-150, 10, 0));
-			Quaternion orientation = Quaternion(0, -1, 0, 1);
-			orientation.Normalise();
-			player->GetTransform().SetOrientation(orientation);
-			SphereVolume* volume = new SphereVolume(1.5f);
-			for (int i = 0; i < numcoins; ++i) {
-				if (coins[i] != nullptr) {
-					coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-					coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
-				}
-			}
-			coincollected = 0;
+		world->ClearAndErase();
+		physics->Clear();
+		InitWorld();
 	}
 	
 	audio->StopAll();
@@ -204,8 +207,12 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	if (timer <= 0) {
+	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::GameState::Pause) {
 		LoseScreen->SetPanelActive(true);
+		timer = 120;
+		NCL::CSC8503::AudioSystem::StopAll();
+		NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+		GameStateManager::SetGameState(GameStateManager::GameState::LoseTimeout);
 	}
 	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;
@@ -213,12 +220,15 @@ void TutorialGame::UpdateGame(float dt) {
 		pausetime = 0;
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
-	if (WinScreen->IfRestart()||LoseScreen->IfRestart()) {
-
+	if (NextLevel->IfNextLevel()) {
+		//Unfinished
+	}
+	else if (WinScreen->IfRestart()||LoseScreen->IfRestart()||NextLevel->IfRestart()) {
 		isfinish = false;
 		Reload();
 		WinScreen->SetRestart(false);
 		LoseScreen->SetRestart(false);
+		NextLevel->SetRestart(false);
 	}
 	UpdateKeys();
 
@@ -249,13 +259,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	}*/
 
-
-
-
-
-
-	
-	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable() || NextLevel->GetPanelIsEnable()) {
 		pauseStart = ::GetTickCount64();
 		pausetime = int(pauseStart);
 		ispause = true;
@@ -270,10 +274,15 @@ void TutorialGame::UpdateGame(float dt) {
 		Window::GetWindow()->LockMouseToWindow(true);
 		InGameUI->SetPanelIsEnable(true);
 	}
-	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-		WinScreen->SetPanelActive(true);
-
-		//Debug::Print("You Win", Vector2(45, 25));
+	if (isfinish && !WinScreen->GetPanelIsEnable()&&!NextLevel->GetPanelIsEnable()) {
+		if (currentLevel == 1 || currentLevel == 2)
+		{
+			NextLevel->SetPanelActive(true);
+		}
+		else
+		{
+			WinScreen->SetPanelActive(true);
+		}
 	}
 
 	/*if (useGravity) {
@@ -567,10 +576,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 
-	if (isfinish) {
-		WinScreen->SetPanelActive(true);
-		//Debug::Print("You Win", Vector2(45, 25));
-	}
+	
 	if (playerposition.y <= -1) {
 		isdead = true;
 		isjump = false;
@@ -598,7 +604,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
 			if (playerposition.y - currenthight >= 0.1f) {
-				isjump = true; //Comment this if want a quick win.
+				//isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
@@ -670,6 +676,7 @@ void TutorialGame::UpdateKeys() {
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
 		LoseScreen->SetPanelActive(false);
+		NextLevel->SetPanelActive(false);
 		OptionMenu->SetPanelActive(false);
 	}
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
@@ -677,6 +684,7 @@ void TutorialGame::UpdateKeys() {
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
 		LoseScreen->SetPanelActive(false);
+		NextLevel->SetPanelActive(false);
 		OptionMenu->SetPanelActive(true);
 	}
 
@@ -848,6 +856,7 @@ void TutorialGame::InitCamera() {
 }
 
 void TutorialGame::InitWorld() {
+	world->ClearAndErase();
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
@@ -865,7 +874,7 @@ void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	InitCharaters(Vector3(-150, 10, 0));
-	InitAiEnemy1();
+	//InitAiEnemy1();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
@@ -903,6 +912,7 @@ void TutorialGame::InitLevel1() {
 	//WinScreen->SetRestart(false);
 }
 void TutorialGame::InitLevel2() {
+    //InitCharaters(Vector3(0, 0, 290));
 	InitCharaters(Vector3(0, 0, -320));
 	InitLevel2design();
 }
@@ -966,7 +976,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(-55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	//AddDoorToWorld(Vector3(-49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddDoorToWorld(Vector3(-39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	AddWallToWorld(Vector3(-43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	//AddDoorToWorld(Vector3(-27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddDoorToWorld(Vector3(-17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -981,7 +991,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 	//AddDoorToWorld(Vector3(39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	//AddDoorToWorld(Vector3(49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	AddWallToWorld(Vector3(43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
@@ -1000,7 +1010,7 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	AddWallToWorld(Vector3(-43, 9, -100), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-44, 9, -100), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-22, 9, -100), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(22, 9, -100), 10, 8, 1, redTex, "block"); //block
 
@@ -1984,6 +1994,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 	}
 	else
 	{
+		//CapsuleVolume* volume = new CapsuleVolume(0.85f * meshSize, 0.3f * meshSize);
 		AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 		character->SetBoundingVolume((CollisionVolume*)volume);
 		character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));

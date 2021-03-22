@@ -1,6 +1,7 @@
 #include "HM_StartMenu.h"
 #include "../../Common/Window.h"
 #include "../CSC8503Common/AudioSystem.h"
+#include "GameStatusManager.h"
 
 HM_StartMenu::HM_StartMenu() {
 	//1.create many ui components if you need! (they must have a name)
@@ -73,10 +74,10 @@ void HM_StartMenu::ClickFunc(const std::string& str) {
 	
 	}
 	if (str == "QuitButton") {
-		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::StopAll();
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		exit(EXIT_SUCCESS);
+		this->SetPanelActive(false);
+		NCL::GameStateManager::SetGameState(NCL::GameStateManager::GameState::Exit);
 	}
 
 	std::cout << str << "\n";

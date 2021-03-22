@@ -375,6 +375,12 @@ void PhysicsSystem::BasicCollisionDetection() {
 				continue;
 
 			}
+			bool collided = ((unsigned int)(*i)->GetLayer() & (*j)->GetLayerMask()) != 0;
+			collided = collided && ((unsigned int)(*j)->GetLayer() & (*i)->GetLayerMask());
+			if (!collided)
+			{
+				continue;
+			}
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info)) {
 				ImpulseResolveCollision(*info.a, *info.b, info.point);

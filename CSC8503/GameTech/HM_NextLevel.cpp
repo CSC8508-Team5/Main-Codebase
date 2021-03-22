@@ -1,9 +1,9 @@
-#include "HM_Win.h"
+#include "HM_NextLevel.h"
 
 #include "../CSC8503Common/AudioSystem.h"
 
 
-HM_Win::HM_Win() {
+HM_NextLevel::HM_NextLevel() {
 	//1.create many ui components if you need! (they must have a name)
 
 	WinScreen_text = new DW_UIText("WinScreenText", "You Win !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
@@ -12,7 +12,8 @@ HM_Win::HM_Win() {
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 
 
-	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,200.0f,0.0f });  // Continue button
+	NextLevel_btn = new DW_UIImage("NextLevelButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,300.0f,0.0f });  // Continue button
+	PlayAgain_btn = new DW_UIImage("PlayAgainButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,200.0f,0.0f });  // Restart button
 	Back_btn = new DW_UIImage("MenuButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,100.0f,0.0f });  // Back to main menu button
 
 	str = NCL::Assets::TEXTUREDIR + "bg1.png";
@@ -20,6 +21,7 @@ HM_Win::HM_Win() {
 
 
 
+	NextLevel_text = new DW_UIText("NextLevelText", "Next Level", 0.7f, NCL::Maths::Vector3{ 570.0f,290.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Next level text
 	PlayAgain_text = new DW_UIText("PlayAgain", "Play Again", 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
 	Back_text = new DW_UIText("Menu", "Menu", 0.7f, NCL::Maths::Vector3{ 590.0f,90.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
 	//2.create an ui panel (it must have a name)
@@ -31,9 +33,11 @@ HM_Win::HM_Win() {
 	//if we set rendering priority, the rendering order will follow rendering priority. Less priority will render earlier.
 	m_panel->AddComponent(m_bg);
 
+	m_panel->AddComponent(NextLevel_btn);
 	m_panel->AddComponent(PlayAgain_btn);
 	m_panel->AddComponent(Back_btn);
 
+	m_panel->AddComponent(NextLevel_text);
 	m_panel->AddComponent(PlayAgain_text);
 	m_panel->AddComponent(Back_text);
 
@@ -42,18 +46,20 @@ HM_Win::HM_Win() {
 
 	//4.add callback to this panel, if some of its components be clicked, we can do something here! 
 	//event type is panel's name
-	std::function<void(std::string)> temp = std::bind(&HM_Win::ClickFunc, this, std::placeholders::_1);
+	std::function<void(std::string)> temp = std::bind(&HM_NextLevel::ClickFunc, this, std::placeholders::_1);
 	DW_UIEventMgr::get_instance().RegisterUIEvent(m_panel->GetPanelName(), temp);
 
 	//5.add this panel to a panel container, that means we can have many panels at same time!
 	DW_UIRenderer::get_instance().AddPanel(m_panel);
 }
 
-HM_Win::~HM_Win() {
+HM_NextLevel::~HM_NextLevel() {
 	delete m_bg;
+	delete NextLevel_btn;
 	delete PlayAgain_btn;
 	delete Back_btn;
 
+	delete NextLevel_text;
 	delete PlayAgain_text;
 	delete Back_btn;
 	delete WinScreen_text;
@@ -61,19 +67,28 @@ HM_Win::~HM_Win() {
 	delete m_panel;
 }
 
-void HM_Win::ClickFunc(const std::string& str) {
+void HM_NextLevel::ClickFunc(const std::string& str) {
 
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
-	if (str == "PlayAgainButton") {
+	if (str == "NextLevelButton") {
+		//not finish
+		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
+		nextlevel = true;
+		restart = false;
+	}
+	else if (str == "PlayAgainButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 		this->SetPanelActive(false);
 		restart = true;
+		nextlevel = false;
 	}
 	else if (str == "MenuButton") {
-		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		this->SetPanelActive(false);
+		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		StartMenu = new HM_StartMenu();
 		restart = false;
+		nextlevel = false;
 	}
 
 

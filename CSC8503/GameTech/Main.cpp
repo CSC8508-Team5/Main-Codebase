@@ -18,6 +18,8 @@
 
 #include "../CSC8503Common/SettingsManager.h"
 
+#include "GameStatusManager.h"
+
 #include <fstream>
 #include <iostream>
 
@@ -226,7 +228,7 @@ void TestPathfinding() {
 }
 void DisplayPathfinding() {
 	for (int i = 1; i < testNodes.size(); ++i) {
-		Vector3 a = testNodes[i - 1];
+		Vector3 a = testNodes[(i - 1)];
 		Vector3 b = testNodes[i];
 
 		Debug::DrawLine(a, b, Vector4(0, 1, 0, 1));
@@ -375,8 +377,10 @@ This time, we've added some extra functionality to the window class - we can
 hide or show the
 
 */
+
 int main() {
 	SettingsManager* s = new SettingsManager();
+	GameStateManager gsm = GameStateManager();
 
 	//bool fullScreen = s->GetBool("full-screen");
 	bool fullScreen = s->GetFullScreen();
@@ -384,7 +388,8 @@ int main() {
 	Vector2 rect = s->GetResolution();
 	//s->SetFullScreen(false);
 
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", rect.x, rect.y, fullScreen);
+	float epsilon = 0.1f;
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", (int) (rect.x + epsilon), (int) (rect.y + epsilon), fullScreen);
 	
 	//JsonTest();
 
@@ -393,7 +398,7 @@ int main() {
 	if (!w->HasInitialised()) {
 		return -1;
 	}
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
@@ -403,7 +408,7 @@ int main() {
 	//TestPathfinding();
 	//TestBehaviourTree();
 
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE) && gsm.GetGameState() < GameStateManager::GameState::Stop) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		if (dt > 0.1f) {
 			std::cout << "Skipping large time delta" << std::endl;
