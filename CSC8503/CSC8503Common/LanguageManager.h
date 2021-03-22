@@ -6,8 +6,8 @@ namespace NCL
 		public JsonManager
 	{
 	public:
-		LanguageManager(string languageFileLocation = Assets::DATADIR, string language="en")
-			: JsonManager(languageFileLocation+"lang_"+language+".json",false) {
+		LanguageManager(string language="en", string languageFileLocation = Assets::DATADIR, string filePrefix = "lang_")
+			: JsonManager(languageFileLocation + filePrefix + language+".json", false) {
 			m_language = language;
 		}
 		
@@ -16,6 +16,7 @@ namespace NCL
 
 	protected:
 		string m_language;
+		Json::Value m_dataRoot;
 	};
 }
 

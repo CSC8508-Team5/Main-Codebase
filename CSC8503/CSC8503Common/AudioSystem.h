@@ -44,7 +44,7 @@ namespace NCL {
 		class AudioSystem
 		{
 		public:
-			AudioSystem();
+			AudioSystem(SettingsManager* s);
 			~AudioSystem();
 
 			void Update(Vector3 listener, Vector3 forward);
@@ -75,8 +75,8 @@ namespace NCL {
 			static void RemoveSourceSFX(string filename);
 
 			//global settings
-			static void SetGlobalVolume(float vol) { vol = min(vol, 1.0f); vol = max(vol, 0.0f); engine->setSoundVolume(vol); SettingsManager::SetVolume(vol); }
-			static void SetGlobalVolume(double vol) { vol = min(vol, 1.0); vol = max(vol, 0.0); engine->setSoundVolume(vol); SettingsManager::SetVolume(vol); }
+			static void SetGlobalVolume(float vol) { vol = min(vol, 1.0f); vol = max(vol, 0.0f); engine->setSoundVolume(vol); }
+			static void SetGlobalVolume(double vol) { vol = min(vol, 1.0); vol = max(vol, 0.0); engine->setSoundVolume(vol); }
 			static float GetGlobalVolume() { return (float)engine->getSoundVolume(); }
 
 			static void SetDefaultMinDistance(float d) { engine->setDefault3DSoundMinDistance(d); }

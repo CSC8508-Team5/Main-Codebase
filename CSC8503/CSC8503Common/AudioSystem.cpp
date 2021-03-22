@@ -2,7 +2,7 @@
 
 irrklang::ISoundEngine* NCL::CSC8503::AudioSystem::engine = nullptr;
 
-NCL::CSC8503::AudioSystem::AudioSystem()
+NCL::CSC8503::AudioSystem::AudioSystem(SettingsManager* s)
 {
 	engine = createIrrKlangDevice();
 	if (!engine)
@@ -11,7 +11,7 @@ NCL::CSC8503::AudioSystem::AudioSystem()
 	}
 	engine->loadPlugins("./ikpMP3.dll");
 	engine->loadPlugins("./ikpFlac.dll");
-	SetGlobalVolume(SettingsManager::GetVolume());
+	SetGlobalVolume(s->GetVolume());
 	std::cout << "irrKlang audio system initialized\n";
 }
 

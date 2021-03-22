@@ -14,13 +14,13 @@
 using namespace NCL;
 using namespace CSC8503;
 
-TutorialGame::TutorialGame() {
+TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
 	physics = new PhysicsSystem(*world);
 	//irrklang audio system
-	audio = new AudioSystem();
+	audio = new AudioSystem(s);
 
 	//global play 2D as background music
 	//audio->PlayAudio("Casual Theme #1 (Looped).ogg");
@@ -53,6 +53,13 @@ TutorialGame::TutorialGame() {
 	coincollected = 0;
 	//end 
 
+	settings = s;
+
+	if (settings)
+		langContent = new LanguageManager();
+	else
+		langContent = new LanguageManager("en");
+
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
@@ -63,7 +70,7 @@ TutorialGame::TutorialGame() {
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
-	OptionMenu = new HM_Option(audio); // option menu
+	OptionMenu = new HM_Option(audio, s); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
@@ -72,8 +79,10 @@ TutorialGame::TutorialGame() {
 	OptionMenu->SetPanelActive(false);
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
-	Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	//Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	//Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Coin_text = new DW_UIText("Cointext", langContent->GetText("coin_collected")+ std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Coin_text);
 	InGameUI->AddComponent(Timer_text);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
@@ -149,6 +158,8 @@ TutorialGame::~TutorialGame() {
 	delete renderer;
 	delete world;
 	delete audio;
+
+	delete langContent;
 }
 
 //Return Game state
@@ -183,7 +194,8 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	Timer_text->SetText("Timer : " + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
+	//Timer_text->SetText("Timer : " + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
+	Timer_text->SetText(langContent->GetText("time") + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
 	if (WinScreen->IfRestart()) {
 		isfinish = false;
 		Reload();
@@ -357,7 +369,8 @@ void TutorialGame::UpdateSpinningPlatform() {
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
+	//Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
+	Coin_text->SetText(langContent->GetText("coin_collected") + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));

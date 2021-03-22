@@ -6,6 +6,10 @@
 #include "StateAi.h"
 #include "../../Common/Vector3.h"
 #include "../../Common/Assets.h"
+
+#include "../CSC8503Common/LanguageManager.h"
+#include "../CSC8503Common/SettingsManager.h"
+
 #include "DW_UIRenderer.h"
 #include "DW_UIText.h"
 #include "DW_UIPanel.h"
@@ -15,11 +19,12 @@
 #include "HM_Win.h"
 #include "HM_Lose.h"
 #include "HM_Option.h"
+
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
 		public:
-			TutorialGame();
+			TutorialGame(SettingsManager* s = nullptr);
 			~TutorialGame();
 			bool IfRestart();
 
@@ -193,6 +198,10 @@ namespace NCL {
 			HM_Win* WinScreen;
 			HM_Lose* LoseScreen;
 			HM_Option* OptionMenu;
+
+			//Language Manager
+			LanguageManager* langContent;
+			SettingsManager* settings;
 		};
 	}
 }
