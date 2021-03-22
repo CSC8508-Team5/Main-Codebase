@@ -173,18 +173,27 @@ TutorialGame::~TutorialGame() {
 void TutorialGame::Reload() {
 	timer = 120;
 	isdead = false;
-	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
-	Quaternion orientation = Quaternion(0, -1, 0, 1);
-	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);
-	SphereVolume* volume = new SphereVolume(1.5f);
-	for (int i = 0; i < numcoins; ++i) {
-		if (coins[i] != nullptr) {
-			coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-			coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
-		}
+	if (currentLevel == 2) {
+		player->GetTransform().SetPosition(Vector3(0, 0, -320));
+		Quaternion orientation = Quaternion(0, -1, 0, 1);
+		orientation.Normalise();
+		player->GetTransform().SetOrientation(orientation);
 	}
-	coincollected = 0;
+	else {
+			player->GetTransform().SetPosition(Vector3(-150, 10, 0));
+			Quaternion orientation = Quaternion(0, -1, 0, 1);
+			orientation.Normalise();
+			player->GetTransform().SetOrientation(orientation);
+			SphereVolume* volume = new SphereVolume(1.5f);
+			for (int i = 0; i < numcoins; ++i) {
+				if (coins[i] != nullptr) {
+					coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+					coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+				}
+			}
+			coincollected = 0;
+	}
+	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
 	startTime = ::GetTickCount();
@@ -262,7 +271,6 @@ void TutorialGame::UpdateGame(float dt) {
 		InGameUI->SetPanelIsEnable(true);
 	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-
 		WinScreen->SetPanelActive(true);
 
 		//Debug::Print("You Win", Vector2(45, 25));
@@ -473,7 +481,6 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 }
 
 void TutorialGame::UpdatePlayer(float dt) {
-	std::cout << isjump << endl;
 	Vector3 playerposition = player->GetTransform().GetPosition();
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
