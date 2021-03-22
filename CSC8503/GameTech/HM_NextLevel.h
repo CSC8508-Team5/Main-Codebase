@@ -9,44 +9,46 @@
 
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
-#include "../CSC8503Common/AudioSystem.h"
 
-class HM_Option
+
+class  HM_NextLevel
 {
 public:
-	HM_Option(NCL::CSC8503::AudioSystem* audio);
-	~HM_Option();
+	HM_NextLevel();
+	~HM_NextLevel();
+
+
+	bool IfRestart() { return restart; }
+	void SetRestart(const bool flag) {
+		restart = flag;
+	}
 
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
-	double volume;
+
 private:
 	DW_UIImage* m_bg;
 
-	DW_UIImage* VolumeUp_btn;
-	DW_UIImage* VolumeDown_btn;
-	DW_UIImage* Volume_btn;
-	DW_UIImage* Close_btn;
+	DW_UIImage* NextLevel_btn;
+	DW_UIImage* Back_btn;
 
-	DW_UIText* Option_text; 
-	DW_UIText* Close_text;
 
-	DW_UIText* Volume_text;
+	DW_UIText* WinScreen_text;
 
-	DW_UIText* VolumeUp_text;
-	DW_UIText* VolumeDown_text;
-	
+	DW_UIText* NextLevel_text;
+	DW_UIText* Back_text;
+
+	DW_UIText* Score_text;
 
 	DW_UIPanel* m_panel;
 
-	bool m_isEnable = false;
+	HM_StartMenu* StartMenu;
+	bool m_isEnable;
+	bool restart;
 	void ClickFunc(const std::string& str);
-
-	// The audio system
-	NCL::CSC8503::AudioSystem* globalAudio;
 
 };
 

@@ -19,7 +19,7 @@
 #include "HM_Win.h"
 #include "HM_Lose.h"
 #include "HM_Option.h"
-
+#include "HM_NextLevel.h"
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
@@ -207,13 +207,13 @@ namespace NCL {
 
 			GameObject* audioAgent;
 
-			//DW UI example
+			//HM UI 
 			HM_StartMenu* StartMenu;
 			HM_PauseMenu* PauseMenu;
 			HM_Win* WinScreen;
 			HM_Lose* LoseScreen;
 			HM_Option* OptionMenu;
-
+			HM_NextLevel* NextLevel;
 			//Language Manager
 			LanguageManager* langContent;
 			SettingsManager* settings;
