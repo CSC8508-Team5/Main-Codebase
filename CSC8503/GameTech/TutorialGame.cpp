@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 2;
+	currentLevel = 3;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -173,25 +173,26 @@ TutorialGame::~TutorialGame() {
 void TutorialGame::Reload() {
 	timer = 120;
 	isdead = false;
-	if (currentLevel == 2) {
-		player->GetTransform().SetPosition(Vector3(0, 0, -320));
+
+	if (currentLevel == 3) {
+
+		player->GetTransform().SetPosition(Vector3(-150, 10, 0));
 		Quaternion orientation = Quaternion(0, -1, 0, 1);
 		orientation.Normalise();
 		player->GetTransform().SetOrientation(orientation);
+		SphereVolume* volume = new SphereVolume(1.5f);
+		for (int i = 0; i < numcoins; ++i) {
+			if (coins[i] != nullptr) {
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+			}
+		}
+		coincollected = 0;
 	}
 	else {
-			player->GetTransform().SetPosition(Vector3(-150, 10, 0));
-			Quaternion orientation = Quaternion(0, -1, 0, 1);
-			orientation.Normalise();
-			player->GetTransform().SetOrientation(orientation);
-			SphereVolume* volume = new SphereVolume(1.5f);
-			for (int i = 0; i < numcoins; ++i) {
-				if (coins[i] != nullptr) {
-					coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-					coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
-				}
-			}
-			coincollected = 0;
+		world->ClearAndErase();
+		physics->Clear();
+		InitWorld();
 	}
 	
 	audio->StopAll();
@@ -206,6 +207,7 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 	if (timer <= 0) {
 		LoseScreen->SetPanelActive(true);
+		timer = 120;
 	}
 	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;
