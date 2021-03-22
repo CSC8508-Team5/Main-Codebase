@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 2;
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -251,7 +251,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	}*/
 
-	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable() || NextLevel->GetPanelIsEnable()) {
 		pauseStart = ::GetTickCount64();
 		pausetime = int(pauseStart);
 		ispause = true;
@@ -267,7 +267,6 @@ void TutorialGame::UpdateGame(float dt) {
 		InGameUI->SetPanelIsEnable(true);
 	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-<<<<<<< HEAD
 		if (currentLevel == 1 || currentLevel == 2)
 		{
 			NextLevel->SetPanelActive(true);
@@ -276,11 +275,6 @@ void TutorialGame::UpdateGame(float dt) {
 		{
 			WinScreen->SetPanelActive(true);
 		}
-=======
-		WinScreen->SetPanelActive(true);
-
->>>>>>> 63203948c133ea4b1fbff2c5bce1910e04e89763
-		//Debug::Print("You Win", Vector2(45, 25));
 	}
 
 	/*if (useGravity) {
@@ -515,10 +509,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 
-	if (isfinish) {
-		WinScreen->SetPanelActive(true);
-		//Debug::Print("You Win", Vector2(45, 25));
-	}
+	
 	if (playerposition.y <= -1) {
 		isdead = true;
 		isjump = false;
@@ -798,6 +789,7 @@ void TutorialGame::InitCamera() {
 }
 
 void TutorialGame::InitWorld() {
+	world->ClearAndErase();
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
@@ -853,6 +845,7 @@ void TutorialGame::InitLevel1() {
 	//WinScreen->SetRestart(false);
 }
 void TutorialGame::InitLevel2() {
+    //InitCharaters(Vector3(0, 0, 290));
 	InitCharaters(Vector3(0, 0, -320));
 	InitLevel2design();
 }
