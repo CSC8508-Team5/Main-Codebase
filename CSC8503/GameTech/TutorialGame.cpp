@@ -1772,6 +1772,8 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 
 		character->GetPhysicsObject()->SetInverseMass(inverseMass);
 		character->GetPhysicsObject()->InitSphereInertia();
+
+		character->GetPhysicsObject()->SetElasticity(0.1f);
 	}
 
 	world->AddGameObject(character);
@@ -1829,6 +1831,8 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 		apple->GetPhysicsObject()->SetInverseMass(0.0f);
 		apple->GetPhysicsObject()->InitSphereInertia();
+
+		apple->GetPhysicsObject()->SetTrigger(true);
 
 		world->AddGameObject(apple);
 		return apple;
