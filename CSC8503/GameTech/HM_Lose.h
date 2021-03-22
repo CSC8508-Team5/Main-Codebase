@@ -18,11 +18,13 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
 
+#include "../CSC8503Common/LanguageManager.h"
+
 
 class  HM_Lose
 {
 public:
-	HM_Lose();
+	HM_Lose(NCL::LanguageManager* lm);
 	~HM_Lose();
 	bool IfRestart() { return restart; }
 	void SetRestart(const bool flag) {
@@ -56,5 +58,6 @@ private:
 	bool restart;
 	void ClickFunc(const std::string& str);
 
+	NCL::LanguageManager* lang;
 };
 

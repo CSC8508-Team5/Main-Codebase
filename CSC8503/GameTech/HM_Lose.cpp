@@ -2,7 +2,8 @@
 #include "../CSC8503Common/AudioSystem.h"
 
 
-HM_Lose::HM_Lose() {
+HM_Lose::HM_Lose(NCL::LanguageManager* lm) {
+	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
 
 
@@ -19,8 +20,8 @@ HM_Lose::HM_Lose() {
 	str = NCL::Assets::TEXTUREDIR + "bg1.png";
 	m_bg = new DW_UIImage("Background", str.c_str(), { 1.82f, 1.0f }, NCL::Maths::Vector3{ 650.0f,360.0f,0.0f });  // Menu background picture
 
-	PlayAgain_text = new DW_UIText("PlayAgain", "Play Again", 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
-	Back_text = new DW_UIText("Menu", "Menu", 0.7f, NCL::Maths::Vector3{ 590.0f,90.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
+	PlayAgain_text = new DW_UIText("PlayAgain", lang->GetText("play_agian"), 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
+	Back_text = new DW_UIText("Menu", lang->GetText("menu"), 0.7f, NCL::Maths::Vector3{ 590.0f,90.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
 	//2.create an ui panel (it must have a name)
 	m_panel = new DW_UIPanel("ExamplePanel");
 
@@ -71,7 +72,8 @@ void HM_Lose::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
 		this->SetPanelActive(false);
-		StartMenu = new HM_StartMenu();
+		//TODO:: change behaviour
+		StartMenu = new HM_StartMenu(lang);
 		restart = false;
 	}
 

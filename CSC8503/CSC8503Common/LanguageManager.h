@@ -11,7 +11,7 @@ namespace NCL
 			m_language = language;
 		}
 		
-		string GetText(string key = "", string defaultStr = "") { return GetString(key, defaultStr); }
+		string GetText(string key = "", string subTree = "",string defaultStr = "") { return GetString(key, defaultStr, subTree); }
 		string GetLanguage() { return m_language; }
 
 	protected:

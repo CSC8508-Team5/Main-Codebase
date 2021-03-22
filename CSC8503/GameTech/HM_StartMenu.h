@@ -17,12 +17,12 @@ Comments and queries to: Dawei Wang, Group 5
 
 #include "DW_UIRenderer.h"
 
-
+#include "../CSC8503Common/LanguageManager.h"
 
 class HM_StartMenu
 {
 public:
-	HM_StartMenu();
+	HM_StartMenu(NCL::LanguageManager* lm);
 	~HM_StartMenu();
 
 	void SetPanelActive(const bool flag) {
@@ -50,5 +50,6 @@ private:
 
 	void ClickFunc(const std::string& str);
 
+	NCL::LanguageManager* lang;
 };
 

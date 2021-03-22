@@ -3,7 +3,8 @@
 #include "../CSC8503Common/AudioSystem.h"
 
 
-HM_Win::HM_Win() {
+HM_Win::HM_Win(NCL::LanguageManager* lm) {
+	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
 
 	WinScreen_text = new DW_UIText("WinScreenText", "You Win !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
@@ -72,7 +73,8 @@ void HM_Win::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
 		this->SetPanelActive(false);
-		StartMenu = new HM_StartMenu();
+		//todo: change behaviour
+		StartMenu = new HM_StartMenu(lang);
 		restart = false;
 	}
 

@@ -73,12 +73,12 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 
 
-	StartMenu = new HM_StartMenu(); // main menu
-	PauseMenu = new HM_PauseMenu(); // Pause menu
-	WinScreen = new HM_Win(); // wining screen
-	LoseScreen = new HM_Lose(); // lose screen
-	NextLevel = new HM_NextLevel(); // next level
-	OptionMenu = new HM_Option(audio); // option menu
+	StartMenu = new HM_StartMenu(langContent); // main menu
+	PauseMenu = new HM_PauseMenu(langContent); // Pause menu
+	WinScreen = new HM_Win(langContent); // wining screen
+	LoseScreen = new HM_Lose(langContent); // lose screen
+	NextLevel = new HM_NextLevel(langContent); // next level
+	OptionMenu = new HM_Option(langContent,audio); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
