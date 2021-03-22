@@ -334,6 +334,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
+		AddScore(timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
@@ -391,6 +392,64 @@ void TutorialGame::UpdateLevelOne() {
 		}
 	}
 };
+
+
+void TutorialGame::AddScore(int score) {
+
+	std::fstream file;				//file stuff
+	file.open("HighScore.txt");
+
+	std::string s;
+	std::vector<int> scores;
+
+	getline(file, s); // skips first line
+
+	while ((getline(file, s))) {
+
+		scores.push_back(std::stoi(s));
+	}
+	//closes default file settings
+	file.close();
+
+	//check if any scores were beat
+	for (int i = 0; i < scores.size(); i++) {
+		if (score > scores.at(i)) {
+			scores.insert(scores.begin() + i, score);//inserts before current position
+			scores.pop_back(); //removes the lowest score
+			break;
+		}
+	}
+
+	file.open("HighScore.txt", std::fstream::out | std::fstream::trunc); // clears file and re-writes to it
+	file << "IF YOU'RE READING THIS AND CHANGING THE SCORE YOU'RE A DIRTY CHEATER >:(\n";
+	for (int i = 0; i < scores.size(); i++) {
+		file << scores.at(i) << "\n";
+	}
+	file.close();
+
+}
+
+
+std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
+
+	std::ifstream file;
+	file.open("HighScore.txt");
+
+	if (file.is_open()) {
+		std::string s;
+		std::string sFinal = "";
+		int counter = 1;
+		(getline(file, s)); //skips first line 
+		while ((getline(file, s))) {
+			sFinal.append(std::to_string(counter) + " - " + s + '\n');
+			counter++;
+		}
+		file.close();
+
+		return sFinal;
+	}
+}
+
 
 void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
