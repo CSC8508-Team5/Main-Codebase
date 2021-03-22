@@ -1154,6 +1154,14 @@ void TutorialGame::LevelThree() {
 		coins[3] = AddCoins(Vector3(30, 4, 20));
 		coins[4] = AddCoins(Vector3(90, 4, -20));
 		coins[5] = AddCoins(Vector3(90, 4, 20));
+		coins[6] = AddCoins(Vector3(110, 4, 10));
+		coins[7] = AddCoins(Vector3(110, 4, 30));
+		coins[8] = AddCoins(Vector3(110, 4, -10));
+		coins[9] = AddCoins(Vector3(110, 4, -30));
+		coins[10] = AddCoins(Vector3(150, 4, 10));
+		coins[11] = AddCoins(Vector3(150, 4, 30));
+		coins[12] = AddCoins(Vector3(150, 4, -10));
+		coins[13] = AddCoins(Vector3(150, 4, -30));
 
 }
 
