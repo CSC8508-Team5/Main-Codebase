@@ -14,7 +14,7 @@
 class HM_Option
 {
 public:
-	HM_Option(NCL::CSC8503::AudioSystem* audio, NCL::SettingsManager* sm);
+	HM_Option(NCL::CSC8503::AudioSystem* audio);
 	~HM_Option();
 
 	void SetPanelActive(const bool flag) {
@@ -23,7 +23,6 @@ public:
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
 	double volume;
-	NCL::SettingsManager* settings;
 private:
 	DW_UIImage* m_bg;
 

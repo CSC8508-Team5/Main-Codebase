@@ -75,8 +75,8 @@ namespace NCL {
 			static void RemoveSourceSFX(string filename);
 
 			//global settings
-			static void SetGlobalVolume(float vol) { vol = min(vol, 1.0f); vol = max(vol, 0.0f); engine->setSoundVolume(vol); }
-			static void SetGlobalVolume(double vol) { vol = min(vol, 1.0); vol = max(vol, 0.0); engine->setSoundVolume(vol); }
+			static void SetGlobalVolume(float vol) { vol = min(vol, 1.0f); vol = max(vol, 0.0f); engine->setSoundVolume(vol); if (s) s->SetVolume(vol); }
+			static void SetGlobalVolume(double vol) { vol = min(vol, 1.0); vol = max(vol, 0.0); engine->setSoundVolume(vol); if (s) s->SetVolume(vol); }
 			static float GetGlobalVolume() { return (float)engine->getSoundVolume(); }
 
 			static void SetDefaultMinDistance(float d) { engine->setDefault3DSoundMinDistance(d); }
@@ -93,6 +93,7 @@ namespace NCL {
 
 		private:
 			static ISoundEngine* engine;
+			static SettingsManager* s;
 		};
 	}
 }
