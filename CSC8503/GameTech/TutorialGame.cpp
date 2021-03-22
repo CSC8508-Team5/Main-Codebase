@@ -196,7 +196,7 @@ void TutorialGame::Reload() {
 	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
-	startTime = ::GetTickCount();
+	startTime = ::GetTickCount64();
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -207,9 +207,9 @@ void TutorialGame::UpdateGame(float dt) {
 	if (timer <= 0) {
 		LoseScreen->SetPanelActive(true);
 	}
-	if ((int(::GetTickCount() - startTime)>=1000)&&(pausetime ==0) ){
+	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;
-		startTime = ::GetTickCount();
+		startTime = ::GetTickCount64();
 		pausetime = 0;
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
@@ -256,7 +256,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
-		pauseStart = ::GetTickCount();
+		pauseStart = ::GetTickCount64();
 		pausetime = int(pauseStart);
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
@@ -538,7 +538,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
-			if (playerposition.y - currenthight >= 0.1) {
+			if (playerposition.y - currenthight >= 0.1f) {
 				isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
@@ -800,7 +800,7 @@ void TutorialGame::InitWorld() {
 		InitLevel3(); // Start Level 3
 	else //Just make sure nobody write number more than 3 for now
 		currentLevel = 1;
-	startTime = ::GetTickCount();
+	startTime = ::GetTickCount64();
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
