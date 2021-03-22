@@ -19,7 +19,7 @@
 #include "HM_Win.h"
 #include "HM_Lose.h"
 #include "HM_Option.h"
-
+#include "HM_NextLevel.h"
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
@@ -101,8 +101,9 @@ namespace NCL {
 			GameObject* AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name);
 			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 10.0f);
 			//adding for level design
-			GameObject** LevelTestOne();
+			GameObject** LevelOne();
 			GameObject* SpinningPlatform();
+			GameObject* AddCannonToWorld(const Vector3& position, string orientation);
 
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
@@ -110,7 +111,9 @@ namespace NCL {
 			DW_UIPanel* InGameUI;
 			void Pendulum();
 			void UpdateLevelOne();
+			void UpdateLevelTwo();
 			void UpdateCoins();
+			void UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction);
 			void UpdateSpinningPlatform();
 			void UpdatePlayer(float dt);
 			void Reload();
@@ -143,13 +146,19 @@ namespace NCL {
 			int			coincollected;
 			int			timer;
 			int			pausetime;
+			float			currenthight;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;
 			GameObject** coins;
+			GameObject** cannonBullet;
 			GameObject* spinplat;
 			GameObject* player;
-			GameObject* finishLine;
+			GameObject* level3finishLine;
+			GameObject* level3Floor;
+			GameObject* level2finishLine;
+			GameObject* level2Floor;
+
 			//end
 
 			// Conor Level (Level Three)
@@ -198,13 +207,13 @@ namespace NCL {
 
 			GameObject* audioAgent;
 
-			//DW UI example
+			//HM UI 
 			HM_StartMenu* StartMenu;
 			HM_PauseMenu* PauseMenu;
 			HM_Win* WinScreen;
 			HM_Lose* LoseScreen;
 			HM_Option* OptionMenu;
-
+			HM_NextLevel* NextLevel;
 			//Language Manager
 			LanguageManager* langContent;
 			SettingsManager* settings;

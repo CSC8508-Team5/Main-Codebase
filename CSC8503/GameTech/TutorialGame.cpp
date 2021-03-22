@@ -35,12 +35,13 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 3;
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject * [17];
-	coins = new GameObject * [25];
+	coins = new GameObject * [25]; //No more than 25 coins
+	cannonBullet = new GameObject * [10]; //No more than 10 cannon
 	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
@@ -48,6 +49,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	isjump = false;
 	timer = 121;
 	pausetime = 0;
+	currenthight = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
@@ -75,12 +77,14 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	PauseMenu = new HM_PauseMenu(); // Pause menu
 	WinScreen = new HM_Win(); // wining screen
 	LoseScreen = new HM_Lose(); // lose screen
+	NextLevel = new HM_NextLevel(); // next level
 	OptionMenu = new HM_Option(audio); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
+	NextLevel->SetPanelActive(false);
 	OptionMenu->SetPanelActive(false);
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
@@ -154,6 +158,7 @@ TutorialGame::~TutorialGame() {
 
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
 	delete[] coins;
+	delete[] cannonBullet;
 	delete spinplat;
 	delete player;
 	delete InGameUI;
@@ -170,21 +175,30 @@ TutorialGame::~TutorialGame() {
 void TutorialGame::Reload() {
 	timer = 120;
 	isdead = false;
-	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
-	Quaternion orientation = Quaternion(0, -1, 0, 1);
-	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);
-	SphereVolume* volume = new SphereVolume(1.5f);
-	for (int i = 0; i < numcoins; ++i) {
-		if (coins[i] != nullptr) {
-			coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-			coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
-		}
+	if (currentLevel == 2) {
+		player->GetTransform().SetPosition(Vector3(0, 0, -320));
+		Quaternion orientation = Quaternion(0, -1, 0, 1);
+		orientation.Normalise();
+		player->GetTransform().SetOrientation(orientation);
 	}
-	coincollected = 0;
+	else {
+			player->GetTransform().SetPosition(Vector3(-150, 10, 0));
+			Quaternion orientation = Quaternion(0, -1, 0, 1);
+			orientation.Normalise();
+			player->GetTransform().SetOrientation(orientation);
+			SphereVolume* volume = new SphereVolume(1.5f);
+			for (int i = 0; i < numcoins; ++i) {
+				if (coins[i] != nullptr) {
+					coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+					coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+				}
+			}
+			coincollected = 0;
+	}
+	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
-	startTime = ::GetTickCount();
+	startTime = ::GetTickCount64();
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -195,9 +209,9 @@ void TutorialGame::UpdateGame(float dt) {
 	if (timer <= 0) {
 		LoseScreen->SetPanelActive(true);
 	}
-	if ((int(::GetTickCount() - startTime)>=1000)&&(pausetime ==0) ){
+	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;
-		startTime = ::GetTickCount();
+		startTime = ::GetTickCount64();
 		pausetime = 0;
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
@@ -216,7 +230,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	//AI
 
-	if (testEnemy) {
+	/*if (testEnemy) {
 		if (checknum == 1) {
 			checkAitime = gametime.GetTotalTimeSeconds();
 			checknum = 0;
@@ -235,16 +249,10 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 
 
-	}
+	}*/
 
-
-
-
-
-
-	
-	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
-		pauseStart = ::GetTickCount();
+	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable() || NextLevel->GetPanelIsEnable()) {
+		pauseStart = ::GetTickCount64();
 		pausetime = int(pauseStart);
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
@@ -259,10 +267,14 @@ void TutorialGame::UpdateGame(float dt) {
 		InGameUI->SetPanelIsEnable(true);
 	}
 	if (isfinish && !WinScreen->GetPanelIsEnable()) {
-
-		WinScreen->SetPanelActive(true);
-
-		//Debug::Print("You Win", Vector2(45, 25));
+		if (currentLevel == 1 || currentLevel == 2)
+		{
+			NextLevel->SetPanelActive(true);
+		}
+		else
+		{
+			WinScreen->SetPanelActive(true);
+		}
 	}
 
 	/*if (useGravity) {
@@ -307,6 +319,9 @@ void TutorialGame::UpdateGame(float dt) {
 		if (currentLevel == 1) {//Update level 1
 			UpdateLevelOne();
 		}
+		else if (currentLevel == 2) {
+			UpdateLevelTwo();
+		}
 		else if (currentLevel == 3) { //Update level 3
 			UpdateLevelThree(dt);
 			if (sliderVector.size() > 0) {
@@ -323,6 +338,7 @@ void TutorialGame::UpdateGame(float dt) {
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
+		isjump = false;
 	}
 
 
@@ -334,7 +350,6 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::UpdateLevelOne() {
-	UpdateCoins();
 	float speed = 30.0f;
 	for (int i = 1; i < numstairs - 1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
@@ -354,6 +369,11 @@ void TutorialGame::UpdateLevelOne() {
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
+		UpdateCoins();
+		UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6),"left");
+		UpdateCannonBullet(cannonBullet[1], Vector3(-100, 25, 80) + Vector3(6, 7, -6), "right");
+		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
+		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
 	}
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
@@ -361,6 +381,7 @@ void TutorialGame::UpdateLevelOne() {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
 			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 			isjump = false;
+			currenthight = player->GetTransform().GetPosition().y;
 		}
 		//finish
 		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
@@ -372,15 +393,36 @@ void TutorialGame::UpdateLevelOne() {
 	}
 };
 
-void TutorialGame::UpdateLevelThree(float dt) {
-	UpdateCoins();
+void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
 	//finish
-	if (CollisionDetection::ObjectIntersection(player, finishLine, info) && !isfinish) {
+	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
 		isfinish = true;
 		ispause = true;
 		audio->StopAll();
 		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
+	//Collision with floor
+	if (CollisionDetection::ObjectIntersection(player, level2Floor, info)) {
+		isjump = false;
+		currenthight = player->GetTransform().GetPosition().y;
+	}
+}
+
+void TutorialGame::UpdateLevelThree(float dt) {
+	UpdateCoins();
+	CollisionDetection::CollisionInfo info;
+	//finish
+	if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
+		isfinish = true;
+		ispause = true;
+		audio->StopAll();
+		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
+	//Collision with floor
+	if (CollisionDetection::ObjectIntersection(player, level3Floor, info)) {
+		isjump = false;
+		currenthight = player->GetTransform().GetPosition().y;
 	}
 }
 
@@ -408,6 +450,34 @@ void TutorialGame::UpdateCoins() {
 				audio->PlaySFX("PP_Collect_Coin_1_2.wav");
 			}
 		}
+	}
+}
+
+void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition,string direction) {
+	SphereVolume* volume = new SphereVolume(0.0f);
+	Vector3 relativePos = player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+	float currentDistance = relativePos.Length();
+	float offset = currentDistance;
+	float startDistance = (bullet->GetTransform().GetPosition() - startPosition).Length();
+	if (startDistance >= 150) {
+		bullet->GetTransform().SetPosition(startPosition);
+	}else	if (abs(offset) > 100.0f) {
+		if (direction == "left") {
+			PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+			bulletPhys->SetLinearVelocity(Vector3(0,0,10));
+		}
+		else if (direction == "right") {
+			PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+			bulletPhys->SetLinearVelocity(Vector3(0, 0, -10));
+		}
+	}else if (abs(offset) > 0.0f) {
+		PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+		bulletPhys->SetLinearVelocity(relativePos);
+	}
+	CollisionDetection::CollisionInfo info;
+	if (CollisionDetection::ObjectIntersection(player, bullet, info)) {
+		timer = timer - 5;
+		bullet->GetTransform().SetPosition(startPosition);
 	}
 }
 
@@ -439,12 +509,10 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 
-	if (isfinish) {
-		WinScreen->SetPanelActive(true);
-		//Debug::Print("You Win", Vector2(45, 25));
-	}
+	
 	if (playerposition.y <= -1) {
 		isdead = true;
+		isjump = false;
 		timer = timer - 5;
 	}
 	//player movement
@@ -468,15 +536,18 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
-			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-
-			isjump = true; //Comment this if want a quick win.
-			//audio->PlaySFX("PP_Jump_1_1.wav");
+			if (playerposition.y - currenthight >= 0.1f) {
+				isjump = true; //Comment this if want a quick win.
+				//audio->PlaySFX("PP_Jump_1_1.wav");
+			}
+			else {
+				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+			}
 		}
-
 	}
 	else {
-		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0));
+		player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
 	}
 }
 
@@ -538,6 +609,7 @@ void TutorialGame::UpdateKeys() {
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
 		LoseScreen->SetPanelActive(false);
+		NextLevel->SetPanelActive(false);
 		OptionMenu->SetPanelActive(false);
 	}
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
@@ -545,6 +617,7 @@ void TutorialGame::UpdateKeys() {
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
 		LoseScreen->SetPanelActive(false);
+		NextLevel->SetPanelActive(false);
 		OptionMenu->SetPanelActive(true);
 	}
 
@@ -716,6 +789,7 @@ void TutorialGame::InitCamera() {
 }
 
 void TutorialGame::InitWorld() {
+	world->ClearAndErase();
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
@@ -727,7 +801,7 @@ void TutorialGame::InitWorld() {
 		InitLevel3(); // Start Level 3
 	else //Just make sure nobody write number more than 3 for now
 		currentLevel = 1;
-	startTime = ::GetTickCount();
+	startTime = ::GetTickCount64();
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
@@ -739,7 +813,7 @@ void TutorialGame::InitLevel1() {
 
 	//-------------LV1 -------------------------------------
 
-	platforms = LevelTestOne();
+	platforms = LevelOne();
 	std::vector<Vector3> poses;
 	for (int i = 0; i < numstairs; i++)
 	{
@@ -749,11 +823,11 @@ void TutorialGame::InitLevel1() {
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	//-------------LV1 -------------------------------------
 
-	Pendulum();
-	spinplat = SpinningPlatform();
+	//Pendulum();
+	//spinplat = SpinningPlatform();
 
 	/* Evie Qian */
-	//platforms = LevelTestOne();
+	//platforms = LevelOne();
 	//std::vector<Vector3> poses;
 	//for (int i = 0; i < numstairs; i++)
 	//{
@@ -771,16 +845,17 @@ void TutorialGame::InitLevel1() {
 	//WinScreen->SetRestart(false);
 }
 void TutorialGame::InitLevel2() {
+    //InitCharaters(Vector3(0, 0, 290));
 	InitCharaters(Vector3(0, 0, -320));
 	InitLevel2design();
 }
 void TutorialGame::InitLevel2design() {
-	AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floot	
+	level2Floor =  AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floor	
 	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
 	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
-	AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
+	level2finishLine = AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
 
 	//AddWallToWorld(Vector3(-99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar		
 	//AddDoorToWorld(Vector3(-93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
@@ -834,7 +909,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(-55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	//AddDoorToWorld(Vector3(-49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddDoorToWorld(Vector3(-39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	AddWallToWorld(Vector3(-43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	//AddDoorToWorld(Vector3(-27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	//AddDoorToWorld(Vector3(-17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -849,7 +924,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 	//AddDoorToWorld(Vector3(39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	//AddDoorToWorld(Vector3(49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	AddWallToWorld(Vector3(43, 9, -160), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
@@ -868,7 +943,7 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	AddWallToWorld(Vector3(-43, 9, -100), 10, 8, 1, redTex, "block"); //block
+	AddWallToWorld(Vector3(-44, 9, -100), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-22, 9, -100), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(22, 9, -100), 10, 8, 1, redTex, "block"); //block
 
@@ -986,7 +1061,7 @@ void TutorialGame::InitLevel3() {
 	LevelThree();
 }
 
-GameObject** TutorialGame::LevelTestOne() {
+GameObject** TutorialGame::LevelOne() {
 	Vector3 PlatformSize = Vector3(10, 4, 50);
 	Vector3 cubeSize = Vector3(10, 4, 10);
 	Vector3 middlecubeSize = Vector3(10, 4, 20);
@@ -1023,19 +1098,28 @@ GameObject** TutorialGame::LevelTestOne() {
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
 		}
 	}
+	cannonBullet[0] = AddCannonToWorld(Vector3(-100, 5, -80), "left");
+	cannonBullet[1] = AddCannonToWorld(Vector3(-100, 25, 80), "right");
+	cannonBullet[2] = AddCannonToWorld(Vector3(50, 45, -80), "left");
+	cannonBullet[3] = AddCannonToWorld(Vector3(50, 55, 80), "right");
 	return platforms;
 }
+
+
 
 void TutorialGame::LevelThree() {
 
 		// Platforms 
-		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+		/*GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
+		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));*/
+		//To make player able to jump
+		level3Floor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
+		level3Floor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
-		finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
-		finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+		level3finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
+		level3finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
-		finishLine->SetName("Finish");
+		level3finishLine->SetName("Finish");
 
 		// State Objects ("sliders")
 		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
@@ -1079,6 +1163,14 @@ void TutorialGame::LevelThree() {
 		coins[3] = AddCoins(Vector3(30, 4, 20));
 		coins[4] = AddCoins(Vector3(90, 4, -20));
 		coins[5] = AddCoins(Vector3(90, 4, 20));
+		coins[6] = AddCoins(Vector3(110, 4, 10));
+		coins[7] = AddCoins(Vector3(110, 4, 30));
+		coins[8] = AddCoins(Vector3(110, 4, -10));
+		coins[9] = AddCoins(Vector3(110, 4, -30));
+		coins[10] = AddCoins(Vector3(150, 4, 10));
+		coins[11] = AddCoins(Vector3(150, 4, 30));
+		coins[12] = AddCoins(Vector3(150, 4, -10));
+		coins[13] = AddCoins(Vector3(150, 4, -30));
 
 }
 
@@ -1087,6 +1179,43 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 	coin = AddBonusToWorld(position);
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 	return coin;
+}
+
+GameObject* TutorialGame::AddCannonToWorld(const Vector3& position, string orientation) {
+	GameObject* bullet = new GameObject();
+	GameObject* cylinder = new GameObject();
+	GameObject* sphere1 = new GameObject();
+	GameObject* sphere2 = new GameObject();
+	GameObject* platform = new GameObject();
+	platform = AddCubeToWorld(position, Vector3(8, 1, 8), 0);
+	platform->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
+
+	cylinder = AddCylinderToWorld(position + Vector3(0, 3.5, 0), 2.0f, 5.0f, 0);
+	Quaternion cylinderturn;
+	if (orientation == "left"){	
+		cylinderturn = Quaternion(0.5, 0.5, 0, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-2.5, 2.5, 1), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, -2.5), 1.5f, 0);
+		bullet = AddSphereToWorld(position + Vector3(6, 7, 6), 1.5f, 0);
+	}
+	else if (orientation == "right"){		
+		cylinderturn = Quaternion(0.5, 0, 0.5, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-1, 2.5, -1.5), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, 1.5), 1.5f, 0);
+		bullet = AddSphereToWorld(position + Vector3(6, 7, -6), 1.5f, 0);
+	}
+	else{			
+		cylinderturn = Quaternion(0.5, 0.5, 0, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-1.5, 2.5, -1), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1.5, 2.5, 1), 1.5f, 0);
+	}
+	cylinderturn.Normalise();
+	cylinder->GetTransform().SetOrientation(cylinderturn);
+	cylinder->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	sphere1->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	sphere2->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	bullet->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
+	return bullet;
 }
 
 GameObject* TutorialGame::SpinningPlatform() {
@@ -1683,6 +1812,7 @@ void TutorialGame::InitCharaters(Vector3 position) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+	currenthight = position.y;
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }
@@ -1696,7 +1826,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	///std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	//DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
 
-	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
+	GameObject* character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player");
 
 	//GameObject* character = new GameObject();
 	//character->SetHUD(hud);
