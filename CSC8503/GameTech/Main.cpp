@@ -228,7 +228,7 @@ void TestPathfinding() {
 }
 void DisplayPathfinding() {
 	for (int i = 1; i < testNodes.size(); ++i) {
-		Vector3 a = testNodes[i - 1];
+		Vector3 a = testNodes[(i - 1)];
 		Vector3 b = testNodes[i];
 
 		Debug::DrawLine(a, b, Vector4(0, 1, 0, 1));
