@@ -191,6 +191,7 @@
     <ClCompile Include="DW_UIRenderer.cpp" />
     <ClCompile Include="DW_UIText.cpp" />
     <ClCompile Include="DW_UITextRenderer.cpp" />
+    <ClCompile Include="GameStatusManager.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
     <ClCompile Include="HM_Lose.cpp" />
     <ClCompile Include="HM_NextLevel.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="DW_UIRenderer.h" />
     <ClInclude Include="DW_UIText.h" />
     <ClInclude Include="DW_UITextRenderer.h" />
+    <ClInclude Include="GameStatusManager.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="HM_Lose.h" />
     <ClInclude Include="HM_NextLevel.h" />

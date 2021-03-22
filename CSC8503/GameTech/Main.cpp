@@ -18,6 +18,8 @@
 
 #include "../CSC8503Common/SettingsManager.h"
 
+#include "GameStatusManager.h"
+
 #include <fstream>
 #include <iostream>
 
@@ -375,8 +377,10 @@ This time, we've added some extra functionality to the window class - we can
 hide or show the
 
 */
+
 int main() {
 	SettingsManager* s = new SettingsManager();
+	GameStateManager gsm = GameStateManager();
 
 	//bool fullScreen = s->GetBool("full-screen");
 	bool fullScreen = s->GetFullScreen();
@@ -403,7 +407,7 @@ int main() {
 	//TestPathfinding();
 	//TestBehaviourTree();
 
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE) && gsm.GetGameState() < GameStateManager::GameState::Stop) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		if (dt > 0.1f) {
 			std::cout << "Skipping large time delta" << std::endl;

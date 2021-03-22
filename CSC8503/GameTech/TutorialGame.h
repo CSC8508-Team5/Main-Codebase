@@ -20,6 +20,7 @@
 #include "HM_Lose.h"
 #include "HM_Option.h"
 #include "HM_NextLevel.h"
+#include "GameStatusManager.h"
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
