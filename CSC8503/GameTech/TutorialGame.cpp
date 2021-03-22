@@ -206,8 +206,11 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	if (timer <= 0) {
+	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::GameState::Pause) {
 		LoseScreen->SetPanelActive(true);
+		NCL::CSC8503::AudioSystem::StopAll();
+		NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+		GameStateManager::SetGameState(GameStateManager::GameState::LoseTimeout);
 	}
 	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;

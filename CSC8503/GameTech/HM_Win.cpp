@@ -70,8 +70,8 @@ void HM_Win::ClickFunc(const std::string& str) {
 		restart = true;
 	}
 	else if (str == "MenuButton") {
-		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
+		this->SetPanelActive(false);
 		StartMenu = new HM_StartMenu();
 		restart = false;
 	}
