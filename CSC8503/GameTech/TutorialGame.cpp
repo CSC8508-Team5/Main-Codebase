@@ -86,9 +86,9 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI = new DW_UIPanel("InGameUI");
 	//Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	//Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Coin_text = new DW_UIText("Scoretext", langContent->GetText("score")+ std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Score_text = new DW_UIText("Scoretext", langContent->GetText("score")+ std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	InGameUI->AddComponent(Coin_text);
+	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
 	InGameUI->SetPanelIsEnable(false);
