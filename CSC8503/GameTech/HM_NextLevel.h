@@ -22,7 +22,10 @@ public:
 	void SetRestart(const bool flag) {
 		restart = flag;
 	}
-
+	bool IfNextLevel() { return nextlevel; }
+	void SetNextLevel(const bool flag) {
+		restart = flag;
+	}
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);
 		m_isEnable = flag;
@@ -33,12 +36,14 @@ private:
 	DW_UIImage* m_bg;
 
 	DW_UIImage* NextLevel_btn;
+	DW_UIImage* PlayAgain_btn;
 	DW_UIImage* Back_btn;
 
 
 	DW_UIText* WinScreen_text;
 
 	DW_UIText* NextLevel_text;
+	DW_UIText* PlayAgain_text;
 	DW_UIText* Back_text;
 
 	DW_UIText* Score_text;
@@ -48,6 +53,7 @@ private:
 	HM_StartMenu* StartMenu;
 	bool m_isEnable;
 	bool restart;
+	bool nextlevel;
 	void ClickFunc(const std::string& str);
 
 };
