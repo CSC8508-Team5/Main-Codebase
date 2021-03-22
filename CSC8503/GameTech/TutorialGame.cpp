@@ -531,7 +531,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
-			if (playerposition.y - currenthight >= 0.1) {
+			if (playerposition.y - currenthight >= 0.1f) {
 				isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
