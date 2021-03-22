@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 1;
+	currentLevel = 3;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -1239,6 +1239,13 @@ void TutorialGame::LevelThree() {
 		coins[12] = AddCoins(Vector3(150, 4, -10));
 		coins[13] = AddCoins(Vector3(150, 4, -30));
 
+		std::vector<Vector3> poses;
+		for (int i = 0; i < 10; i++)
+		{
+			poses.push_back(Vector3{i*30.0f-50.0f,0.0f,-15.0f});
+			poses.push_back(Vector3{ i * 30.0f-50.0f,0.0f,15.0f });
+		}
+		renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins

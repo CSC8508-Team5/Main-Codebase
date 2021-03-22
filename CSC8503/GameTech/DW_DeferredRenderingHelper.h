@@ -57,7 +57,7 @@ public:
 	void SetPointLights(const std::vector<NCL::Maths::Vector3>& poses);
 
 private:
-	std::vector<NCL::Maths::Vector4> COLORS{ {5.0f, 5.0f, 5.0f,1.0f},{10.0f, 0.0f, 0.0f,1.0f},{0.0f, 0.0f, 15.0f,1.0f},{0.0f, 5.0f, 0.0f,1.0f},{5.0f, 5.0f, 0.0f,1.0f} };
+	std::vector<NCL::Maths::Vector4> COLORS{ {5.0f, 5.0f, 5.0f,1.0f},{15.0f, 0.0f, 0.0f,1.0f},{0.0f, 0.0f, 15.0f,1.0f},{0.0f, 5.0f, 0.0f,1.0f},{5.0f, 5.0f, 0.0f,1.0f} };
 	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex, m_gBufferShadowTex;
 
 	GLuint m_lightingFBO, m_lightingDiffTex, m_lightingSpecTex;
