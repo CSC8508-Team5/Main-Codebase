@@ -26,8 +26,8 @@ namespace NCL {
 		public:
 			TutorialGame(SettingsManager* s = nullptr);
 			~TutorialGame();
-			bool IfRestart();
-
+			int GetCurrentLevel() { return currentLevel; }
+			void SetCurrentLevel(int level) { currentLevel = level; }
 			virtual void UpdateGame(float dt);
 
 		protected:
@@ -105,7 +105,7 @@ namespace NCL {
 			GameObject* SpinningPlatform();
 
 			GameObject* AddCoins(const Vector3& position);
-			DW_UIText* Coin_text;
+			DW_UIText* Score_text;
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			void Pendulum();
@@ -136,19 +136,25 @@ namespace NCL {
 			bool		isjump;
 			bool		isfinish;
 			bool		ispause;
+			bool		isdead;
+			int			currentLevel = 1;
 			int			numstairs;
 			int			numcoins;
 			int			coincollected;
+			int			timer;
+			int			pausetime;
+			DWORD startTime;
+			DWORD pauseStart;
 			GameObject** platforms;
 			GameObject** coins;
 			GameObject* spinplat;
 			GameObject* player;
+			GameObject* finishLine;
 			//end
 
 			// Conor Level (Level Three)
 			void LevelThree();
 			void UpdateLevelThree(float dt);
-			bool isLevelThree = false; // Make sure this is changed in final build!
 			std::vector<GameObject*> sliderVector;
 
 			GameObject* selectionObject = nullptr;

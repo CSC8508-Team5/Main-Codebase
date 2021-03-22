@@ -34,6 +34,8 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	useGravity = true;
 	inSelectionMode = false;
 
+	//current level
+	currentLevel = 3;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -44,9 +46,12 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	yaw = 0.0f;
 	pitch = 0.0f;
 	isjump = false;
+	timer = 121;
+	pausetime = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
+	isdead = false;
 	//gamestate
 	numstairs = 14;
 	numcoins = 25; // Upper limit of coins
@@ -81,7 +86,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI = new DW_UIPanel("InGameUI");
 	//Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	//Timer_text = new DW_UIText("Timertext", "Time :  ", 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Coin_text = new DW_UIText("Cointext", langContent->GetText("coin_collected")+ std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Coin_text = new DW_UIText("Scoretext", langContent->GetText("score")+ std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Coin_text);
 	InGameUI->AddComponent(Timer_text);
@@ -152,7 +157,7 @@ TutorialGame::~TutorialGame() {
 	delete spinplat;
 	delete player;
 	delete InGameUI;
-	delete Coin_text;
+	delete Score_text;
 
 	delete physics;
 	delete renderer;
@@ -162,17 +167,9 @@ TutorialGame::~TutorialGame() {
 	delete langContent;
 }
 
-//Return Game state
-bool TutorialGame::IfRestart() {
-	if (WinScreen->IfRestart()) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 void TutorialGame::Reload() {
+	timer = 120;
+	isdead = false;
 	player->GetTransform().SetPosition(Vector3(-150, 10, 0));
 	Quaternion orientation = Quaternion(0, -1, 0, 1);
 	orientation.Normalise();
@@ -187,6 +184,7 @@ void TutorialGame::Reload() {
 	coincollected = 0;
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
+	startTime = ::GetTickCount();
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -194,13 +192,21 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	//Timer_text->SetText("Timer : " + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
-	Timer_text->SetText(langContent->GetText("time") + std::to_string((int)(dt * 10)) + " s"); //unfinished timer
-	if (WinScreen->IfRestart()) {
+	if (timer <= 0) {
+		LoseScreen->SetPanelActive(true);
+	}
+	if ((int(::GetTickCount() - startTime)>=1000)&&(pausetime ==0) ){
+		timer -= 1;
+		startTime = ::GetTickCount();
+		pausetime = 0;
+	}
+	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
+	if (WinScreen->IfRestart()||LoseScreen->IfRestart()) {
+
 		isfinish = false;
 		Reload();
 		WinScreen->SetRestart(false);
-		//platforms = LevelTestOne();
+		LoseScreen->SetRestart(false);
 	}
 	UpdateKeys();
 
@@ -236,14 +242,17 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 
-
+	
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
+		pauseStart = ::GetTickCount();
+		pausetime = int(pauseStart);
 		ispause = true;
 		Window::GetWindow()->ShowOSPointer(true);
 		Window::GetWindow()->LockMouseToWindow(false);
 		InGameUI->SetPanelIsEnable(false);
 	}
 	else {
+		pausetime = 0;
 		ispause = false;
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
@@ -294,18 +303,26 @@ void TutorialGame::UpdateGame(float dt) {
 
 	Debug::FlushRenderables(dt);
 	CollisionDetection::CollisionInfo info;
-	if ((!ispause) || (!isfinish)) {
-		//UpdateLevelOne();
-		//UpdateCoins();
+	if ((!ispause) && (!isfinish)&&(!isdead)) {
+		if (currentLevel == 1) {//Update level 1
+			UpdateLevelOne();
+		}
+		else if (currentLevel == 3) { //Update level 3
+			UpdateLevelThree(dt);
+			if (sliderVector.size() > 0) {
+				for (auto i = 0; i < sliderVector.size(); ++i) {
+					sliderVector.at(i)->Update(dt);
+				}
+			}
+		}
 		UpdatePlayer(dt);
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 		//UpdateSpinningPlatform();
 	}
-
-	if (isLevelThree && ((!ispause) || (!isfinish)) && sliderVector.size() > 0) {
-		for (auto i = 0; i < sliderVector.size(); ++i) {
-			sliderVector.at(i)->Update(dt);
-		}
+	if (isdead) {//reset player
+		player->GetTransform().SetScale(Vector3(0, 0, 0));
+		InitCharaters(Vector3(-150, 10, 0));
+		isdead = false;
 	}
 
 
@@ -317,6 +334,7 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::UpdateLevelOne() {
+	UpdateCoins();
 	float speed = 30.0f;
 	for (int i = 1; i < numstairs - 1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
@@ -355,7 +373,15 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateLevelThree(float dt) {
-	// Not Yet Implemented
+	UpdateCoins();
+	CollisionDetection::CollisionInfo info;
+	//finish
+	if (CollisionDetection::ObjectIntersection(player, finishLine, info) && !isfinish) {
+		isfinish = true;
+		ispause = true;
+		audio->StopAll();
+		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
 }
 
 void TutorialGame::UpdateSpinningPlatform() {
@@ -369,8 +395,8 @@ void TutorialGame::UpdateSpinningPlatform() {
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(timer * 10 + coincollected*50)));
 	//Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
-	Coin_text->SetText(langContent->GetText("coin_collected") + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
 			coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
@@ -417,9 +443,9 @@ void TutorialGame::UpdatePlayer(float dt) {
 		WinScreen->SetPanelActive(true);
 		//Debug::Print("You Win", Vector2(45, 25));
 	}
-	if (playerposition.y <= -5) {
-		player->GetTransform().SetScale(Vector3(0, 0, 0));
-		InitCharaters(Vector3(-150, 10, 0));
+	if (playerposition.y <= -1) {
+		isdead = true;
+		timer = timer - 5;
 	}
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
@@ -444,7 +470,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 		if (!isjump) {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
-			//isjump = true; //Comment this if want a quick win.
+			isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
@@ -693,10 +719,15 @@ void TutorialGame::InitWorld() {
 	physics->UseGravity(useGravity);
 	world->ClearAndErase();
 	physics->Clear();
-	//InitLevel1();       // start lv1 
-	//InitLevel2();  // start lv2 
-	InitLevel3(); // Start Level 3
-
+	if (currentLevel == 1)
+		InitLevel1();       // start lv1 
+	else if (currentLevel == 2)
+		InitLevel2();  // start lv2 
+	else if (currentLevel == 3)
+		InitLevel3(); // Start Level 3
+	else //Just make sure nobody write number more than 3 for now
+		currentLevel = 1;
+	startTime = ::GetTickCount();
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
@@ -951,16 +982,14 @@ void TutorialGame::InitLevel2design() {
 
 }
 void TutorialGame::InitLevel3() {
-	InitCharaters(Vector3(0, 0, -320));
+	InitCharaters(Vector3(-150, 10, 0));
 	LevelThree();
-	isLevelThree = true;
 }
 
-
 GameObject** TutorialGame::LevelTestOne() {
-	Vector3 PlatformSize = Vector3(10, 5, 50);
-	Vector3 cubeSize = Vector3(10, 5, 10);
-	Vector3 middlecubeSize = Vector3(10, 5, 20);
+	Vector3 PlatformSize = Vector3(10, 4, 50);
+	Vector3 cubeSize = Vector3(10, 4, 10);
+	Vector3 middlecubeSize = Vector3(10, 4, 20);
 
 	float invCubeMass = 0; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
@@ -1001,10 +1030,12 @@ void TutorialGame::LevelThree() {
 
 		// Platforms 
 		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-		startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
-		GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
-		finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+		finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
+		finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+		finishLine->SetName("Finish");
 
 		// State Objects ("sliders")
 		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
