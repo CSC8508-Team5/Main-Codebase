@@ -61,8 +61,8 @@ void Loading::InitialAssets() {
 
 
 	//UI````````````````````````````````````````````
-	StartMenu = new HM_StartMenu(); // main menu
-	StartMenu->SetPanelActive(true);
+	LoadingMenu = new HM_Loading(); // main menu
+	LoadingMenu->SetPanelActive(true);
 	//UI````````````````````````````````````````````
 
 
@@ -80,7 +80,7 @@ void NCL::CSC8503::Loading::UpdateGame(float dt)
 	Window::GetWindow()->ShowOSPointer(false);
 	Window::GetWindow()->LockMouseToWindow(true);
 
-	StartMenu->GetPanelIsEnable();	///?
+	LoadingMenu->GetPanelIsEnable();	///?
 
 
 	world->UpdateWorld(dt);

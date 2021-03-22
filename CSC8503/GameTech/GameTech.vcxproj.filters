@@ -123,6 +123,9 @@
     <ClCompile Include="Loading.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HM_Loading.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -225,6 +228,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Loading.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_Loading.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,6 +11,7 @@
 #include "DW_UIPanel.h"
 #include "DW_UIImage.h"
 #include "HM_StartMenu.h"
+#include "HM_Loading.h"
 #include "HM_PauseMenu.h"
 #include "HM_Win.h"
 #include "HM_Lose.h"
@@ -37,7 +38,7 @@ namespace NCL {
 			float		yaw;
 			float		pitch;
 
-			HM_StartMenu* StartMenu;
+			HM_Loading* LoadingMenu;
 			OGLTexture* basicTex = nullptr;
 			OGLShader* basicShader = nullptr;
 			OGLMesh* cubeMesh = nullptr;

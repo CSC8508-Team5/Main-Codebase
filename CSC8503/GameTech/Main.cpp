@@ -402,8 +402,9 @@ int main() {
 	Loading* L = new Loading();
 	w->UpdateWindow();
 	float dt0 = w->GetTimer()->GetTimeDeltaSeconds();
-	L->UpdateGame(dt0);
+	//L->UpdateGame(dt0);
 	TutorialGame* g = new TutorialGame();
+	delete L;
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
 	//TestPathfinding();
@@ -411,6 +412,8 @@ int main() {
 
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
+
+
 		if (dt > 0.1f) {
 			std::cout << "Skipping large time delta" << std::endl;
 			continue; //must have hit a breakpoint or something to have a 1 second frame time!
