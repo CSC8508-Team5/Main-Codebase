@@ -115,9 +115,9 @@ namespace NCL {
 				applyGravity = state;
 				if (useBulletPhysics)
 					if (applyGravity)
-						UpdateBulletGravity(btVector3(0, 0, 0));
-					else
 						UpdateBulletGravity(gravity);
+					else
+						UpdateBulletGravity(btVector3(0, 0, 0));
 			}
 
 			void UpdateBulletGravity(btVector3 gravity) {
