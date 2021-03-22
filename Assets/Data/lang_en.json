@@ -18,10 +18,10 @@
     "time": "Time :  ",
     "time_up": "",
     "volume": "Volume : ",
-    "volume_up": ">",
-    "volume_down": "<",
+    "volume_up": "+",
+    "volume_down": "-",
     "you_win": "",
     "next_level": "Next Level",
     "pause_menu": "Game Paused",
-    "game_name": "Game name you prefer"
+    "game_name": "Game Name"
 }
