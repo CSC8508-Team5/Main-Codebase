@@ -1797,6 +1797,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 	}
 	else
 	{
+		//CapsuleVolume* volume = new CapsuleVolume(0.85f * meshSize, 0.3f * meshSize);
 		AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.85f, 0.3f) * meshSize);
 		character->SetBoundingVolume((CollisionVolume*)volume);
 		character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
