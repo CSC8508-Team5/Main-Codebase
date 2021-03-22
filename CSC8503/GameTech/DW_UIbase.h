@@ -16,7 +16,7 @@ Comments and queries to: Dawei Wang, Group 5
 class DW_UIbase
 {
 public:
-	enum UIType {
+	enum class UIType {
 		NONE,
 		TEXT,
 		IMAGE	,
