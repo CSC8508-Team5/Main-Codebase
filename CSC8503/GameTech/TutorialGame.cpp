@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 1;
+	currentLevel = 2;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -49,6 +49,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	isjump = false;
 	timer = 121;
 	pausetime = 0;
+	currenthight = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
@@ -309,6 +310,9 @@ void TutorialGame::UpdateGame(float dt) {
 		if (currentLevel == 1) {//Update level 1
 			UpdateLevelOne();
 		}
+		else if (currentLevel == 2) {
+			UpdateLevelTwo();
+		}
 		else if (currentLevel == 3) { //Update level 3
 			UpdateLevelThree(dt);
 			if (sliderVector.size() > 0) {
@@ -368,6 +372,7 @@ void TutorialGame::UpdateLevelOne() {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
 			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 			isjump = false;
+			currenthight = player->GetTransform().GetPosition().y;
 		}
 		//finish
 		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
@@ -379,15 +384,36 @@ void TutorialGame::UpdateLevelOne() {
 	}
 };
 
-void TutorialGame::UpdateLevelThree(float dt) {
-	UpdateCoins();
+void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
 	//finish
-	if (CollisionDetection::ObjectIntersection(player, finishLine, info) && !isfinish) {
+	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
 		isfinish = true;
 		ispause = true;
 		audio->StopAll();
 		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
+	//Collision with floor
+	if (CollisionDetection::ObjectIntersection(player, level2Floor, info)) {
+		isjump = false;
+		currenthight = player->GetTransform().GetPosition().y;
+	}
+}
+
+void TutorialGame::UpdateLevelThree(float dt) {
+	UpdateCoins();
+	CollisionDetection::CollisionInfo info;
+	//finish
+	if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
+		isfinish = true;
+		ispause = true;
+		audio->StopAll();
+		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
+	}
+	//Collision with floor
+	if (CollisionDetection::ObjectIntersection(player, level3Floor, info)) {
+		isjump = false;
+		currenthight = player->GetTransform().GetPosition().y;
 	}
 }
 
@@ -447,6 +473,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 }
 
 void TutorialGame::UpdatePlayer(float dt) {
+	std::cout << isjump << endl;
 	Vector3 playerposition = player->GetTransform().GetPosition();
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
@@ -504,15 +531,18 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
-			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-
-			//isjump = true; //Comment this if want a quick win.
-			//audio->PlaySFX("PP_Jump_1_1.wav");
+			if (playerposition.y - currenthight >= 0.1) {
+				isjump = true; //Comment this if want a quick win.
+				//audio->PlaySFX("PP_Jump_1_1.wav");
+			}
+			else {
+				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+			}
 		}
-
 	}
 	else {
-		player->GetPhysicsObject()->AddForce(Vector3(0, -50, 0));
+		player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
 	}
 }
 
@@ -811,12 +841,12 @@ void TutorialGame::InitLevel2() {
 	InitLevel2design();
 }
 void TutorialGame::InitLevel2design() {
-	AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floot	
+	level2Floor =  AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floor	
 	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
 	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
-	AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
+	level2finishLine = AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
 
 	//AddWallToWorld(Vector3(-99, 9, -300), 1, 8, 1, greenTex, "pillar");  //pillar		
 	//AddDoorToWorld(Vector3(-93, 10, -300), Vector3(5, 8, 1), redTex, "MoveDoor"); //door 
@@ -1071,13 +1101,16 @@ GameObject** TutorialGame::LevelOne() {
 void TutorialGame::LevelThree() {
 
 		// Platforms 
-		GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+		/*GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
+		startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));*/
+		//To make player able to jump
+		level3Floor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
+		level3Floor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
-		finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
-		finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+		level3finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
+		level3finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 
-		finishLine->SetName("Finish");
+		level3finishLine->SetName("Finish");
 
 		// State Objects ("sliders")
 		sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
@@ -1762,6 +1795,7 @@ void TutorialGame::InitCharaters(Vector3 position) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+	currenthight = position.y;
 	/*AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));*/
 }

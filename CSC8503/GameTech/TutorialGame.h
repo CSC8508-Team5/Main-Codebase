@@ -111,6 +111,7 @@ namespace NCL {
 			DW_UIPanel* InGameUI;
 			void Pendulum();
 			void UpdateLevelOne();
+			void UpdateLevelTwo();
 			void UpdateCoins();
 			void UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction);
 			void UpdateSpinningPlatform();
@@ -145,6 +146,7 @@ namespace NCL {
 			int			coincollected;
 			int			timer;
 			int			pausetime;
+			float			currenthight;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;
@@ -152,7 +154,11 @@ namespace NCL {
 			GameObject** cannonBullet;
 			GameObject* spinplat;
 			GameObject* player;
-			GameObject* finishLine;
+			GameObject* level3finishLine;
+			GameObject* level3Floor;
+			GameObject* level2finishLine;
+			GameObject* level2Floor;
+
 			//end
 
 			// Conor Level (Level Three)
