@@ -242,12 +242,6 @@ void TutorialGame::UpdateGame(float dt) {
 
 	}*/
 
-
-
-
-
-
-	
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable()) {
 		pauseStart = ::GetTickCount();
 		pausetime = int(pauseStart);
