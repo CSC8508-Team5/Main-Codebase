@@ -600,7 +600,7 @@ void TutorialGame::LevelThree() {
 
 	// Platforms 
 	GameObject* startingFloor = AddCubeToWorld(Vector3(40, 0, 0), Vector3(200, 2, 50), 0);
-	startingFloor->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+	startingFloor->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 
 	GameObject* finish = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 	finish->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
@@ -647,6 +647,14 @@ void TutorialGame::LevelThree() {
 	coins[3] = AddCoins(Vector3(30, 4, 20));
 	coins[4] = AddCoins(Vector3(90, 4, -20));
 	coins[5] = AddCoins(Vector3(90, 4, 20));
+	coins[6] = AddCoins(Vector3(110, 4, 10));
+	coins[7] = AddCoins(Vector3(110, 4, 30));
+	coins[8] = AddCoins(Vector3(110, 4, -10));
+	coins[9] = AddCoins(Vector3(110, 4, -30));	
+	coins[10] = AddCoins(Vector3(150, 4, 10));
+	coins[11] = AddCoins(Vector3(150, 4, 30));
+	coins[12] = AddCoins(Vector3(150, 4, -10));
+	coins[13] = AddCoins(Vector3(150, 4, -30));
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
