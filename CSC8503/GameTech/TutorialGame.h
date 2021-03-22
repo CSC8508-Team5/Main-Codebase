@@ -101,8 +101,9 @@ namespace NCL {
 			GameObject* AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name);
 			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 10.0f);
 			//adding for level design
-			GameObject** LevelTestOne();
+			GameObject** LevelOne();
 			GameObject* SpinningPlatform();
+			GameObject* AddCannonToWorld(const Vector3& position, string orientation);
 
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
@@ -111,6 +112,7 @@ namespace NCL {
 			void Pendulum();
 			void UpdateLevelOne();
 			void UpdateCoins();
+			void UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction);
 			void UpdateSpinningPlatform();
 			void UpdatePlayer(float dt);
 			void Reload();
@@ -147,6 +149,7 @@ namespace NCL {
 			DWORD pauseStart;
 			GameObject** platforms;
 			GameObject** coins;
+			GameObject** cannonBullet;
 			GameObject* spinplat;
 			GameObject* player;
 			GameObject* finishLine;

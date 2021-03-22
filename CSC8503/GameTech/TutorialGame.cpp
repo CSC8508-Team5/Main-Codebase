@@ -35,12 +35,13 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 3;
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject * [17];
-	coins = new GameObject * [25];
+	coins = new GameObject * [25]; //No more than 25 coins
+	cannonBullet = new GameObject * [10]; //No more than 10 cannon
 	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
@@ -154,6 +155,7 @@ TutorialGame::~TutorialGame() {
 
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
 	delete[] coins;
+	delete[] cannonBullet;
 	delete spinplat;
 	delete player;
 	delete InGameUI;
@@ -216,7 +218,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 	//AI
 
-	if (testEnemy) {
+	/*if (testEnemy) {
 		if (checknum == 1) {
 			checkAitime = gametime.GetTotalTimeSeconds();
 			checknum = 0;
@@ -235,7 +237,7 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 
 
-	}
+	}*/
 
 
 
@@ -323,6 +325,7 @@ void TutorialGame::UpdateGame(float dt) {
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
+		isjump = false;
 	}
 
 
@@ -334,7 +337,6 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::UpdateLevelOne() {
-	UpdateCoins();
 	float speed = 30.0f;
 	for (int i = 1; i < numstairs - 1; ++i) {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
@@ -354,6 +356,11 @@ void TutorialGame::UpdateLevelOne() {
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
+		UpdateCoins();
+		UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6),"left");
+		UpdateCannonBullet(cannonBullet[1], Vector3(-100, 25, 80) + Vector3(6, 7, -6), "right");
+		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
+		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
 	}
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
@@ -411,6 +418,34 @@ void TutorialGame::UpdateCoins() {
 	}
 }
 
+void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition,string direction) {
+	SphereVolume* volume = new SphereVolume(0.0f);
+	Vector3 relativePos = player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+	float currentDistance = relativePos.Length();
+	float offset = currentDistance;
+	float startDistance = (bullet->GetTransform().GetPosition() - startPosition).Length();
+	if (startDistance >= 150) {
+		bullet->GetTransform().SetPosition(startPosition);
+	}else	if (abs(offset) > 100.0f) {
+		if (direction == "left") {
+			PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+			bulletPhys->SetLinearVelocity(Vector3(0,0,10));
+		}
+		else if (direction == "right") {
+			PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+			bulletPhys->SetLinearVelocity(Vector3(0, 0, -10));
+		}
+	}else if (abs(offset) > 0.0f) {
+		PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
+		bulletPhys->SetLinearVelocity(relativePos);
+	}
+	CollisionDetection::CollisionInfo info;
+	if (CollisionDetection::ObjectIntersection(player, bullet, info)) {
+		timer = timer - 5;
+		bullet->GetTransform().SetPosition(startPosition);
+	}
+}
+
 void TutorialGame::UpdatePlayer(float dt) {
 	Vector3 playerposition = player->GetTransform().GetPosition();
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
@@ -445,6 +480,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	}
 	if (playerposition.y <= -1) {
 		isdead = true;
+		isjump = false;
 		timer = timer - 5;
 	}
 	//player movement
@@ -470,13 +506,13 @@ void TutorialGame::UpdatePlayer(float dt) {
 		if (!isjump) {
 			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
 
-			isjump = true; //Comment this if want a quick win.
+			//isjump = true; //Comment this if want a quick win.
 			//audio->PlaySFX("PP_Jump_1_1.wav");
 		}
 
 	}
 	else {
-		player->GetPhysicsObject()->AddForce(Vector3(0, -100, 0));
+		player->GetPhysicsObject()->AddForce(Vector3(0, -50, 0));
 	}
 }
 
@@ -739,7 +775,7 @@ void TutorialGame::InitLevel1() {
 
 	//-------------LV1 -------------------------------------
 
-	platforms = LevelTestOne();
+	platforms = LevelOne();
 	std::vector<Vector3> poses;
 	for (int i = 0; i < numstairs; i++)
 	{
@@ -749,11 +785,11 @@ void TutorialGame::InitLevel1() {
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	//-------------LV1 -------------------------------------
 
-	Pendulum();
-	spinplat = SpinningPlatform();
+	//Pendulum();
+	//spinplat = SpinningPlatform();
 
 	/* Evie Qian */
-	//platforms = LevelTestOne();
+	//platforms = LevelOne();
 	//std::vector<Vector3> poses;
 	//for (int i = 0; i < numstairs; i++)
 	//{
@@ -986,7 +1022,7 @@ void TutorialGame::InitLevel3() {
 	LevelThree();
 }
 
-GameObject** TutorialGame::LevelTestOne() {
+GameObject** TutorialGame::LevelOne() {
 	Vector3 PlatformSize = Vector3(10, 4, 50);
 	Vector3 cubeSize = Vector3(10, 4, 10);
 	Vector3 middlecubeSize = Vector3(10, 4, 20);
@@ -1023,8 +1059,14 @@ GameObject** TutorialGame::LevelTestOne() {
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
 		}
 	}
+	cannonBullet[0] = AddCannonToWorld(Vector3(-100, 5, -80), "left");
+	cannonBullet[1] = AddCannonToWorld(Vector3(-100, 25, 80), "right");
+	cannonBullet[2] = AddCannonToWorld(Vector3(50, 45, -80), "left");
+	cannonBullet[3] = AddCannonToWorld(Vector3(50, 55, 80), "right");
 	return platforms;
 }
+
+
 
 void TutorialGame::LevelThree() {
 
@@ -1087,6 +1129,43 @@ GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 c
 	coin = AddBonusToWorld(position);
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 	return coin;
+}
+
+GameObject* TutorialGame::AddCannonToWorld(const Vector3& position, string orientation) {
+	GameObject* bullet = new GameObject();
+	GameObject* cylinder = new GameObject();
+	GameObject* sphere1 = new GameObject();
+	GameObject* sphere2 = new GameObject();
+	GameObject* platform = new GameObject();
+	platform = AddCubeToWorld(position, Vector3(8, 1, 8), 0);
+	platform->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
+
+	cylinder = AddCylinderToWorld(position + Vector3(0, 3.5, 0), 2.0f, 5.0f, 0);
+	Quaternion cylinderturn;
+	if (orientation == "left"){	
+		cylinderturn = Quaternion(0.5, 0.5, 0, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-2.5, 2.5, 1), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, -2.5), 1.5f, 0);
+		bullet = AddSphereToWorld(position + Vector3(6, 7, 6), 1.5f, 0);
+	}
+	else if (orientation == "right"){		
+		cylinderturn = Quaternion(0.5, 0, 0.5, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-1, 2.5, -1.5), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, 1.5), 1.5f, 0);
+		bullet = AddSphereToWorld(position + Vector3(6, 7, -6), 1.5f, 0);
+	}
+	else{			
+		cylinderturn = Quaternion(0.5, 0.5, 0, 0.5);
+		sphere1 = AddSphereToWorld(position + Vector3(-1.5, 2.5, -1), 1.5f, 0);
+		sphere2 = AddSphereToWorld(position + Vector3(1.5, 2.5, 1), 1.5f, 0);
+	}
+	cylinderturn.Normalise();
+	cylinder->GetTransform().SetOrientation(cylinderturn);
+	cylinder->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	sphere1->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	sphere2->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+	bullet->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
+	return bullet;
 }
 
 GameObject* TutorialGame::SpinningPlatform() {
@@ -1696,7 +1775,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	///std::string str{ NCL::Assets::TEXTUREDIR + "doge.png" };
 	//DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
 
-	GameObject* character = AddCharacterToWorld(position, charMeshA, nullptr, basicShader, "player");
+	GameObject* character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player");
 
 	//GameObject* character = new GameObject();
 	//character->SetHUD(hud);
