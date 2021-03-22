@@ -388,7 +388,8 @@ int main() {
 	Vector2 rect = s->GetResolution();
 	//s->SetFullScreen(false);
 
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", rect.x, rect.y, fullScreen);
+	float epsilon = 0.1f;
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", (int) (rect.x + epsilon), (int) (rect.y + epsilon), fullScreen);
 	
 	//JsonTest();
 
