@@ -175,25 +175,26 @@ TutorialGame::~TutorialGame() {
 void TutorialGame::Reload() {
 	timer = 120;
 	isdead = false;
-	if (currentLevel == 2) {
-		player->GetTransform().SetPosition(Vector3(0, 0, -320));
+
+	if (currentLevel == 3) {
+
+		player->GetTransform().SetPosition(Vector3(-150, 10, 0));
 		Quaternion orientation = Quaternion(0, -1, 0, 1);
 		orientation.Normalise();
 		player->GetTransform().SetOrientation(orientation);
+		SphereVolume* volume = new SphereVolume(1.5f);
+		for (int i = 0; i < numcoins; ++i) {
+			if (coins[i] != nullptr) {
+				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
+				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
+			}
+		}
+		coincollected = 0;
 	}
 	else {
-			player->GetTransform().SetPosition(Vector3(-150, 10, 0));
-			Quaternion orientation = Quaternion(0, -1, 0, 1);
-			orientation.Normalise();
-			player->GetTransform().SetOrientation(orientation);
-			SphereVolume* volume = new SphereVolume(1.5f);
-			for (int i = 0; i < numcoins; ++i) {
-				if (coins[i] != nullptr) {
-					coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-					coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
-				}
-			}
-			coincollected = 0;
+		world->ClearAndErase();
+		physics->Clear();
+		InitWorld();
 	}
 	
 	audio->StopAll();
@@ -208,6 +209,7 @@ void TutorialGame::UpdateGame(float dt) {
 	}*/
 	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::GameState::Pause) {
 		LoseScreen->SetPanelActive(true);
+		timer = 120;
 		NCL::CSC8503::AudioSystem::StopAll();
 		NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
 		GameStateManager::SetGameState(GameStateManager::GameState::LoseTimeout);
@@ -218,12 +220,15 @@ void TutorialGame::UpdateGame(float dt) {
 		pausetime = 0;
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
-	if (WinScreen->IfRestart()||LoseScreen->IfRestart()) {
-
+	if (NextLevel->IfNextLevel()) {
+		//Unfinished
+	}
+	else if (WinScreen->IfRestart()||LoseScreen->IfRestart()||NextLevel->IfRestart()) {
 		isfinish = false;
 		Reload();
 		WinScreen->SetRestart(false);
 		LoseScreen->SetRestart(false);
+		NextLevel->SetRestart(false);
 	}
 	UpdateKeys();
 
@@ -269,7 +274,7 @@ void TutorialGame::UpdateGame(float dt) {
 		Window::GetWindow()->LockMouseToWindow(true);
 		InGameUI->SetPanelIsEnable(true);
 	}
-	if (isfinish && !WinScreen->GetPanelIsEnable()) {
+	if (isfinish && !WinScreen->GetPanelIsEnable()&&!NextLevel->GetPanelIsEnable()) {
 		if (currentLevel == 1 || currentLevel == 2)
 		{
 			NextLevel->SetPanelActive(true);
@@ -540,7 +545,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
 			if (playerposition.y - currenthight >= 0.1f) {
-				isjump = true; //Comment this if want a quick win.
+				//isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
@@ -810,7 +815,7 @@ void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	InitCharaters(Vector3(-150, 10, 0));
-	InitAiEnemy1();
+	//InitAiEnemy1();
 	//InitDefaultFloor();
 	//BridgeConstraintTest();
 
