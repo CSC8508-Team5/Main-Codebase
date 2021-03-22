@@ -398,7 +398,7 @@ int main() {
 	if (!w->HasInitialised()) {
 		return -1;
 	}
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
