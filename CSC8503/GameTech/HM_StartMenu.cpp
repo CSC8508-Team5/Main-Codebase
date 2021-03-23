@@ -6,8 +6,6 @@
 HM_StartMenu::HM_StartMenu(NCL::LanguageManager* lm) {
 	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
-	NCL::CSC8503::AudioSystem::StopAll();
-	NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
 
 	GameName_text = new DW_UIText("GameNameText", lang->GetText("game_name"), 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
@@ -61,24 +59,24 @@ HM_StartMenu::~HM_StartMenu() {
 void HM_StartMenu::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "SoloButton") {
-		this->SetPanelActive(false);
-		NCL::CSC8503::AudioSystem::StopAll();
+		//this->SetPanelActive(false);
+		input = 1;
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
-		NCL::CSC8503::AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
+		//NCL::CSC8503::AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 
 	}
 	if (str == "DuoButton") {
-		this->SetPanelActive(false);
-		NCL::CSC8503::AudioSystem::StopAll();
+		//this->SetPanelActive(false);
+		input = 2;
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
-		NCL::CSC8503::AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
+		//NCL::CSC8503::AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 	
 	}
 	if (str == "QuitButton") {
-		NCL::CSC8503::AudioSystem::StopAll();
+		input = 3;
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		this->SetPanelActive(false);
-		NCL::GameStateManager::SetGameState(NCL::GameStateManager::GameState::Exit);
+		//this->SetPanelActive(false);
+		//NCL::GameStateManager::SetGameState(NCL::GameStateManager::GameState::Exit);
 	}
 
 	std::cout << str << "\n";

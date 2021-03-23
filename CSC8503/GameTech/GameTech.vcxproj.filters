@@ -236,5 +236,8 @@
     <ClInclude Include="HM_Win.h">
       <Filter>UI_Instances</Filter>
     </ClInclude>
+    <ClInclude Include="GameArrangement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

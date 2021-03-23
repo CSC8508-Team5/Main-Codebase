@@ -73,20 +73,20 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InitialiseAssets();
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 
-
+	/*
 	StartMenu = new HM_StartMenu(langContent); // main menu
 	PauseMenu = new HM_PauseMenu(langContent); // Pause menu
 	WinScreen = new HM_Win(langContent); // wining screen
 	LoseScreen = new HM_Lose(langContent); // lose screen
 	NextLevel = new HM_NextLevel(langContent); // next level
-	OptionMenu = new HM_Option(langContent,audio); // option menu
+	OptionMenu = new HM_Option(langContent); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
 	WinScreen->SetPanelActive(false);
 	LoseScreen->SetPanelActive(false);
 	NextLevel->SetPanelActive(false);
-	OptionMenu->SetPanelActive(false);
+	OptionMenu->SetPanelActive(false);*/
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
 	//Coin_text = new DW_UIText("Cointext", "Coins collected : " + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
@@ -207,7 +207,6 @@ void TutorialGame::Reload() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
-
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
@@ -224,6 +223,9 @@ void TutorialGame::UpdateGame(float dt) {
 		pausetime = 0;
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
+
+	/*
+
 	if (NextLevel->IfNextLevel()) {
 		isfinish = false;
 		NextLevel->SetNextLevel(false);
@@ -245,7 +247,7 @@ void TutorialGame::UpdateGame(float dt) {
 		LoseScreen->SetRestart(false);
 		NextLevel->SetRestart(false);
 		Reload();
-	}
+	}*/
 	UpdateKeys();
 
 
@@ -274,7 +276,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 	}*/
-
+	/*
 	if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable() || NextLevel->GetPanelIsEnable()) {
 		pauseStart = ::GetTickCount64();
 		pausetime = int(pauseStart);
@@ -306,7 +308,7 @@ void TutorialGame::UpdateGame(float dt) {
 			}
 		}
 	}
-
+	*/
 
 	physics->Update(dt);
 

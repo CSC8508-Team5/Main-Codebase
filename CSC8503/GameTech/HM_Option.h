@@ -16,7 +16,7 @@
 class HM_Option
 {
 public:
-	HM_Option(NCL::LanguageManager* lm, NCL::CSC8503::AudioSystem* audio);
+	HM_Option(NCL::LanguageManager* lm);
 	~HM_Option();
 
 	void SetPanelActive(const bool flag) {
@@ -46,9 +46,6 @@ private:
 
 	bool m_isEnable = false;
 	void ClickFunc(const std::string& str);
-
-	// The audio system
-	NCL::CSC8503::AudioSystem* globalAudio;
 
 	NCL::LanguageManager* lang;
 };

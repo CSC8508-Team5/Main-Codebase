@@ -19,6 +19,7 @@
 #include "../CSC8503Common/SettingsManager.h"
 
 #include "GameStatusManager.h"
+#include "GameArrangement.h"
 
 #include <fstream>
 #include <iostream>
@@ -381,6 +382,7 @@ hide or show the
 int main() {
 	SettingsManager* s = new SettingsManager();
 	GameStateManager gsm = GameStateManager();
+	LanguageManager* lang = nullptr;
 
 	//bool fullScreen = s->GetBool("full-screen");
 	bool fullScreen = s->GetFullScreen();
@@ -402,7 +404,14 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
+	if (s)
+		lang = new LanguageManager();
+	else
+		lang = new LanguageManager("en");
+
 	TutorialGame* g = new TutorialGame(s);
+	
+	GameArrangement* ga = new GameArrangement(g, w, lang);
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
 	//TestPathfinding();
@@ -433,6 +442,7 @@ int main() {
 
 		}*/
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+		ga->Update(dt);
 		g->UpdateGame(dt);
 		//DisplayPathfinding();
 	}

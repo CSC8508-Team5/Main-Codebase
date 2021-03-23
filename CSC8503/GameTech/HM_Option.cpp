@@ -1,10 +1,9 @@
 #include "HM_Option.h"
 
-HM_Option::HM_Option(NCL::LanguageManager* lm, NCL::CSC8503::AudioSystem* audio) {
+HM_Option::HM_Option(NCL::LanguageManager* lm) {
 	lang = lm;
-	// Passing in Global Audio
-	globalAudio = audio;
-	volume = audio->GetGlobalVolume();
+
+	volume = NCL::CSC8503::AudioSystem::GetGlobalVolume();
 
 	//1.create many ui components if you need! (they must have a name)
 	Option_text = new DW_UIText("Optiontext", lang->GetText("option"), 1.5f, NCL::Maths::Vector3{ 550.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // option text	
@@ -80,7 +79,7 @@ void HM_Option::ClickFunc(const std::string& str) {
 		{
 			volume += 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
-			globalAudio->SetGlobalVolume(volume);
+			NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
 		}
 
 	}
@@ -90,7 +89,7 @@ void HM_Option::ClickFunc(const std::string& str) {
 		{
 			volume -= 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
-			globalAudio->SetGlobalVolume(volume);
+			NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
 		}
 		/*
 		if (abs(0.1f - volume) < epsilon) {

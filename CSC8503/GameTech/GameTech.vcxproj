@@ -229,6 +229,7 @@
     <ClInclude Include="DW_UIRenderer.h" />
     <ClInclude Include="DW_UIText.h" />
     <ClInclude Include="DW_UITextRenderer.h" />
+    <ClInclude Include="GameArrangement.h" />
     <ClInclude Include="GameStatusManager.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="HM_Lose.h" />

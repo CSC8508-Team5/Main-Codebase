@@ -21,6 +21,7 @@
 #include "HM_Option.h"
 #include "HM_NextLevel.h"
 #include "GameStatusManager.h"
+
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame {
@@ -45,13 +46,11 @@ namespace NCL {
 
 			void InitLevel2();
 			void InitLevel2design();
-
 			void InitLevel3();
 
 
 
 			//AI
-
 			void InitAiEnemy1();
 			StateAi* AddAiEnemyToWorld(const Vector3& position);
 			StateAi* testEnemy = nullptr;
@@ -224,6 +223,7 @@ namespace NCL {
 			//Language Manager
 			LanguageManager* langContent;
 			SettingsManager* settings;
+
 		};
 	}
 }

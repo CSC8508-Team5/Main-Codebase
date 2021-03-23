@@ -26,11 +26,13 @@ public:
 	~HM_StartMenu();
 
 	void SetPanelActive(const bool flag) {
-		m_panel->SetPanelIsEnable(flag); 
+		m_panel->SetPanelIsEnable(flag);
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
 
+	int GetInput() { return input; }
+	void ResetInput() { input = 0; }
 private:
 	DW_UIImage* m_bg;
 
@@ -49,6 +51,8 @@ private:
 	bool m_isEnable;
 
 	void ClickFunc(const std::string& str);
+
+	int input = 0;
 
 	NCL::LanguageManager* lang;
 };
