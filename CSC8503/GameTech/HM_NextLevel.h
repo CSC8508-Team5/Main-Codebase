@@ -10,11 +10,12 @@
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
 
+#include "../CSC8503Common/LanguageManager.h"
 
 class  HM_NextLevel
 {
 public:
-	HM_NextLevel();
+	HM_NextLevel(NCL::LanguageManager* lm);
 	~HM_NextLevel();
 
 
@@ -57,5 +58,6 @@ private:
 	int score;
 	void ClickFunc(const std::string& str);
 
+	NCL::LanguageManager* lang;
 };
 

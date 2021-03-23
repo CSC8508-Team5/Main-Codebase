@@ -19,7 +19,7 @@ public:
 	enum class UIType {
 		NONE,
 		TEXT,
-		IMAGE	,
+		IMAGE,
 		HUD
 	};
 	DW_UIbase(const std::string& name, const UIType type, const NCL::Maths::Vector3& pos = NCL::Maths::Vector3{}, const NCL::Maths::Vector3& color = NCL::Maths::Vector3{1.0f,1.0f,1.0f}, const int priority = 0);

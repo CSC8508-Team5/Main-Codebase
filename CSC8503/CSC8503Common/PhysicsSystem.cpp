@@ -103,7 +103,7 @@ void PhysicsSystem::SetGravity(const Vector3& g) {
 	gravity = g;
 
 	if (useBulletPhysics)
-		dynamicsWorld->setGravity(g);
+		UpdateBulletGravity(gravity);
 }
 
 /*

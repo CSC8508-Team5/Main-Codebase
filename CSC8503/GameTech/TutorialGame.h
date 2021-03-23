@@ -104,7 +104,7 @@ namespace NCL {
 			GameObject* AddBonusToWorld(const Vector3& position);
 
 			GameObject* AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name);
-			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 10.0f);
+			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 0.1f);
 			//adding for level design
 			GameObject** LevelOne();
 			GameObject* SpinningPlatform();
@@ -153,6 +153,7 @@ namespace NCL {
 			int			pausetime;
 			int			score;
 			float			currenthight;
+			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;

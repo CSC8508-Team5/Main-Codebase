@@ -35,12 +35,13 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 1;
+	currentLevel = 2;
 
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject * [17];
-	coins = new GameObject * [25]; //No more than 25 coins
+	numcoins = 25; // Upper limit of coins
+	coins = new GameObject * [numcoins]; //No more than 25 coins
 	cannonBullet = new GameObject * [10]; //No more than 10 cannon
 	spinplat = new GameObject;
 	player = new GameObject;
@@ -56,8 +57,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	ispause = false;
 	isdead = false;
 	//gamestate
-	numstairs = 14;
-	numcoins = 25; // Upper limit of coins
+	numstairs = 14;	
 	coincollected = 0;
 	//end 
 
@@ -74,12 +74,12 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 
 
-	StartMenu = new HM_StartMenu(); // main menu
-	PauseMenu = new HM_PauseMenu(); // Pause menu
-	WinScreen = new HM_Win(); // wining screen
-	LoseScreen = new HM_Lose(); // lose screen
-	NextLevel = new HM_NextLevel(); // next level
-	OptionMenu = new HM_Option(audio); // option menu
+	StartMenu = new HM_StartMenu(langContent); // main menu
+	PauseMenu = new HM_PauseMenu(langContent); // Pause menu
+	WinScreen = new HM_Win(langContent); // wining screen
+	LoseScreen = new HM_Lose(langContent); // lose screen
+	NextLevel = new HM_NextLevel(langContent); // next level
+	OptionMenu = new HM_Option(langContent,audio); // option menu
 
 	StartMenu->SetPanelActive(true);
 	PauseMenu->SetPanelActive(false);
@@ -141,7 +141,7 @@ void TutorialGame::InitialiseAssets() {
 	InitWorld();
 	InitCamera();
 	glDisable(GL_DEBUG_OUTPUT);
-
+	scoreAdded = false;
 }
 
 TutorialGame::~TutorialGame() {
@@ -191,16 +191,19 @@ void TutorialGame::Reload() {
 			}
 		}
 		coincollected = 0;
+
 	}
 	else {
 		world->ClearAndErase();
 		physics->Clear();
 		InitWorld();
+
 	}
 	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
 	startTime = ::GetTickCount64();
+	scoreAdded = false;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -297,19 +300,14 @@ void TutorialGame::UpdateGame(float dt) {
 		{
 			WinScreen->SetScore(score + timer * 10 + coincollected * 50);
 			WinScreen->SetPanelActive(true);
-			AddScore(score + timer * 10 + coincollected * 50);
+			if (scoreAdded == false) {
+				AddScore(score + timer * 10 + coincollected * 50);
+				scoreAdded = true;
+			}
 		}
 	}
 
-	/*if (useGravity) {
-		Debug::Print("(G)ravity on", Vector2(5, 95));
-	}
-	else {
-		Debug::Print("(G)ravity off", Vector2(5, 95));
-	}*/
 
-	//SelectObject();
-	//MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -359,7 +357,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
-		AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
+		//AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
@@ -604,24 +602,41 @@ void TutorialGame::UpdatePlayer(float dt) {
 		isjump = false;
 		timer = timer - 5;
 	}
+
+	Vector3 inputVector = Vector3::Zero();
+
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Forward().Normalised();
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Backward().Normalised();
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Right().Normalised();
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Left().Normalised();
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
-
+	if (physics->isUseBulletPhysics())
+	{
+		player->GetBulletBody()->setActivationState(true);
+		player->GetBulletBody()->setLinearVelocity(inputVector*15.0f);
+	}
+	else
+	{
+		player->GetPhysicsObject()->ApplyLinearImpulse(inputVector*15.0f*dt);
+	}
+	
+	
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
@@ -630,13 +645,24 @@ void TutorialGame::UpdatePlayer(float dt) {
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
-				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				if (physics->isUseBulletPhysics())
+				{
+					player->GetBulletBody()->setLinearVelocity(Vector3(0, 20, 0));
+					//player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				}
+				else
+				{
+					player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+					player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				}
 			}
 		}
 	}
-	else {
-		player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+		else {
+			if(physics->isUseBulletPhysics())
+				player->GetBulletBody()->applyCentralForce(Vector3(0, -150, 0));
+			else
+				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
 	}
 }
 
@@ -1937,7 +1963,7 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	//DW_UIHUD* hud = new DW_UIHUD(str.c_str(), Vector2{ 3.0f,1.0f }, Vector3{ 0.0f,4.0f ,0.0f });
 
 	GameObject* character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player");
-
+	character->SetLayer(GameObject::Layer::Player);
 	//GameObject* character = new GameObject();
 	//character->SetHUD(hud);
 
@@ -1973,6 +1999,7 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	float inverseMass = 0.5f;
 
 	GameObject* character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "enemy");
+	character->SetLayer(GameObject::Layer::Enemy);
 	/*
 AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * meshSize);
 character->SetBoundingVolume((CollisionVolume*)volume);
@@ -2260,13 +2287,44 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, co
 GameObject* TutorialGame::AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name) { //lv2 design
 	GameObject* wall = new GameObject(name);
 	Vector3 wallSize = Vector3(x, y, z);
-	AABBVolume* volume = new AABBVolume(wallSize);
-	wall->SetBoundingVolume((CollisionVolume*)volume);
+
 	wall->GetTransform().SetScale(wallSize * 2).SetPosition(position);
 	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), cubeMesh, tempTex, basicShader));
-	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
-	wall->GetPhysicsObject()->SetInverseMass(0);
-	wall->GetPhysicsObject()->InitCubeInertia();
+
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btBoxShape(wallSize);
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = wall->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 0.0f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		wall->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	}
+	else
+	{
+		AABBVolume* volume = new AABBVolume(wallSize);
+		wall->SetBoundingVolume((CollisionVolume*)volume);
+		wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
+		wall->GetPhysicsObject()->SetInverseMass(0);
+		wall->GetPhysicsObject()->InitCubeInertia();
+	}
 	world->AddGameObject(wall);
 	return wall;
 }
@@ -2274,17 +2332,47 @@ GameObject* TutorialGame::AddWallToWorld(const Vector3& position, int x, int y, 
 GameObject* TutorialGame::AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass) {
 	GameObject* cube = new GameObject(name);
 
-	AABBVolume* volume = new AABBVolume(dimensions);
-
-	cube->SetBoundingVolume((CollisionVolume*)volume);
-
 	cube->GetTransform().SetPosition(position).SetScale(dimensions * 2);
-
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, tempTex, basicShader));
-	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
-	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
-	cube->GetPhysicsObject()->InitCubeInertia();
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btBoxShape(dimensions);
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = cube->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 0.0f;
+		if (inverseMass != 0.0f)
+			mass = (1 / inverseMass);
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		cube->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+	}
+	else
+	{
+		AABBVolume* volume = new AABBVolume(dimensions);
+
+		cube->SetBoundingVolume((CollisionVolume*)volume);
+		cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+		cube->GetPhysicsObject()->SetInverseMass(inverseMass);
+		cube->GetPhysicsObject()->InitCubeInertia();
+	}
 
 	world->AddGameObject(cube);
 
