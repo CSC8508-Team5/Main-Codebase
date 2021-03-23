@@ -35,6 +35,8 @@ namespace NCL {
 			float counter;
 
 			string objectName;
+
+			float speed = 0.3f;
 		};
 	}
 }
