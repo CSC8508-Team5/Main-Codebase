@@ -37,7 +37,7 @@ public:
 		m_isEnable = flag;
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
-
+	void SetScore(int currentscore);
 private:
 	DW_UIImage* m_bg;
 
@@ -58,6 +58,7 @@ private:
 	bool m_isEnable;
 	bool restart;
 	void ClickFunc(const std::string& str);
+	int score;
 
 	NCL::LanguageManager* lang;
 };

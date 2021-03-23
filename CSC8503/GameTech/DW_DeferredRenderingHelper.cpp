@@ -82,9 +82,22 @@ void DW_DeferredRenderingHelper::InitLights() {
 	m_spotLight->SetDirection(NCL::Maths::Vector3(0, -1.0f, 0));
 
 
-	//directional light
+	////directional light
+	//m_directionalLight = new DW_Light(DW_Light::LightType::Directional);
+	///*m_directionalLight->SetPosition(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
+	//m_directionalLight->SetDirection(NCL::Maths::Vector3(75.0f, 0.0f, 0.0f) - m_directionalLight->GetPosition());*/
+	//m_directionalLight->SetPosition(NCL::Maths::Vector3(-120.0f, 100.0f, -20.0f));
+	//m_directionalLight->SetDirection(NCL::Maths::Vector3(75.0f, 0.0f, 0.0f) - m_directionalLight->GetPosition());
+	//m_directionalLight->SetColor(NCL::Maths::Vector4(0.5f, 0.5f, 0.5f, 1));
+	//m_directionalLight->SetAmbient(0.05f);
+}
+
+void DW_DeferredRenderingHelper::SetDirectionalLight(const NCL::Maths::Vector3& pos) {
 	m_directionalLight = new DW_Light(DW_Light::LightType::Directional);
-	m_directionalLight->SetPosition(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
+	/*m_directionalLight->SetPosition(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
+	m_directionalLight->SetDirection(NCL::Maths::Vector3(75.0f, 0.0f, 0.0f) - m_directionalLight->GetPosition());*/
+	//m_directionalLight->SetPosition(NCL::Maths::Vector3(-120.0f, 100.0f, -20.0f));
+	m_directionalLight->SetPosition(pos);
 	m_directionalLight->SetDirection(NCL::Maths::Vector3(75.0f, 0.0f, 0.0f) - m_directionalLight->GetPosition());
 	m_directionalLight->SetColor(NCL::Maths::Vector4(0.5f, 0.5f, 0.5f, 1));
 	m_directionalLight->SetAmbient(0.05f);

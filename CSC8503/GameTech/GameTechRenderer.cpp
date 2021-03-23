@@ -510,10 +510,13 @@ void GameTechRenderer::RenderShadowMap() {
 
 	BindShader(shadowShader);
 	int mvpLocation = glGetUniformLocation(shadowShader->GetProgramID(), "mvpMatrix");
-
+	//std::cout << gameWorld.GetPlayer()->GetTransform().GetPosition() << "\n";
+	//Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(
+		//m_deferredHelper->GetDirectionLight()->GetPosition() + gameWorld.GetPlayer()->GetTransform().GetPosition(), 
+		//gameWorld.GetPlayer()->GetTransform().GetPosition() - (m_deferredHelper->GetDirectionLight()->GetPosition() + gameWorld.GetPlayer()->GetTransform().GetPosition()), Vector3(0, 1, 0));
 	Matrix4 shadowViewMatrix = Matrix4::BuildViewMatrix(m_deferredHelper->GetDirectionLight()->GetPosition(), m_deferredHelper->GetDirectionLight()->GetPosition() + m_deferredHelper->GetDirectionLight()->GetDirection(), Vector3(0,1,0));
 	//Matrix4 shadowProjMatrix = Matrix4::Perspective(100.0f, 500.0f, 1, 45.0f);
-	Matrix4 shadowProjMatrix = Matrix4::Orthographic(1.0f, 400.0f, 100.0f, -100.0f, 100.0f, -100.0f);//directional light use orth matrix to cast shadow
+	Matrix4 shadowProjMatrix = Matrix4::Orthographic(1.0f, 400.0f, 350.0f, -350.0f, 350.0f, -350.0f);//directional light use orth matrix to cast shadow
 
 	Matrix4 mvMatrix = shadowProjMatrix * shadowViewMatrix;
 

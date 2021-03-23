@@ -30,6 +30,10 @@ namespace NCL {
 			int GetCurrentLevel() { return currentLevel; }
 			void SetCurrentLevel(int level) { currentLevel = level; }
 			virtual void UpdateGame(float dt);
+			void AddScore(int score);//adds score to high score file
+			std::string GetScoreBoard();//returns a formatted string of top 5 scores
+
+
 
 		protected:
 			void InitialiseAssets();
@@ -147,7 +151,9 @@ namespace NCL {
 			int			coincollected;
 			int			timer;
 			int			pausetime;
+			int			score;
 			float			currenthight;
+			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;

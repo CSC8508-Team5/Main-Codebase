@@ -50,6 +50,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	timer = 121;
 	pausetime = 0;
 	currenthight = 0;
+	score = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
@@ -140,7 +141,7 @@ void TutorialGame::InitialiseAssets() {
 	InitWorld();
 	InitCamera();
 	glDisable(GL_DEBUG_OUTPUT);
-
+	scoreAdded = false;
 }
 
 TutorialGame::~TutorialGame() {
@@ -190,16 +191,19 @@ void TutorialGame::Reload() {
 			}
 		}
 		coincollected = 0;
+
 	}
 	else {
 		world->ClearAndErase();
 		physics->Clear();
 		InitWorld();
+
 	}
 	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
 	startTime = ::GetTickCount64();
+	scoreAdded = false;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -221,14 +225,26 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
 	if (NextLevel->IfNextLevel()) {
-		//Unfinished
+		isfinish = false;
+		NextLevel->SetNextLevel(false);
+		if (currentLevel == 2) {
+			world->ClearAndErase();
+			physics->Clear();
+			currentLevel += 1;
+			InitWorld();
+		}
+		else {
+			currentLevel += 1;
+		}
+		score += int(timer * 10 + coincollected * 50);
+		Reload();
 	}
 	else if (WinScreen->IfRestart()||LoseScreen->IfRestart()||NextLevel->IfRestart()) {
 		isfinish = false;
-		Reload();
 		WinScreen->SetRestart(false);
 		LoseScreen->SetRestart(false);
 		NextLevel->SetRestart(false);
+		Reload();
 	}
 	UpdateKeys();
 
@@ -277,23 +293,21 @@ void TutorialGame::UpdateGame(float dt) {
 	if (isfinish && !WinScreen->GetPanelIsEnable()&&!NextLevel->GetPanelIsEnable()) {
 		if (currentLevel == 1 || currentLevel == 2)
 		{
+			NextLevel->SetScore(score + timer * 10 + coincollected * 50);
 			NextLevel->SetPanelActive(true);
 		}
 		else
 		{
+			WinScreen->SetScore(score + timer * 10 + coincollected * 50);
 			WinScreen->SetPanelActive(true);
+			if (scoreAdded == false) {
+				AddScore(score + timer * 10 + coincollected * 50);
+				scoreAdded = true;
+			}
 		}
 	}
 
-	/*if (useGravity) {
-		Debug::Print("(G)ravity on", Vector2(5, 95));
-	}
-	else {
-		Debug::Print("(G)ravity off", Vector2(5, 95));
-	}*/
 
-	//SelectObject();
-	//MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -343,6 +357,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
+		//AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
@@ -401,8 +416,67 @@ void TutorialGame::UpdateLevelOne() {
 	}
 };
 
+
+void TutorialGame::AddScore(int score) {
+
+	std::fstream file;				//file stuff
+	file.open("HighScore.txt");
+
+	std::string s;
+	std::vector<int> scores;
+
+	getline(file, s); // skips first line
+
+	while ((getline(file, s))) {
+
+		scores.push_back(std::stoi(s));
+	}
+	//closes default file settings
+	file.close();
+
+	//check if any scores were beat
+	for (int i = 0; i < scores.size(); i++) {
+		if (score > scores.at(i)) {
+			scores.insert(scores.begin() + i, score);//inserts before current position
+			scores.pop_back(); //removes the lowest score
+			break;
+		}
+	}
+
+	file.open("HighScore.txt", std::fstream::out | std::fstream::trunc); // clears file and re-writes to it
+	file << "IF YOU'RE READING THIS AND CHANGING THE SCORE YOU'RE A DIRTY CHEATER >:(\n";
+	for (int i = 0; i < scores.size(); i++) {
+		file << scores.at(i) << "\n";
+	}
+	file.close();
+
+}
+
+
+std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
+
+	std::ifstream file;
+	file.open("HighScore.txt");
+
+	if (file.is_open()) {
+		std::string s;
+		std::string sFinal = "";
+		int counter = 1;
+		(getline(file, s)); //skips first line 
+		while ((getline(file, s))) {
+			sFinal.append(std::to_string(counter) + " - " + s + '\n');
+			counter++;
+		}
+		file.close();
+
+		return sFinal;
+	}
+}
+
+
 void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	//finish
 	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
 		isfinish = true;
@@ -445,7 +519,7 @@ void TutorialGame::UpdateSpinningPlatform() {
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(timer * 10 + coincollected*50)));
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected*50)));
 	//Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
@@ -562,7 +636,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
 			if (playerposition.y - currenthight >= 0.1f) {
-				//isjump = true; //Comment this if want a quick win.
+				isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
@@ -838,6 +912,7 @@ void TutorialGame::InitWorld() {
 	else //Just make sure nobody write number more than 3 for now
 		currentLevel = 1;
 	startTime = ::GetTickCount64();
+	coincollected = 0;
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
@@ -857,6 +932,7 @@ void TutorialGame::InitLevel1() {
 		poses.push_back(platforms[i]->GetTransform().GetPosition());
 	}
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
 	//-------------LV1 -------------------------------------
 
 	//Pendulum();
@@ -1091,6 +1167,16 @@ void TutorialGame::InitLevel2design() {
 	//AddDoorToWorld(Vector3(16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar
 
+
+	std::vector<Vector3> poses;
+	for (int i = 0; i < 12; i++)
+	{
+		poses.push_back(Vector3{ -25.0f,0.0f,i * 50.0f - 300.0f });
+		poses.push_back(Vector3{ 25.0f,0.0f,i * 50.0f - 300.0f });
+	}
+	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-120.0f, 100.0f, -20.0f));
+
 }
 void TutorialGame::InitLevel3() {
 	InitCharaters(Vector3(-150, 10, 0));
@@ -1125,7 +1211,7 @@ GameObject** TutorialGame::LevelOne() {
 		}
 		else if (i % 3 == 2) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if (i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
@@ -1208,6 +1294,15 @@ void TutorialGame::LevelThree() {
 		coins[12] = AddCoins(Vector3(150, 4, -10));
 		coins[13] = AddCoins(Vector3(150, 4, -30));
 
+		std::vector<Vector3> poses;
+		for (int i = 0; i < 10; i++)
+		{
+			poses.push_back(Vector3{i*30.0f-50.0f,0.0f,-15.0f});
+			poses.push_back(Vector3{ i * 30.0f-50.0f,0.0f,15.0f });
+		}
+		renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+		renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
+		
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
@@ -1511,7 +1606,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateCube(const Vector3& position, Vect
 		.SetPosition(position)
 		.SetScale(dimensions * 2);
 
-	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, whiteTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
