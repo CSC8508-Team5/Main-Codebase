@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 1;
+	currentLevel = 2;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -523,24 +523,41 @@ void TutorialGame::UpdatePlayer(float dt) {
 		isjump = false;
 		timer = timer - 5;
 	}
+
+	Vector3 inputVector = Vector3::Zero();
+
 	//player movement
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Forward().Normalised();
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Backward().Normalised();
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Right().Normalised();
+		//playerposition -= Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
-		player->GetTransform().SetPosition(playerposition);
+		inputVector += player->GetTransform().Left().Normalised();
+		//playerposition += Matrix4::Rotation(yaw * 10, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * frameSpeed;
+		//player->GetTransform().SetPosition(playerposition);
 	}
-
+	if (physics->isUseBulletPhysics())
+	{
+		player->GetBulletBody()->setActivationState(true);
+		player->GetBulletBody()->setLinearVelocity(inputVector*15.0f);
+	}
+	else
+	{
+		player->GetPhysicsObject()->ApplyLinearImpulse(inputVector*15.0f*dt);
+	}
+	
+	
 	//jump
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
@@ -549,13 +566,24 @@ void TutorialGame::UpdatePlayer(float dt) {
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
-				player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				if (physics->isUseBulletPhysics())
+				{
+					player->GetBulletBody()->setLinearVelocity(Vector3(0, 20, 0));
+					//player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				}
+				else
+				{
+					player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
+					player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+				}
 			}
 		}
 	}
-	else {
-		player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
+		else {
+			if(physics->isUseBulletPhysics())
+				player->GetBulletBody()->applyCentralForce(Vector3(0, -150, 0));
+			else
+				player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
 	}
 }
 
