@@ -407,7 +407,7 @@ void TutorialGame::UpdateLevelOne() {
 			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 			isjump = false;
 			currenthight = player->GetTransform().GetPosition().y;
-		}
+		}		
 		//finish
 		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 			isfinish = true;
@@ -562,6 +562,11 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 	if (CollisionDetection::ObjectIntersection(player, bullet, info)) {
 		timer = timer - 5;
 		bullet->GetTransform().SetPosition(startPosition);
+	}
+	for (int i = 0; i < numstairs; ++i) {
+			if (CollisionDetection::ObjectIntersection(bullet, platforms[i], info)) {
+				bullet->GetTransform().SetPosition(startPosition);
+			}
 	}
 }
 
