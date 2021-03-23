@@ -153,6 +153,7 @@ namespace NCL {
 			int			pausetime;
 			int			score;
 			float			currenthight;
+			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;

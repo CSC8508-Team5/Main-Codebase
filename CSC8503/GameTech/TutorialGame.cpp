@@ -141,7 +141,7 @@ void TutorialGame::InitialiseAssets() {
 	InitWorld();
 	InitCamera();
 	glDisable(GL_DEBUG_OUTPUT);
-
+	scoreAdded = false;
 }
 
 TutorialGame::~TutorialGame() {
@@ -191,16 +191,19 @@ void TutorialGame::Reload() {
 			}
 		}
 		coincollected = 0;
+
 	}
 	else {
 		world->ClearAndErase();
 		physics->Clear();
 		InitWorld();
+
 	}
 	
 	audio->StopAll();
 	audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
 	startTime = ::GetTickCount64();
+	scoreAdded = false;
 }
 
 void TutorialGame::UpdateGame(float dt) {
@@ -295,19 +298,14 @@ void TutorialGame::UpdateGame(float dt) {
 		else
 		{
 			WinScreen->SetPanelActive(true);
-			AddScore(score + timer * 10 + coincollected * 50);
+			if (scoreAdded == false) {
+				AddScore(score + timer * 10 + coincollected * 50);
+				scoreAdded = true;
+			}
 		}
 	}
 
-	/*if (useGravity) {
-		Debug::Print("(G)ravity on", Vector2(5, 95));
-	}
-	else {
-		Debug::Print("(G)ravity off", Vector2(5, 95));
-	}*/
 
-	//SelectObject();
-	//MoveSelectedObject();
 	physics->Update(dt);
 
 	if (lockedObject != nullptr) {
@@ -357,7 +355,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
-		AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
+		//AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
