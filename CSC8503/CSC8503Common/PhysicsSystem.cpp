@@ -185,11 +185,11 @@ void PhysicsSystem::UpdateRaw(float dt)
 		useBroadPhase = !useBroadPhase;
 		std::cout << "Setting broadphase to " << useBroadPhase << std::endl;
 	}
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::I)) {
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::U)) {
 		constraintIterationCount--;
 		std::cout << "Setting constraint iterations to " << constraintIterationCount << std::endl;
 	}
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::I)) {
 		constraintIterationCount++;
 		std::cout << "Setting constraint iterations to " << constraintIterationCount << std::endl;
 	}
