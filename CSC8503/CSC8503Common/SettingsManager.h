@@ -18,8 +18,8 @@ namespace NCL
 		bool GetFullScreen() { return m_dataRoot.get("full-screen", false).asBool(); }
 		void SetFullScreen(bool fs) { m_dataRoot["full-screen"] = fs; }
 
-		Vector2 GetResolution() { return Vector2(m_dataRoot["resolution"].get("width",1280).asInt(), m_dataRoot["resolution"].get("height",720).asInt()); }
-		void SetResolution(Vector2 rect) { m_dataRoot["resolution"]["width"] = rect.x; m_dataRoot["resolution"]["height"] = rect.y; }
+		pair<int,int> GetResolution() { return make_pair(m_dataRoot["resolution"].get("width",1280).asInt(), m_dataRoot["resolution"].get("height",720).asInt()); }
+		void SetResolution(pair<int,int> rect) { m_dataRoot["resolution"]["width"] = rect.first; m_dataRoot["resolution"]["height"] = rect.second; }
 
 		string GetLanguage() { return GetString("language","en"); }
 		void SetLanguage(string lang) { m_dataRoot["language"] = lang; }
