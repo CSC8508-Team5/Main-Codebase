@@ -6,8 +6,8 @@
 HM_NextLevel::HM_NextLevel() {
 	//1.create many ui components if you need! (they must have a name)
 
-	WinScreen_text = new DW_UIText("WinScreenText", "You Win !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
-	Score_text = new DW_UIText("ScoreText", "Score", 1.1f, NCL::Maths::Vector3{ 520.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); //  score text
+	WinScreen_text = new DW_UIText("WinScreenText", "Level Finish !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
+	Score_text = new DW_UIText("ScoreText", "Score:    "+ std::to_string(score), 1.1f, NCL::Maths::Vector3{ 520.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); //  score text
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 
@@ -93,4 +93,9 @@ void HM_NextLevel::ClickFunc(const std::string& str) {
 
 
 	std::cout << str << "\n";
+}
+
+void HM_NextLevel::SetScore(const int currentscore) {
+	score = currentscore;
+	Score_text->SetText("Score:    " + std::to_string(score));
 }

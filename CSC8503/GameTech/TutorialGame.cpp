@@ -293,10 +293,12 @@ void TutorialGame::UpdateGame(float dt) {
 	if (isfinish && !WinScreen->GetPanelIsEnable()&&!NextLevel->GetPanelIsEnable()) {
 		if (currentLevel == 1 || currentLevel == 2)
 		{
+			NextLevel->SetScore(score + timer * 10 + coincollected * 50);
 			NextLevel->SetPanelActive(true);
 		}
 		else
 		{
+			WinScreen->SetScore(score + timer * 10 + coincollected * 50);
 			WinScreen->SetPanelActive(true);
 			if (scoreAdded == false) {
 				AddScore(score + timer * 10 + coincollected * 50);
