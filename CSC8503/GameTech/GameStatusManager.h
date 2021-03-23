@@ -4,8 +4,8 @@ namespace NCL
 	class GameStateManager
 	{
 	public:
-		GameStateManager() { gs = GameState::Playing; }
-		enum class GameState {
+		GameStateManager() { gs = State::Playing; }
+		enum class State {
 			Playing,
 			Pause,
 			Win,
@@ -16,9 +16,9 @@ namespace NCL
 			Exit,
 		};
 
-		static GameState GetGameState() { return gs; }
-		static void SetGameState(GameState state) { gs = state; }
+		static State GetGameState() { return gs; }
+		static void SetGameState(State state) { gs = state; }
 	protected:
-		static GameState gs;
+		static State gs;
 	};
 }

@@ -1,3 +1,3 @@
 #include "GameStatusManager.h"
 
-NCL::GameStateManager::GameState NCL::GameStateManager::gs;
+NCL::GameStateManager::State NCL::GameStateManager::gs;

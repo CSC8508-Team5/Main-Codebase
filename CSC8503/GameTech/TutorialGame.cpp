@@ -210,12 +210,12 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
-	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::GameState::Pause) {
+	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::State::Pause) {
 		LoseScreen->SetPanelActive(true);
 		timer = 120;
 		NCL::CSC8503::AudioSystem::StopAll();
 		NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
-		GameStateManager::SetGameState(GameStateManager::GameState::LoseTimeout);
+		GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
 	}
 	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){
 		timer -= 1;
@@ -716,7 +716,7 @@ void TutorialGame::UpdateKeys() {
 		audioAgent->GetSoundSource()->SetMinDistance(5.0f);
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
+	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
 		PauseMenu->SetPanelActive(true);
 		StartMenu->SetPanelActive(false);
 		WinScreen->SetPanelActive(false);
@@ -731,7 +731,7 @@ void TutorialGame::UpdateKeys() {
 		LoseScreen->SetPanelActive(false);
 		NextLevel->SetPanelActive(false);
 		OptionMenu->SetPanelActive(true);
-	}
+	}*/
 
 	if (lockedObject) {
 		LockedObjectMovement();

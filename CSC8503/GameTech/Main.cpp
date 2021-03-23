@@ -417,7 +417,7 @@ int main() {
 	//TestPathfinding();
 	//TestBehaviourTree();
 
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE) && gsm.GetGameState() < GameStateManager::GameState::Stop) {
+	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE) && gsm.GetGameState() < GameStateManager::State::Stop) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		if (dt > 0.1f) {
 			std::cout << "Skipping large time delta" << std::endl;
