@@ -151,6 +151,7 @@ namespace NCL {
 			int			coincollected;
 			int			timer;
 			int			pausetime;
+			int			score;
 			float			currenthight;
 			DWORD startTime;
 			DWORD pauseStart;

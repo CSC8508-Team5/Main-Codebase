@@ -24,7 +24,7 @@ public:
 	}
 	bool IfNextLevel() { return nextlevel; }
 	void SetNextLevel(const bool flag) {
-		restart = flag;
+		nextlevel = flag;
 	}
 	void SetPanelActive(const bool flag) {
 		m_panel->SetPanelIsEnable(flag);

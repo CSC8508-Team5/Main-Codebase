@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 2;
+	currentLevel = 1;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -50,6 +50,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	timer = 121;
 	pausetime = 0;
 	currenthight = 0;
+	score = 0;
 	//gamestate
 	isfinish = false;
 	ispause = false;
@@ -221,14 +222,26 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 	Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
 	if (NextLevel->IfNextLevel()) {
-		//Unfinished
+		isfinish = false;
+		NextLevel->SetNextLevel(false);
+		if (currentLevel == 2) {
+			world->ClearAndErase();
+			physics->Clear();
+			currentLevel += 1;
+			InitWorld();
+		}
+		else {
+			currentLevel += 1;
+		}
+		score += int(timer * 10 + coincollected * 50);
+		Reload();
 	}
 	else if (WinScreen->IfRestart()||LoseScreen->IfRestart()||NextLevel->IfRestart()) {
 		isfinish = false;
-		Reload();
 		WinScreen->SetRestart(false);
 		LoseScreen->SetRestart(false);
 		NextLevel->SetRestart(false);
+		Reload();
 	}
 	UpdateKeys();
 
@@ -282,6 +295,7 @@ void TutorialGame::UpdateGame(float dt) {
 		else
 		{
 			WinScreen->SetPanelActive(true);
+			AddScore(score + timer * 10 + coincollected * 50);
 		}
 	}
 
@@ -343,7 +357,7 @@ void TutorialGame::UpdateGame(float dt) {
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
-		AddScore(timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
+		AddScore(score + timer * 10 + coincollected * 50);										//ADDING SCORE TO HIGH SCORE TABLE
 		player->GetTransform().SetScale(Vector3(0, 0, 0));
 		InitCharaters(Vector3(-150, 10, 0));
 		isdead = false;
@@ -462,6 +476,7 @@ std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
 
 void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	//finish
 	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
 		isfinish = true;
@@ -504,7 +519,7 @@ void TutorialGame::UpdateSpinningPlatform() {
 
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(timer * 10 + coincollected*50)));
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected*50)));
 	//Coin_text->SetText("Coins collected : " + std::to_string((int)(coincollected)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i] != nullptr) {
@@ -604,7 +619,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
 		if (!isjump) {
 			if (playerposition.y - currenthight >= 0.1f) {
-				//isjump = true; //Comment this if want a quick win.
+				isjump = true; //Comment this if want a quick win.
 				//audio->PlaySFX("PP_Jump_1_1.wav");
 			}
 			else {
@@ -869,6 +884,7 @@ void TutorialGame::InitWorld() {
 	else //Just make sure nobody write number more than 3 for now
 		currentLevel = 1;
 	startTime = ::GetTickCount64();
+	coincollected = 0;
 }
 void TutorialGame::InitLevel1() {
 	//testStateObject = AddStateObjectToWor ld(Vector3(0, 10, 0));
@@ -1167,7 +1183,7 @@ GameObject** TutorialGame::LevelOne() {
 		}
 		else if (i % 3 == 2) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if (i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
@@ -1562,7 +1578,7 @@ GameObject* NCL::CSC8503::TutorialGame::CreateCube(const Vector3& position, Vect
 		.SetPosition(position)
 		.SetScale(dimensions * 2);
 
-	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, whiteTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
