@@ -64,11 +64,17 @@ namespace NCL {
 					if (panel->GetInput() == 1)
 					{
 						*newState = new GameSceneSolo(game);
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg");
+						GameStateManager::SetGameState(GameStateManager::State::Playing);
 						return PushdownResult::Push;
 					}
 					if (panel->GetInput() == 2)
 					{
 						*newState = new GameSceneDuo(game);
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg");
+						GameStateManager::SetGameState(GameStateManager::State::Playing);
 						return PushdownResult::Push;
 					}
 					if (panel->GetInput() == 3)
@@ -79,7 +85,7 @@ namespace NCL {
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
+					std::cout << "Showing MainMenu\n";
 					window->ShowOSPointer(true);
 					AudioSystem::StopAll();
 					NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
@@ -87,10 +93,10 @@ namespace NCL {
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving MainMenu\n";
 					panel->SetPanelActive(false);
 					window->ShowOSPointer(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					panel->ResetInput();
 				}
 
 			public:
@@ -107,19 +113,26 @@ namespace NCL {
 			class OptionMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
 					
+					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O) || panel->GetInput() == 1)
+					{
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
-					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GSM::State::Pause);
+					std::cout << "Showing OptionMenu\n";
+					//volume = AudioSystem::GetGlobalVolume();
+					AudioSystem::SetGlobalVolume(AudioSystem::GetGlobalVolume() * 0.4f);
+					GSM::SetGameState(GSM::State::Pause);
+					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving OptionMenu\n";
+					AudioSystem::SetGlobalVolume(panel->volume);
+					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					panel->ResetInput();
 				}
 
 			public:
@@ -127,28 +140,43 @@ namespace NCL {
 				{
 					game = g;
 					panel = optionPanel;
+					//volume = 0.0f;
 				}
 			protected:
 				TutorialGame* game;
 				HM_Option* panel;
+				//float volume;
 			};
 
 			class PauseMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-					
+
+					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P) || panel->GetInput()==1)
+					{
+						return PushdownResult::Pop;
+					}
+					if (panel->GetInput() == 2)
+					{
+						GSM::SetGameState(GSM::State::Stop);
+						return PushdownResult::Pop;
+					}
+
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
-					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
+					std::cout << "Showing PauseMenu\n";
+					volume = AudioSystem::GetGlobalVolume();
+					AudioSystem::SetGlobalVolume(volume * 0.4f);
+					GSM::SetGameState(GSM::State::Pause);
+					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving PauseMenu\n";
+					AudioSystem::SetGlobalVolume(volume);
+					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					panel->ResetInput();
 				}
 
 			public:
@@ -156,10 +184,12 @@ namespace NCL {
 				{
 					game = g;
 					panel = pausePanel;
+					volume = 0.0f;
 				}
 			protected:
 				TutorialGame* game;
 				HM_PauseMenu* panel;
+				float volume;
 			};
 
 			class NextLevelMenu : public PushdownState {
@@ -199,14 +229,12 @@ namespace NCL {
 				void OnAwake() override {
 					std::cout << "Showing Main Menu\n";
 					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
 					GameStateManager::SetGameState(GameStateManager::State::Pause);
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
 					std::cout << "Leaving Main Menu\n";
 					panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
 				}
 
 			public:
@@ -228,14 +256,12 @@ namespace NCL {
 				void OnAwake() override {
 					std::cout << "Showing Main Menu\n";
 					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
+					GameStateManager::SetGameState(GameStateManager::State::Lose);
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
 					std::cout << "Leaving Main Menu\n";
 					panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
 				}
 
 			public:
@@ -251,25 +277,29 @@ namespace NCL {
 
 			class GameSceneSolo : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-					std::cout << "haha, now in solo mode" << endl;
 					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P))
 					{
 						*newState = new PauseMenu(game);
 						return PushdownResult::Push;
 					}
+					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O))
+					{
+						*newState = new OptionMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() == GSM::State::Stop)
+					{
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
-					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
-					//panel->SetPanelActive(true);
+					std::cout << "Showing Solo mode\n";
+
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
-					//panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					std::cout << "Leaving Solo Menu\n";
+
 				}
 
 			public:
@@ -285,25 +315,29 @@ namespace NCL {
 
 			class GameSceneDuo : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-					std::cout << "haha,now in DUO mode"<<endl;
 					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P))
 					{
 						*newState = new PauseMenu(game);
 						return PushdownResult::Push;
 					}
+					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O))
+					{
+						*newState = new OptionMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() == GSM::State::Stop)
+					{
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
-					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
-					//panel->SetPanelActive(true);
+					std::cout << "Showing Duo mode\n";
+
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
-					//panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					std::cout << "Leaving Duo mode\n";
+
 				}
 
 			public:

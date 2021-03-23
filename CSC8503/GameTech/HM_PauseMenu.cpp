@@ -63,15 +63,17 @@ HM_PauseMenu::~HM_PauseMenu() {
 void HM_PauseMenu::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "ContinueButton") {
-		this->SetPanelActive(false);
+		//this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
+		input = 1;
 	}
 	else if (str == "MenuButton") {
-		this->SetPanelActive(false);
+		//this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
+		input = 2;
 		//todo:: change behaviour
-		StartMenu = new HM_StartMenu(lang);
-		m_isEnable = true;
+		//StartMenu = new HM_StartMenu(lang);
+		//m_isEnable = true;
 	}
 
 

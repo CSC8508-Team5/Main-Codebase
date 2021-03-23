@@ -70,8 +70,9 @@ void HM_Option::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	float epsilon = 0.01f;
 	if (str == "CloseButton") {
-		this->SetPanelActive(false);
+		//this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
+		input = 1;
 	}
 	else if (str == "VolumeUpButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("CGM3_Cute_Chirpy_Button_02_4.wav");
@@ -79,7 +80,7 @@ void HM_Option::ClickFunc(const std::string& str) {
 		{
 			volume += 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
-			NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
+			//NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
 		}
 
 	}
@@ -89,7 +90,7 @@ void HM_Option::ClickFunc(const std::string& str) {
 		{
 			volume -= 0.1;
 			Volume_text->SetText("Volume : " + std::to_string((int)(volume * 10)));
-			NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
+			//NCL::CSC8503::AudioSystem::SetGlobalVolume(volume);
 		}
 		/*
 		if (abs(0.1f - volume) < epsilon) {

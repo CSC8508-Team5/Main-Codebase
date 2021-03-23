@@ -18,7 +18,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics = new PhysicsSystem(*world);
+	physics = new PhysicsSystem(*world,true);
 	//irrklang audio system
 	audio = new AudioSystem(s);
 

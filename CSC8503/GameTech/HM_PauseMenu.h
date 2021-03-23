@@ -33,6 +33,8 @@ public:
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
 
+	int GetInput() { return input; }
+	void ResetInput() { input = 0; }
 
 private:
 	DW_UIImage* m_bg;
@@ -54,5 +56,6 @@ private:
 	void ClickFunc(const std::string& str);
 
 	NCL::LanguageManager* lang;
+	int input = 0;
 };
 
