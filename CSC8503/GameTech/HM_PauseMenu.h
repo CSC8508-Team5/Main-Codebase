@@ -19,11 +19,12 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
 
+#include "../CSC8503Common/LanguageManager.h"
 
 class  HM_PauseMenu
 {
 public:
-	HM_PauseMenu();
+	HM_PauseMenu(NCL::LanguageManager* lm);
 	~HM_PauseMenu();
 
 	void SetPanelActive(const bool flag) { 
@@ -52,5 +53,6 @@ private:
 	bool m_isEnable;
 	void ClickFunc(const std::string& str);
 
+	NCL::LanguageManager* lang;
 };
 

@@ -2,11 +2,12 @@
 
 #include "../CSC8503Common/AudioSystem.h"
 
-HM_PauseMenu::HM_PauseMenu() {
+HM_PauseMenu::HM_PauseMenu(NCL::LanguageManager* lm) {
+	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
 
 
-	PauseMenu_text = new DW_UIText("PauseMenuText", "Pause Menu", 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	PauseMenu_text = new DW_UIText("PauseMenuText", lang->GetText("pause_menu"), 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 
@@ -19,7 +20,7 @@ HM_PauseMenu::HM_PauseMenu() {
 
 
 
-	Continue_text = new DW_UIText("Continue", "Continue", 0.7f, NCL::Maths::Vector3{ 570.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Continue text
+	Continue_text = new DW_UIText("Continue", lang->GetText("continue"), 0.7f, NCL::Maths::Vector3{ 570.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Continue text
 	Back_text = new DW_UIText("Menu", "Menu", 0.7f, NCL::Maths::Vector3{ 590.0f,100.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
 	//2.create an ui panel (it must have a name)
 	m_panel = new DW_UIPanel("PauseMenu");
@@ -68,7 +69,8 @@ void HM_PauseMenu::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
-		StartMenu = new HM_StartMenu();
+		//todo:: change behaviour
+		StartMenu = new HM_StartMenu(lang);
 		m_isEnable = true;
 	}
 

@@ -11,10 +11,12 @@
 #include "HM_StartMenu.h"
 #include "../CSC8503Common/AudioSystem.h"
 
+#include "../CSC8503Common/LanguageManager.h"
+
 class HM_Option
 {
 public:
-	HM_Option(NCL::CSC8503::AudioSystem* audio);
+	HM_Option(NCL::LanguageManager* lm, NCL::CSC8503::AudioSystem* audio);
 	~HM_Option();
 
 	void SetPanelActive(const bool flag) {
@@ -48,5 +50,6 @@ private:
 	// The audio system
 	NCL::CSC8503::AudioSystem* globalAudio;
 
+	NCL::LanguageManager* lang;
 };
 

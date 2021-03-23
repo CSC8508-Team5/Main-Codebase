@@ -316,6 +316,12 @@ void	Win32Window::LockMouseToWindow(bool lock)	{
 		//windowRect.top -= 1; //adjust until something happens?!
 
 		SetCapture(windowHandle);
+
+		windowRect.top += 30;
+		windowRect.bottom -= 30;
+		windowRect.left += 1;
+		windowRect.right -= 1;
+
 		ClipCursor(&windowRect);
 	}
 	else{

@@ -18,11 +18,12 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIRenderer.h"
 #include "HM_StartMenu.h"
 
+#include "../CSC8503Common/LanguageManager.h"
 
 class  HM_Win
 {
 public:
-	HM_Win();
+	HM_Win(NCL::LanguageManager* lm);
 	~HM_Win();
 
 
@@ -58,5 +59,7 @@ private:
 	bool restart;
 	void ClickFunc(const std::string& str);
 	int score;
+
+	NCL::LanguageManager* lang;
 };
 

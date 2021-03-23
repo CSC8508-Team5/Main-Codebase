@@ -19,6 +19,9 @@
     <Filter Include="Rendering">
       <UniqueIdentifier>{f47cc1d1-7dd2-43d9-9b5d-297a0b80781e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI_Instances">
+      <UniqueIdentifier>{b6c23447-2073-4268-b450-a95f4b2eb4a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -59,21 +62,6 @@
     </ClCompile>
     <ClCompile Include="DW_UITextRenderer.cpp">
       <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="HM_StartMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HM_PauseMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HM_Win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HM_Lose.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HM_Option.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DW_DeferredRenderingHelper.cpp">
       <Filter>Rendering</Filter>
@@ -120,11 +108,26 @@
     <ClCompile Include="StateAi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HM_NextLevel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameStatusManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_Lose.cpp">
+      <Filter>UI_Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_NextLevel.cpp">
+      <Filter>UI_Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_Option.cpp">
+      <Filter>UI_Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_PauseMenu.cpp">
+      <Filter>UI_Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_StartMenu.cpp">
+      <Filter>UI_Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="HM_Win.cpp">
+      <Filter>UI_Instances</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,21 +169,6 @@
     </ClInclude>
     <ClInclude Include="DW_UIText.h">
       <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="HM_StartMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HM_PauseMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HM_Win.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HM_Lose.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HM_Option.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DW_DeferredRenderingHelper.h">
       <Filter>Rendering</Filter>
@@ -227,11 +215,26 @@
     <ClInclude Include="StateAi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HM_NextLevel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameStatusManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_Lose.h">
+      <Filter>UI_Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_NextLevel.h">
+      <Filter>UI_Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_Option.h">
+      <Filter>UI_Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_PauseMenu.h">
+      <Filter>UI_Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_StartMenu.h">
+      <Filter>UI_Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="HM_Win.h">
+      <Filter>UI_Instances</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,12 +3,13 @@
 #include "../CSC8503Common/AudioSystem.h"
 #include "GameStatusManager.h"
 
-HM_StartMenu::HM_StartMenu() {
+HM_StartMenu::HM_StartMenu(NCL::LanguageManager* lm) {
+	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
 	NCL::CSC8503::AudioSystem::StopAll();
 	NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
 
-	GameName_text = new DW_UIText("GameNameText", "Game Name", 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	GameName_text = new DW_UIText("GameNameText", lang->GetText("game_name"), 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 	Solo_btn = new DW_UIImage("SoloButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,315.0f,0.0f });  // single player mode button
@@ -19,9 +20,9 @@ HM_StartMenu::HM_StartMenu() {
 	m_bg = new DW_UIImage("Background", str.c_str(), { 1.82f, 1.0f }, NCL::Maths::Vector3{ 650.0f,360.0f,0.0f });  // Menu background picture
 
 
-	Solo_text = new DW_UIText("Solo", "Solo", 0.7f, NCL::Maths::Vector3{ 605.0f,305.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // single player mode text
-	Duo_text = new DW_UIText("Duo", "Duo", 0.7f, NCL::Maths::Vector3{ 605.0f,205.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // mutli player mode text
-	Quit_text = new DW_UIText("Quit", "Quit", 0.7f, NCL::Maths::Vector3{ 605.0f,105.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // quit text
+	Solo_text = new DW_UIText("Solo", lang->GetText("mode_solo"), 0.7f, NCL::Maths::Vector3{ 605.0f,305.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // single player mode text
+	Duo_text = new DW_UIText("Duo", lang->GetText("mode_duo"), 0.7f, NCL::Maths::Vector3{ 605.0f,205.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // mutli player mode text
+	Quit_text = new DW_UIText("Quit", lang->GetText("quit"), 0.7f, NCL::Maths::Vector3{ 605.0f,105.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // quit text
 	//2.create an ui panel (it must have a name)
 	m_panel = new DW_UIPanel("StartMenu");
 

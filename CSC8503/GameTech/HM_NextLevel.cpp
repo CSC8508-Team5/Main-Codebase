@@ -3,7 +3,8 @@
 #include "../CSC8503Common/AudioSystem.h"
 
 
-HM_NextLevel::HM_NextLevel() {
+HM_NextLevel::HM_NextLevel(NCL::LanguageManager* lm) {
+	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
 
 	WinScreen_text = new DW_UIText("WinScreenText", "Level Finish !", 1.5f, NCL::Maths::Vector3{ 520.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // win text
@@ -21,8 +22,8 @@ HM_NextLevel::HM_NextLevel() {
 
 
 
-	NextLevel_text = new DW_UIText("NextLevelText", "Next Level", 0.7f, NCL::Maths::Vector3{ 570.0f,290.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Next level text
-	PlayAgain_text = new DW_UIText("PlayAgain", "Play Again", 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
+	NextLevel_text = new DW_UIText("NextLevelText", lang->GetText("next_level"), 0.7f, NCL::Maths::Vector3{ 570.0f,290.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Next level text
+	PlayAgain_text = new DW_UIText("PlayAgain", lang->GetText("play_agian"), 0.7f, NCL::Maths::Vector3{ 570.0f,190.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // play again text
 	Back_text = new DW_UIText("Menu", "Menu", 0.7f, NCL::Maths::Vector3{ 590.0f,90.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Back to main menu text
 	//2.create an ui panel (it must have a name)
 	m_panel = new DW_UIPanel("WinMenu");
@@ -86,7 +87,8 @@ void HM_NextLevel::ClickFunc(const std::string& str) {
 	else if (str == "MenuButton") {
 		this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		StartMenu = new HM_StartMenu();
+		//TODO: change behaviour
+		StartMenu = new HM_StartMenu(lang);
 		restart = false;
 		nextlevel = false;
 	}
