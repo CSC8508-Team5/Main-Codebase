@@ -40,7 +40,8 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//adding for level design
 	platformtimer = 0.0f;
 	platforms = new GameObject * [17];
-	coins = new GameObject * [25]; //No more than 25 coins
+	numcoins = 25; // Upper limit of coins
+	coins = new GameObject * [numcoins]; //No more than 25 coins
 	cannonBullet = new GameObject * [10]; //No more than 10 cannon
 	spinplat = new GameObject;
 	player = new GameObject;
@@ -56,8 +57,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	ispause = false;
 	isdead = false;
 	//gamestate
-	numstairs = 14;
-	numcoins = 25; // Upper limit of coins
+	numstairs = 14;	
 	coincollected = 0;
 	//end 
 

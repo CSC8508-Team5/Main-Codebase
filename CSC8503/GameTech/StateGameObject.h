@@ -36,7 +36,7 @@ namespace NCL {
 
 			string objectName;
 
-			float speed = 0.3f;
+			const float speed = 0.3f;
 		};
 	}
 }
