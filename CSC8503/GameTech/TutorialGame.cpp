@@ -35,7 +35,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inSelectionMode = false;
 
 	//current level
-	currentLevel = 3;
+	currentLevel = 2;
 
 	//adding for level design
 	platformtimer = 0.0f;
@@ -888,6 +888,7 @@ void TutorialGame::InitLevel1() {
 		poses.push_back(platforms[i]->GetTransform().GetPosition());
 	}
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
 	//-------------LV1 -------------------------------------
 
 	//Pendulum();
@@ -1122,6 +1123,16 @@ void TutorialGame::InitLevel2design() {
 	//AddDoorToWorld(Vector3(16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar
 
+
+	std::vector<Vector3> poses;
+	for (int i = 0; i < 12; i++)
+	{
+		poses.push_back(Vector3{ -25.0f,0.0f,i * 50.0f - 300.0f });
+		poses.push_back(Vector3{ 25.0f,0.0f,i * 50.0f - 300.0f });
+	}
+	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-120.0f, 100.0f, -20.0f));
+
 }
 void TutorialGame::InitLevel3() {
 	InitCharaters(Vector3(-150, 10, 0));
@@ -1246,6 +1257,8 @@ void TutorialGame::LevelThree() {
 			poses.push_back(Vector3{ i * 30.0f-50.0f,0.0f,15.0f });
 		}
 		renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
+		renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
+		
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins

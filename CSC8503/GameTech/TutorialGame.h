@@ -33,6 +33,8 @@ namespace NCL {
 			void AddScore(int score);//adds score to high score file
 			std::string GetScoreBoard();//returns a formatted string of top 5 scores
 
+
+
 		protected:
 			void InitialiseAssets();
 

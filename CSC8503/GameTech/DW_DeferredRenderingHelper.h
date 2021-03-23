@@ -56,6 +56,8 @@ public:
 
 	void SetPointLights(const std::vector<NCL::Maths::Vector3>& poses);
 
+	void SetDirectionalLight(const NCL::Maths::Vector3& pos);
+
 private:
 	std::vector<NCL::Maths::Vector4> COLORS{ {5.0f, 5.0f, 5.0f,1.0f},{15.0f, 0.0f, 0.0f,1.0f},{0.0f, 0.0f, 15.0f,1.0f},{0.0f, 5.0f, 0.0f,1.0f},{5.0f, 5.0f, 0.0f,1.0f} };
 	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex, m_gBufferShadowTex;

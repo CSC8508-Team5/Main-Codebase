@@ -141,6 +141,16 @@ GameObject* NCL::CSC8503::GameWorld::GetGameObjectByBulletBody(const btCollision
 	return nullptr;
 }
 
+GameObject* NCL::CSC8503::GameWorld::GetPlayer() {
+	for (GameObject* g : gameObjects) {
+		if (g->GetName()=="player")
+		{
+			return g;
+		}
+	}
+	return nullptr;
+}
+
 void GameWorld::GetConstraintIterators(
 	std::vector<Constraint*>::const_iterator& first,
 	std::vector<Constraint*>::const_iterator& last) const {
