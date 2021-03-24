@@ -172,7 +172,7 @@ namespace NCL {
 				return hit;
 			}
 
-			bool isUseBulletPhysics() const { return useBulletPhysics; }
+			static bool isUseBulletPhysics() { return useBulletPhysics; }
 		protected:
 			void TriggerNearCallback(btBroadphasePair& collisionPair,
 				btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo) {
@@ -217,7 +217,7 @@ namespace NCL {
 
 
 			//bullet3 physics
-			bool useBulletPhysics = false;
+			static bool useBulletPhysics;
 			///collision configuration contains default setup for memory, collision setup.
 			btDefaultCollisionConfiguration* collisionConfiguration;// = new btDefaultCollisionConfiguration();
 
