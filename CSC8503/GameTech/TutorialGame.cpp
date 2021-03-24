@@ -688,7 +688,7 @@ void TutorialGame::UpdateKeys() {
 }
 
 /* Scoreboard functionality */
-void TutorialGame::AddScore(int score) {
+void TutorialGame::AddBoardScore(int score) {
 
 	std::fstream file;				//file stuff
 	file.open("HighScore.txt");
@@ -953,7 +953,8 @@ void TutorialGame::InitLevel2() {
 }
 
 void TutorialGame::InitLevel3() {
-	InitCharaters(Vector3(-150, 10, 0));
+	InitCharaters(Vector3(-150, 5, 0));
+	InstantiateCharaters();
 	LevelThree();
 }
 
@@ -980,7 +981,10 @@ GameObject** TutorialGame::LevelOne() {
 	for (int i = 1; i < numstairs - 1; ++i) {
 		if (i % 3 == 1) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
+			if (physics->isUseBulletPhysics())
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 30));
+			else
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
 		}
@@ -990,7 +994,10 @@ GameObject** TutorialGame::LevelOne() {
 		}
 		else if (i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			if (physics->isUseBulletPhysics())
+				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -30));
+			else
+				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
 		}
@@ -1191,61 +1198,6 @@ void TutorialGame::InitLevel2design() {
 	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-120.0f, 100.0f, -20.0f));
 
 }
-void TutorialGame::InitLevel3() {
-	InitCharaters(Vector3(-150, 5, 0));
-	InstantiateCharaters();
-	LevelThree();
-}
-
-GameObject** TutorialGame::LevelOne() {
-	Vector3 PlatformSize = Vector3(10, 4, 50);
-	Vector3 cubeSize = Vector3(10, 4, 10);
-	Vector3 middlecubeSize = Vector3(10, 4, 20);
-
-	float invCubeMass = 0; // how heavy the middle pieces are
-	float cubeDistance = 20; // distance between links
-
-	Vector3 startPos = Vector3(-150, 5, 0);
-
-	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0), PlatformSize, 0);
-	platforms[numstairs - 1] = AddCubeToWorld(startPos + Vector3((numstairs - 1) * cubeDistance, (numstairs - 1) * 5.0f, 0), PlatformSize, 0);
-	platforms[0]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-	platforms[numstairs - 1]->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
-	//initial coins
-	for (int i = 0; i < numcoins; ++i) {
-		coins[i] = nullptr;
-	}
-
-	for (int i = 1; i < numstairs - 1; ++i) {
-		if (i % 3 == 1) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
-			if (physics->isUseBulletPhysics())
-				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 30));
-			else
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
-			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
-		}
-		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
-			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
-		}
-		else if (i % 3 == 0) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
-			if (physics->isUseBulletPhysics())
-				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -30));
-			else
-			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
-			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
-		}
-	}
-	cannonBullet[0] = AddCannonToWorld(Vector3(-100, 5, -80), "left");
-	cannonBullet[1] = AddCannonToWorld(Vector3(-100, 25, 80), "right");
-	cannonBullet[2] = AddCannonToWorld(Vector3(50, 45, -80), "left");
-	cannonBullet[3] = AddCannonToWorld(Vector3(50, 55, 80), "right");
-	return platforms;
-}
 
 void TutorialGame::LevelThree() {
 
@@ -1261,6 +1213,7 @@ void TutorialGame::LevelThree() {
 	level3finishLine->SetName("Finish");
 
 	// State Objects ("sliders")
+	//todo sliders uncessary as we will call gameobjct->update of every object in world->update()
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(-60, 6, 0), Vector3(20, 4, 1), false, true));
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(0, 6, 0), Vector3(20, 4, 1), true, true));
 	sliderVector.emplace_back(AddStateObjectToWorld(Vector3(60, 6, 0), Vector3(20, 4, 1), false, true));

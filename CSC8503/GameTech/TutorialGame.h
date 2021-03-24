@@ -54,10 +54,11 @@ namespace NCL {
 
 			void InitWorld();
 
+			void InitLevel1();
 			void InitLevel2();
 			void InitLevel2design();
 			void InitLevel3();
-			void AddScore(int score);//adds score to high score file
+			void AddBoardScore(int score);//adds score to high score file
 
 
 			//AI
@@ -67,12 +68,6 @@ namespace NCL {
 			int checkAitime = 0;
 			int checkAitime1 = 0;
 			int checknum = 1;
-
-
-
-
-
-			void InitLevel1();
 
 			//void InitCharaters(Vector3 position) { playerOrigin = Transform().SetPosition(position); };
 			void InitCharaters(Vector3 position, Quaternion orientation = Quaternion(0, -1, 0, 1)) { orientation.Normalise(); playerOrigin = Transform().SetPosition(position).SetOrientation(orientation); };
