@@ -213,7 +213,18 @@ void TutorialGame::Reload() {
 void TutorialGame::UpdateGame(float dt) {
 	fps = 1.0f / dt;
 	Debug_text1->SetText("FPS: " + std::to_string((int)fps));	//updateFPS
-	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)
+
+	MEMORYSTATUSEX memInfo;
+	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+	GlobalMemoryStatusEx(&memInfo);
+	DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
+	DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
+	DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
+	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsed/100000) + " Mb");	//vram
+	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /100000) + " Mb");	//ram
+
+
+	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
 	{
 
 		/*if (!inSelectionMode) {
