@@ -157,6 +157,7 @@ namespace NCL {
 
 					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P) || panel->GetInput()==1)
 					{
+						GSM::SetGameState(GSM::State::Playing);
 						return PushdownResult::Pop;
 					}
 					if (panel->GetInput() == 2)
@@ -178,7 +179,6 @@ namespace NCL {
 				void OnSleep() override {
 					std::cout << "Leaving PauseMenu\n";
 					AudioSystem::SetGlobalVolume(volume);
-					GSM::SetGameState(GSM::State::Playing);
 					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
 					panel->ResetInput();
