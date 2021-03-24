@@ -18,7 +18,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics = new PhysicsSystem(*world, true);
+	physics = new PhysicsSystem(*world);
 	//irrklang audio system
 	audio = new AudioSystem(s);
 
@@ -639,10 +639,11 @@ void TutorialGame::UpdatePlayer(float dt) {
 		inputVector += player->GetTransform().Left().Normalised();
 
 	}
+	
 	if (physics->isUseBulletPhysics())
 	{
 		player->GetBulletBody()->setActivationState(true);
-		player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
+		//player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
 	}
 	else
 	{
@@ -1138,7 +1139,7 @@ void TutorialGame::InitLevel2design() {
 
 }
 void TutorialGame::InitLevel3() {
-	InitCharaters(Vector3(-150, 10, 0));
+	InitCharaters(Vector3(-150, 5, 0));
 	InstantiateCharaters();
 	LevelThree();
 }
