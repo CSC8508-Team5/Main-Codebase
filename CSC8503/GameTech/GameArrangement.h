@@ -199,12 +199,19 @@ namespace NCL {
 					if (panel->GetInput() == 2)
 					{
 						//todo add next level code
+						game->ChangeLevel();
+						game->ResetLevel();
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GSM::SetGameState(GSM::State::Playing);
 						return PushdownResult::Pop;
 					}
 					if (panel->GetInput() == 2)
 					{
 						//todo add restart game code
+						game->ResetLevel();
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GSM::SetGameState(GSM::State::Playing);
 						return PushdownResult::Pop;
 					}
@@ -220,6 +227,7 @@ namespace NCL {
 					AudioSystem::StopAll();
 					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
 					window->ShowOSPointer(true);
+					panel->SetScore(game->GetScore());
 					panel->SetPanelActive(true);
 					//todo add panel score update code
 				}
@@ -246,6 +254,9 @@ namespace NCL {
 					if (panel->GetInput() == 1)
 					{
 						//todo add restart game code
+						game->ResetLevel();
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GSM::SetGameState(GSM::State::Playing);
 						return PushdownResult::Pop;
 					}
@@ -261,6 +272,7 @@ namespace NCL {
 					AudioSystem::StopAll();
 					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
 					window->ShowOSPointer(true);
+					panel->SetScore(game->GetScore());
 					panel->SetPanelActive(true);
 					//todo add panel score update code
 				}
@@ -287,6 +299,9 @@ namespace NCL {
 					if (panel->GetInput() == 1)
 					{
 						//todo add restart game code
+						game->ResetLevel();
+						AudioSystem::StopAll();
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GSM::SetGameState(GSM::State::Playing);
 						return PushdownResult::Pop;
 					}

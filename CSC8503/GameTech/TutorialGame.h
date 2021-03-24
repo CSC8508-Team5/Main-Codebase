@@ -28,14 +28,21 @@ namespace NCL {
 		public:
 			TutorialGame(SettingsManager* s = nullptr);
 			~TutorialGame();
+
 			int GetCurrentLevel() { return currentLevel; }
 			void SetCurrentLevel(int level) { currentLevel = level; }
 			int GetMaxLevel() { return 3; }
+
 			virtual void UpdateGame(float dt);
+
 			void AddScore(int score);//adds score to high score file
 			std::string GetScoreBoard();//returns a formatted string of top 5 scores
+			//int GetScore() { return score + timer * 10 + coincollected * 50;}
+			void SetScore(int s) { score = s; }
+			int GetScore() { return score; }
 
-
+			void ChangeLevel() { currentLevel += 1; }
+			void ResetLevel() { InitWorld(); }
 
 		protected:
 			void InitialiseAssets();
