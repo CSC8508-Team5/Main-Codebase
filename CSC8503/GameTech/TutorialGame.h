@@ -30,7 +30,7 @@ namespace NCL {
 			int GetCurrentLevel() { return currentLevel; }
 			void SetCurrentLevel(int level) { currentLevel = level; }
 			virtual void UpdateGame(float dt);
-			void AddScore(int score);//adds score to high score file
+
 			std::string GetScoreBoard();//returns a formatted string of top 5 scores
 
 
@@ -47,7 +47,7 @@ namespace NCL {
 			void InitLevel2design();
 
 			void InitLevel3();
-
+			void AddScore(int score);//adds score to high score file
 
 
 			//AI
