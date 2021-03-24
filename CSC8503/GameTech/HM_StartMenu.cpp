@@ -71,6 +71,12 @@ HM_StartMenu::~HM_StartMenu() {
 
 	delete Solo_text;
 	delete m_panel;
+	delete ScoreBoard_text;
+	delete ScoreBoard_text1;
+	delete ScoreBoard_text2;
+	delete ScoreBoard_text3;
+	delete ScoreBoard_text4;
+	delete ScoreBoard_text5;
 }
 
 void HM_StartMenu::ClickFunc(const std::string& str) {
