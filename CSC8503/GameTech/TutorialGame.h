@@ -103,7 +103,16 @@ namespace NCL {
 					}
 					});
 			}
-			void AddFinishAttributesToObject(GameObject* obj){
+			void AddPlayerhAttributesToObject(GameObject* obj){
+				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
+					if (other->GetLayer() == GameObject::Layer::Default)
+					{
+						//(PlayerObject*)obj->SetOnGround(true);
+					}
+					});
+			}
+
+			void AddFinishAttributesToObject(GameObject* obj) {
 				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
 					if (other->GetLayer() == GameObject::Layer::Player)
 					{

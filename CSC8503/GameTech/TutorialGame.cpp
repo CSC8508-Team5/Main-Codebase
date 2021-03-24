@@ -18,7 +18,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics = new PhysicsSystem(*world,true);
+	physics = new PhysicsSystem(*world,false);
 	//irrklang audio system
 	audio = new AudioSystem(s);
 
@@ -537,7 +537,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 void TutorialGame::UpdatePlayer(float dt) {
 	Vector3 playerposition = player->GetTransform().GetPosition();
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
-	pitch -= (Window::GetMouse()->GetRelativePosition().y);
+	//pitch -= (Window::GetMouse()->GetRelativePosition().y);
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
 
 	if (yaw < 0) {
@@ -546,12 +546,12 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (yaw > 360.0f) {
 		yaw -= 360.0f;
 	}
-	if (pitch < -90.0f) {
+	/*if (pitch < -90.0f) {
 		pitch = -90.0f;
 	}
 	if (pitch > 90.0f) {
 		pitch = 90.0f;
-	}
+	}*/
 	float frameSpeed = 50 * dt;
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
@@ -562,12 +562,12 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 
-
+	/*
 	if (playerposition.y <= -1) {
 		isdead = true;
 		isjump = false;
 		timer = timer - 5;
-	}
+	}*/
 
 	Vector3 inputVector = Vector3::Zero();
 
