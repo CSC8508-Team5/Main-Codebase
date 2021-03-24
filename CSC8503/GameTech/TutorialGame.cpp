@@ -25,7 +25,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	inDebugMode = false;
 	forceMagnitude = 10.0f;
 	useGravity = true;
-	inSelectionMode = false;
+	inSelectionMode = false; 
 	//current level
 	currentLevel = 1;
 
@@ -53,6 +53,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//end 
 
 	settings = s;
+	selectionObject = player;
 
 	if (settings)
 		langContent = new LanguageManager();
@@ -222,7 +223,7 @@ void TutorialGame::UpdateGame(float dt) {
 	DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
 	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsed/100000) + " Mb");	//vram
 	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /100000) + " Mb");	//ram
-
+	
 
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
 	{
@@ -277,12 +278,13 @@ void TutorialGame::UpdateGame(float dt) {
 		if (inDebugMode) {
 			
 			InGameUI1->SetPanelIsEnable(true);
-
+			SelectObject();
 		}
 		else {
 			InGameUI1->SetPanelIsEnable(false);
 
 		}
+		Debug_text4->SetText("Collision: " + std::to_string(selectionObject->GetWorldID()));	//non functional atm
 
 
 
@@ -665,8 +667,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
 		InitWorld(); //We can reset the simulation at any time with F1
-		selectionObject = nullptr;
-		lockedObject = nullptr;
+		//selectionObject = nullptr;
+		//lockedObject = nullptr;
 	}
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F2)) {
@@ -704,6 +706,14 @@ void TutorialGame::UpdateKeys() {
 	}	
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::K)) {
 		inDebugMode = !inDebugMode;
+		if (inDebugMode) {
+			Window::GetWindow()->ShowOSPointer(true);
+			Window::GetWindow()->LockMouseToWindow(false);
+		}
+		else {
+			Window::GetWindow()->ShowOSPointer(false);
+			Window::GetWindow()->LockMouseToWindow(true);
+		}
 	}
 	
 
@@ -726,12 +736,12 @@ void TutorialGame::UpdateKeys() {
 		OptionMenu->SetPanelActive(true);
 	}*/
 
-	if (lockedObject) {
+	/*if (lockedObject) {
 		LockedObjectMovement();
 	}
 	else {
 		DebugObjectMovement();
-	}
+	}*/
 }
 
 /* Scoreboard functionality */
@@ -791,155 +801,155 @@ std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
 }
 
 /* Debugging (not present in game)*/
-void TutorialGame::LockedObjectMovement() {
-	Matrix4 view = world->GetMainCamera()->BuildViewMatrix();
-	Matrix4 camWorld = view.Inverse();
+//void TutorialGame::LockedObjectMovement() {
+//	Matrix4 view = world->GetMainCamera()->BuildViewMatrix();
+//	Matrix4 camWorld = view.Inverse();
+//
+//	Vector3 rightAxis = Vector3(camWorld.GetColumn(0)); //view is inverse of model!
+//
+//	//forward is more tricky -  camera forward is 'into' the screen...
+//	//so we can take a guess, and use the cross of straight up, and
+//	//the right axis, to hopefully get a vector that's good enough!
+//
+//	Vector3 fwdAxis = Vector3::Cross(Vector3(0, 1, 0), rightAxis);
+//	fwdAxis.y = 0.0f;
+//	fwdAxis.Normalise();
+//
+//	Vector3 charForward = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
+//	Vector3 charForward2 = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
+//
+//	float force = 1.0f;
+//
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
+//		if (physics->isUseBulletPhysics())
+//		{
+//			selectionObject->GetBulletBody()->activate();
+//			selectionObject->GetBulletBody()->applyCentralImpulse(-rightAxis * force);
+//		}
+//		else
+//			lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
+//	}
+//
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
+//		if (physics->isUseBulletPhysics())
+//		{
+//			selectionObject->GetBulletBody()->activate();
+//			selectionObject->GetBulletBody()->applyCentralImpulse(rightAxis * force);
+//		}
+//		else
+//			lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
+//	}
+//
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
+//		if (physics->isUseBulletPhysics())
+//		{
+//			selectionObject->GetBulletBody()->activate();
+//			//selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
+//			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis * 5);
+//		}
+//		else
+//			lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
+//	}
+//
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
+//		if (physics->isUseBulletPhysics())
+//		{
+//			selectionObject->GetBulletBody()->activate();
+//			//selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
+//			selectionObject->GetBulletBody()->setLinearVelocity(-fwdAxis * 5);
+//		}
+//		else
+//			lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
+//	}
+//
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
+//		if (physics->isUseBulletPhysics())
+//		{
+//			selectionObject->GetBulletBody()->activate();
+//			selectionObject->GetBulletBody()->applyCentralImpulse(Vector3(0, -10, 0));
+//		}
+//		else
+//			lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
+//	}
+//}
 
-	Vector3 rightAxis = Vector3(camWorld.GetColumn(0)); //view is inverse of model!
-
-	//forward is more tricky -  camera forward is 'into' the screen...
-	//so we can take a guess, and use the cross of straight up, and
-	//the right axis, to hopefully get a vector that's good enough!
-
-	Vector3 fwdAxis = Vector3::Cross(Vector3(0, 1, 0), rightAxis);
-	fwdAxis.y = 0.0f;
-	fwdAxis.Normalise();
-
-	Vector3 charForward = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
-	Vector3 charForward2 = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
-
-	float force = 1.0f;
-
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-		if (physics->isUseBulletPhysics())
-		{
-			selectionObject->GetBulletBody()->activate();
-			selectionObject->GetBulletBody()->applyCentralImpulse(-rightAxis * force);
-		}
-		else
-			lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
-	}
-
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-		if (physics->isUseBulletPhysics())
-		{
-			selectionObject->GetBulletBody()->activate();
-			selectionObject->GetBulletBody()->applyCentralImpulse(rightAxis * force);
-		}
-		else
-			lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
-	}
-
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-		if (physics->isUseBulletPhysics())
-		{
-			selectionObject->GetBulletBody()->activate();
-			//selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
-			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis * 5);
-		}
-		else
-			lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
-	}
-
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-		if (physics->isUseBulletPhysics())
-		{
-			selectionObject->GetBulletBody()->activate();
-			//selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
-			selectionObject->GetBulletBody()->setLinearVelocity(-fwdAxis * 5);
-		}
-		else
-			lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
-	}
-
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
-		if (physics->isUseBulletPhysics())
-		{
-			selectionObject->GetBulletBody()->activate();
-			selectionObject->GetBulletBody()->applyCentralImpulse(Vector3(0, -10, 0));
-		}
-		else
-			lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-	}
-}
-
-void TutorialGame::DebugObjectMovement() {
-	//If we've selected an object, we can manipulate it with some key presses
-	if (inSelectionMode && selectionObject) {
-		//Twist the selected object!
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyCentralForce(Vector3(-10, 0, 0));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyCentralForce(Vector3(10, 0, 0));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddForce(Vector3(10, 0, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyTorque(Vector3(0, 10, 0));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyTorque(Vector3(0, -10, 0));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, -10));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, 10));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
-		}
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
-			if (physics->isUseBulletPhysics())
-			{
-				selectionObject->GetBulletBody()->activate();
-				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, -10, 0));
-			}
-			else
-				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-		}
-
-	}
-
-}
+//void TutorialGame::DebugObjectMovement() {
+//	//If we've selected an object, we can manipulate it with some key presses
+//	if (inSelectionMode && selectionObject) {
+//		//Twist the selected object!
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(-10, 0, 0));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(10, 0, 0));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddForce(Vector3(10, 0, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyTorque(Vector3(0, 10, 0));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyTorque(Vector3(0, -10, 0));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, -10));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, 10));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
+//		}
+//
+//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
+//			if (physics->isUseBulletPhysics())
+//			{
+//				selectionObject->GetBulletBody()->activate();
+//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, -10, 0));
+//			}
+//			else
+//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
+//		}
+//
+//	}
+//
+//}
 
 /* Camera, World and Player initialisation */
 void TutorialGame::InitCamera() {
@@ -2065,25 +2075,25 @@ letting you move the camera around.
 
 */
 bool TutorialGame::SelectObject() {
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
-		inSelectionMode = !inSelectionMode;
-		if (inSelectionMode) {
-			Window::GetWindow()->ShowOSPointer(true);
-			Window::GetWindow()->LockMouseToWindow(false);
-		}
-		else {
-			Window::GetWindow()->ShowOSPointer(false);
-			Window::GetWindow()->LockMouseToWindow(true);
-		}
-	}
-	if (inSelectionMode) {
-		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
+	//if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
+	//	inSelectionMode = !inSelectionMode;
+	//	if (inSelectionMode) {
+	//		Window::GetWindow()->ShowOSPointer(true);
+	//		Window::GetWindow()->LockMouseToWindow(false);
+	//	}
+	//	else {
+	//		Window::GetWindow()->ShowOSPointer(false);
+	//		Window::GetWindow()->LockMouseToWindow(true);
+	//	}
+	//}
+	//if (inSelectionMode) {
+		//renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 				selectionObject = nullptr;
-				lockedObject = nullptr;
+
 			}
 
 			//Raycasting is a bit same as before, you should build ray first
@@ -2097,36 +2107,37 @@ bool TutorialGame::SelectObject() {
 
 				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+			
 				return true;
 			}
 			else {
 				return false;
 			}
 		}
-	}
-	else {
-		renderer->DrawString("Press Q to change to select mode!", Vector2(5, 85));
-	}
+	//}
+	//else {
+	//	renderer->DrawString("Press Q to change to select mode!", Vector2(5, 85));
+	//}
 
-	if (lockedObject) {
-		renderer->DrawString("Press L to unlock object!", Vector2(5, 80));
-	}
+	//if (lockedObject) {
+	//	renderer->DrawString("Press L to unlock object!", Vector2(5, 80));
+	//}
 
-	else if (selectionObject) {
-		renderer->DrawString("Press L to lock selected object object!", Vector2(5, 80));
-	}
+	//else if (selectionObject) {
+	//	renderer->DrawString("Press L to lock selected object object!", Vector2(5, 80));
+	//}
 
-	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::L)) {
-		if (selectionObject) {
-			if (lockedObject == selectionObject) {
-				lockedObject = nullptr;
-			}
-			else {
-				lockedObject = selectionObject;
-			}
-		}
+	//if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::L)) {
+	//	if (selectionObject) {
+	//		if (lockedObject == selectionObject) {
+	//			lockedObject = nullptr;
+	//		}
+	//		else {
+	//			lockedObject = selectionObject;
+	//		}
+	//	}
 
-	}
+	//}
 
 	return false;
 }
