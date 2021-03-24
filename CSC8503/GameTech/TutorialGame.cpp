@@ -91,7 +91,6 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
-
 /*
 
 Each of the little demo scenarios used in the game uses the same 2 meshes,
@@ -196,6 +195,7 @@ void TutorialGame::Reload() {
 	//scoreAdded = false;
 }
 
+/* All update functions */
 void TutorialGame::UpdateGame(float dt) {
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)
 	{
@@ -417,64 +417,6 @@ void TutorialGame::UpdateLevelOne() {
 	}
 };
 
-
-void TutorialGame::AddBoardScore(int score) {
-
-	std::fstream file;				//file stuff
-	file.open("HighScore.txt");
-
-	std::string s;
-	std::vector<int> scores;
-
-	getline(file, s); // skips first line
-
-	while ((getline(file, s))) {
-
-		scores.push_back(std::stoi(s));
-	}
-	//closes default file settings
-	file.close();
-
-	//check if any scores were beat
-	for (int i = 0; i < scores.size(); i++) {
-		if (score > scores.at(i)) {
-			scores.insert(scores.begin() + i, score);//inserts before current position
-			scores.pop_back(); //removes the lowest score
-			break;
-		}
-	}
-
-	file.open("HighScore.txt", std::fstream::out | std::fstream::trunc); // clears file and re-writes to it
-	file << "IF YOU'RE READING THIS AND CHANGING THE SCORE YOU'RE A DIRTY CHEATER >:(\n";
-	for (int i = 0; i < scores.size(); i++) {
-		file << scores.at(i) << "\n";
-	}
-	file.close();
-
-}
-
-
-std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
-
-	std::ifstream file;
-	file.open("HighScore.txt");
-
-	if (file.is_open()) {
-		std::string s;
-		std::string sFinal = "";
-		int counter = 1;
-		(getline(file, s)); //skips first line 
-		while ((getline(file, s))) {
-			sFinal.append(std::to_string(counter) + " - " + s + '\n');
-			counter++;
-		}
-		file.close();
-
-		return sFinal;
-	}
-}
-
-
 void TutorialGame::UpdateLevelTwo() {
 	CollisionDetection::CollisionInfo info;
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
@@ -609,8 +551,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
 	double turnsin, turncos;
-	turnsin = sin((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
-	turncos = cos((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
+	turnsin = sin((PI / 2) * ((yaw / 9 - 45) / 2));
+	turncos = cos((PI / 2) * ((yaw / 9 - 45) / 2));
 	orientation = Quaternion(0, turnsin, 0, turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
@@ -745,7 +687,63 @@ void TutorialGame::UpdateKeys() {
 	}
 }
 
+/* Scoreboard functionality */
+void TutorialGame::AddScore(int score) {
 
+	std::fstream file;				//file stuff
+	file.open("HighScore.txt");
+
+	std::string s;
+	std::vector<int> scores;
+
+	getline(file, s); // skips first line
+
+	while ((getline(file, s))) {
+
+		scores.push_back(std::stoi(s));
+	}
+	//closes default file settings
+	file.close();
+
+	//check if any scores were beat
+	for (int i = 0; i < scores.size(); i++) {
+		if (score > scores.at(i)) {
+			scores.insert(scores.begin() + i, score);//inserts before current position
+			scores.pop_back(); //removes the lowest score
+			break;
+		}
+	}
+
+	file.open("HighScore.txt", std::fstream::out | std::fstream::trunc); // clears file and re-writes to it
+	file << "IF YOU'RE READING THIS AND CHANGING THE SCORE YOU'RE A DIRTY CHEATER >:(\n";
+	for (int i = 0; i < scores.size(); i++) {
+		file << scores.at(i) << "\n";
+	}
+	file.close();
+
+}
+
+std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
+
+	std::ifstream file;
+	file.open("HighScore.txt");
+
+	if (file.is_open()) {
+		std::string s;
+		std::string sFinal = "";
+		int counter = 1;
+		(getline(file, s)); //skips first line 
+		while ((getline(file, s))) {
+			sFinal.append(std::to_string(counter) + " - " + s + '\n');
+			counter++;
+		}
+		file.close();
+
+		return sFinal;
+	}
+}
+
+/* Debugging (not present in game)*/
 void TutorialGame::LockedObjectMovement() {
 	Matrix4 view = world->GetMainCamera()->BuildViewMatrix();
 	Matrix4 camWorld = view.Inverse();
@@ -896,6 +894,7 @@ void TutorialGame::DebugObjectMovement() {
 
 }
 
+/* Camera, World and Player initialisation */
 void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetNearPlane(0.1f);
 	world->GetMainCamera()->SetFarPlane(500.0f);
@@ -922,6 +921,8 @@ void TutorialGame::InitWorld() {
 	coincollected = 0;
 	timer = 10;
 }
+
+/* Level Preparations */
 void TutorialGame::InitLevel1() {
 
 	InitCharaters(Vector3(-150, 10, 0));
@@ -943,12 +944,64 @@ void TutorialGame::InitLevel1() {
 	coincollected = 0;
 	//WinScreen->SetRestart(false);
 }
+
 void TutorialGame::InitLevel2() {
 
 	InitCharaters(Vector3(0, 0, -320));
 	InstantiateCharaters();
 	InitLevel2design();
 }
+
+void TutorialGame::InitLevel3() {
+	InitCharaters(Vector3(-150, 10, 0));
+	LevelThree();
+}
+
+/* Game Levels */
+GameObject** TutorialGame::LevelOne() {
+	Vector3 PlatformSize = Vector3(10, 4, 50);
+	Vector3 cubeSize = Vector3(10, 4, 10);
+	Vector3 middlecubeSize = Vector3(10, 4, 20);
+
+	float invCubeMass = 0; // how heavy the middle pieces are
+	float cubeDistance = 20; // distance between links
+
+	Vector3 startPos = Vector3(-150, 5, 0);
+
+	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0), PlatformSize, 0);
+	platforms[numstairs - 1] = AddCubeToWorld(startPos + Vector3((numstairs - 1) * cubeDistance, (numstairs - 1) * 5.0f, 0), PlatformSize, 0);
+	platforms[0]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+	platforms[numstairs - 1]->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+	//initial coins
+	for (int i = 0; i < numcoins; ++i) {
+		coins[i] = nullptr;
+	}
+
+	for (int i = 1; i < numstairs - 1; ++i) {
+		if (i % 3 == 1) {
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
+			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
+		}
+		else if (i % 3 == 2) {
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+		}
+		else if (i % 3 == 0) {
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
+			platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
+		}
+	}
+	cannonBullet[0] = AddCannonToWorld(Vector3(-100, 5, -80), "left");
+	cannonBullet[1] = AddCannonToWorld(Vector3(-100, 25, 80), "right");
+	cannonBullet[2] = AddCannonToWorld(Vector3(50, 45, -80), "left");
+	cannonBullet[3] = AddCannonToWorld(Vector3(50, 55, 80), "right");
+	return platforms;
+}
+
 void TutorialGame::InitLevel2design() {
 	level2Floor = AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floor	
 	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
@@ -1194,8 +1247,6 @@ GameObject** TutorialGame::LevelOne() {
 	return platforms;
 }
 
-
-
 void TutorialGame::LevelThree() {
 
 	// Platforms 
@@ -1271,6 +1322,7 @@ void TutorialGame::LevelThree() {
 
 }
 
+/* Level elements and Obstacles*/
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
 	//todo ADD collision detection callback
 	//todo Add audio object
@@ -1589,8 +1641,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateCapsule(const Vector3& position, f
 	return capsule;
 }
 
-
-
 GameObject* NCL::CSC8503::TutorialGame::CreateBulletFloor(const Vector3& position)
 {
 	GameObject* floor = new GameObject("Floor");
@@ -1756,8 +1806,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCapsule(const Vector3& posit
 
 	return capsule;
 }
-
-
 
 GameObject* NCL::CSC8503::TutorialGame::CreateBulletCylinder(const Vector3& position, float halfHeight, float radius, float inverseMass)
 {
@@ -2011,7 +2059,6 @@ manipulated later. Pressing Q will let you toggle between this behaviour and ins
 letting you move the camera around.
 
 */
-
 bool TutorialGame::SelectObject() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
 		inSelectionMode = !inSelectionMode;
@@ -2256,6 +2303,7 @@ StateAi* TutorialGame::AddAiEnemyToWorld(const Vector3& position) {
 	enemy = character;
 	return character;
 }
+
 void TutorialGame::InitAiEnemy1() {
 	testEnemy = AddAiEnemyToWorld(Vector3(-150, 10, 0));
 }
