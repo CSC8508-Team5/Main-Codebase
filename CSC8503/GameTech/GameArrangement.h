@@ -65,7 +65,7 @@ namespace NCL {
 					{
 						*newState = new GameSceneSolo(game);
 						AudioSystem::StopAll();
-						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg");
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GameStateManager::SetGameState(GameStateManager::State::Playing);
 						return PushdownResult::Push;
 					}
@@ -73,7 +73,7 @@ namespace NCL {
 					{
 						*newState = new GameSceneDuo(game);
 						AudioSystem::StopAll();
-						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg");
+						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GameStateManager::SetGameState(GameStateManager::State::Playing);
 						return PushdownResult::Push;
 					}
@@ -97,6 +97,9 @@ namespace NCL {
 					panel->SetPanelActive(false);
 					window->ShowOSPointer(false);
 					panel->ResetInput();
+					game->SetCurrentLevel(1);
+					game->SetScore(0);
+					game->ResetLevel();
 				}
 
 			public:
@@ -196,9 +199,10 @@ namespace NCL {
 
 			class NextLevelMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-					if (panel->GetInput() == 2)
+					if (panel->GetInput() == 1)
 					{
 						//todo add next level code
+						game->UpdateScore();
 						game->ChangeLevel();
 						game->ResetLevel();
 						AudioSystem::StopAll();
@@ -225,9 +229,9 @@ namespace NCL {
 				void OnAwake() override {
 					std::cout << "Showing NextLevelMenu\n";
 					AudioSystem::StopAll();
-					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
+					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg", true);
 					window->ShowOSPointer(true);
-					panel->SetScore(game->GetScore());
+					panel->SetScore(game->GetAddingScore());
 					panel->SetPanelActive(true);
 					//todo add panel score update code
 				}
@@ -270,9 +274,9 @@ namespace NCL {
 				void OnAwake() override {
 					std::cout << "Showing WinMenu\n";
 					AudioSystem::StopAll();
-					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
+					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg",true);
 					window->ShowOSPointer(true);
-					panel->SetScore(game->GetScore());
+					panel->SetScore(game->GetAddingScore());
 					panel->SetPanelActive(true);
 					//todo add panel score update code
 				}
@@ -315,7 +319,7 @@ namespace NCL {
 				void OnAwake() override {
 					std::cout << "Showing LoseMenu\n";
 					AudioSystem::StopAll();
-					AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+					AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg", true);
 					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
 				}
