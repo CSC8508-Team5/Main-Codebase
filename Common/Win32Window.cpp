@@ -317,8 +317,8 @@ void	Win32Window::LockMouseToWindow(bool lock)	{
 
 		SetCapture(windowHandle);
 
-		windowRect.top += 30;
-		windowRect.bottom -= 30;
+		windowRect.top += 40;
+		windowRect.bottom -= 10;
 		windowRect.left += 1;
 		windowRect.right -= 1;
 
