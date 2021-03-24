@@ -654,23 +654,27 @@ void NCL::CSC8503::PhysicsSystem::IntegrateWorldTransform()
 		}
 
 		btRigidBody* body = btRigidBody::upcast(object);
-		//btTransform  bTrans;
-		/*if (body && body->getMotionState())
+		/*btTransform  bTrans;
+		if (body && body->getMotionState())
 			body->getMotionState()->getWorldTransform(bTrans);
 		else
-			bTrans = body->getWorldTransform();*/
+			bTrans = body->getWorldTransform();
 
-		//Transform& transform = (*i)->GetTransform();
-		//bTrans.setIdentity();
-		//bTrans.setOrigin(transform.GetPosition());
-		//bTrans.setRotation(transform.GetOrientation());
+		Transform& transform = (*i)->GetTransform();
+		bTrans.setIdentity();
+		bTrans.setOrigin(transform.GetPosition());
+		bTrans.setRotation(transform.GetOrientation());*/
 
 		btTransform bTrans = (*i)->GetTransform();
 
-		if (body && body->getMotionState())
+		if (body) {
+			body->getMotionState()->setWorldTransform(bTrans);
+			body->setWorldTransform(bTrans);
+		}
+		/*if (body && body->getMotionState())
 			body->getMotionState()->setWorldTransform(bTrans);
 		else
-			body->setWorldTransform(bTrans);
+			body->setWorldTransform(bTrans);*/
 	}
 }
 

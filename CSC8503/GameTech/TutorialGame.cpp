@@ -306,7 +306,7 @@ void TutorialGame::UpdateGame(float dt) {
 			}
 		}
 		*/
-
+		world->UpdateWorld(dt);
 		physics->Update(dt);
 
 		if (lockedObject != nullptr) {
@@ -330,7 +330,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 		}
 
-		world->UpdateWorld(dt);
+		
 
 		CollisionDetection::CollisionInfo info;
 		//if ((!ispause) && (!isfinish) && (!isdead)) {
@@ -590,7 +590,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (physics->isUseBulletPhysics())
 	{
 		player->GetBulletBody()->setActivationState(true);
-		player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
+		player->GetBulletBody()->applyCentralImpulse(inputVector * 15.0f );
+		//player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
 	}
 	else
 	{
@@ -2130,16 +2131,54 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, co
 
 	StateGameObject* newStateObject = new StateGameObject("State Cube", switchD, perpendicular);
 
-	AABBVolume* volume = new AABBVolume(dimensions);
-	newStateObject->SetBoundingVolume((CollisionVolume*)volume);
+	
 	newStateObject->GetTransform()
 		.SetScale(dimensions * 2)
 		.SetPosition(position);
 
 	newStateObject->SetRenderObject(new RenderObject(&newStateObject->GetTransform(), cubeMesh, basicTex, basicShader));
-	newStateObject->SetPhysicsObject(new PhysicsObject(&newStateObject->GetTransform(), newStateObject->GetBoundingVolume()));
 
-	newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
+	if (physics->isUseBulletPhysics())
+	{
+		btCollisionShape* shape = new btBoxShape(dimensions);
+
+		//Initialize bullet inner transfrom(have no scale), you can set it from gameworld transform directly or create new bulletTransfrom
+		btTransform bulletTransform = newStateObject->GetTransform();
+
+		//caculate the mass of object, bullet object use mass instead of inverse mass for initialing
+		btScalar mass = 10.0f;
+
+		//if mass != zero, we shall caculate the local inertia by calling bullet api
+		bool isDynamic = (mass != 0.0f);
+		btVector3 localInertia(0, 0, 0);
+
+		if (isDynamic)
+			shape->calculateLocalInertia(mass, localInertia);
+
+		//init motionstate from bullet transform
+		btDefaultMotionState* motionState = new btDefaultMotionState(bulletTransform);
+
+		//init bullet rigid body
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, localInertia);
+
+		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
+		newStateObject->SetBulletPhysicsObject(new btRigidBody(rbInfo));
+
+		//todo
+		newStateObject->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+		newStateObject->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
+	}
+	else
+	{
+		AABBVolume* volume = new AABBVolume(dimensions);
+		newStateObject->SetBoundingVolume((CollisionVolume*)volume);
+
+		newStateObject->SetPhysicsObject(new PhysicsObject(&newStateObject->GetTransform(), newStateObject->GetBoundingVolume()));
+
+		newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
+	}
+
+	
 	newStateObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 
 	world->AddGameObject(newStateObject);
