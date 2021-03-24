@@ -1,10 +1,11 @@
 {
-	"full-screen" : false,
+	"full_screen" : false,
 	"language" : "en",
 	"resolution" : 
 	{
 		"height" : 720,
 		"width" : 1280
 	},
-	"volume" : 1.0
+	"volume" : 1.0,
+	"bullet_engine": false
 }
