@@ -576,8 +576,8 @@ void TutorialGame::UpdatePlayer(float dt) {
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
 	double turnsin, turncos;
-	turnsin = sin((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
-	turncos = cos((3.1415927 / 2) * ((yaw / 9 - 45) / 2));
+	turnsin = sin((PI / 2) * ((yaw / 9 - 45) / 2));
+	turncos = cos((PI / 2) * ((yaw / 9 - 45) / 2));
 	orientation = Quaternion(0, turnsin, 0, turncos);
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
