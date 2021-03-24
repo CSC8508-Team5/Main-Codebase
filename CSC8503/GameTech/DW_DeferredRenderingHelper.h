@@ -58,6 +58,16 @@ public:
 
 	void SetDirectionalLight(const NCL::Maths::Vector3& pos);
 
+	void ClearLights() {
+		for (auto i : m_pointLights)
+			delete i;
+		m_pointLights.clear();
+
+		/*if(m_spotLight)
+			delete m_spotLight;*/
+		if(m_directionalLight)
+			delete m_directionalLight;
+	}
 private:
 	std::vector<NCL::Maths::Vector4> COLORS{ {5.0f, 5.0f, 5.0f,1.0f},{15.0f, 0.0f, 0.0f,1.0f},{0.0f, 0.0f, 15.0f,1.0f},{0.0f, 5.0f, 0.0f,1.0f},{5.0f, 5.0f, 0.0f,1.0f} };
 	GLuint m_gBufferFBO,m_gBufferColorTex,m_gBufferDepthTex,m_gBufferNormalTex, m_gBufferShadowTex;
