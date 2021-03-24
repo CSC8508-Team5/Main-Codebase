@@ -399,6 +399,7 @@ void TutorialGame::UpdateLevelOne() {
 		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
 		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
 	}
+	//todo: connected body
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
 		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
@@ -408,16 +409,17 @@ void TutorialGame::UpdateLevelOne() {
 			currenthight = player->GetTransform().GetPosition().y;
 		}
 		//finish
-		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
+		/*if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 			isfinish = true;
 			ispause = true;
 			//audio->StopAll();
 			//audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-		}
+		}*/
 	}
 };
 
 void TutorialGame::UpdateLevelTwo() {
+	/*
 	CollisionDetection::CollisionInfo info;
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	//finish
@@ -431,14 +433,14 @@ void TutorialGame::UpdateLevelTwo() {
 	if (CollisionDetection::ObjectIntersection(player, level2Floor, info)) {
 		isjump = false;
 		currenthight = player->GetTransform().GetPosition().y;
-	}
+	}*/
 }
 
 void TutorialGame::UpdateLevelThree(float dt) {
 	UpdateCoins();
-	CollisionDetection::CollisionInfo info;
+	//CollisionDetection::CollisionInfo info;
 	//finish
-	if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
+	/*if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
 		isfinish = true;
 		ispause = true;
 		audio->StopAll();
@@ -448,7 +450,7 @@ void TutorialGame::UpdateLevelThree(float dt) {
 	if (CollisionDetection::ObjectIntersection(player, level3Floor, info)) {
 		isjump = false;
 		currenthight = player->GetTransform().GetPosition().y;
-	}
+	}*/
 }
 
 void TutorialGame::UpdateSpinningPlatform() {
@@ -939,6 +941,8 @@ void TutorialGame::InitLevel1() {
 
 		poses.push_back(platforms[i]->GetTransform().GetPosition());
 	}
+	AddFinishAttributesToObject(platforms[numstairs - 1]);
+
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
 	//-------------LV1 -------------------------------------
@@ -1020,7 +1024,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
 	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
 	level2finishLine = AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
-
+	AddFinishAttributesToObject(level2finishLine);
 
 	AddWallToWorld(Vector3(-55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -1213,8 +1217,9 @@ void TutorialGame::LevelThree() {
 
 	level3finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 	level3finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
-
 	level3finishLine->SetName("Finish");
+
+	AddFinishAttributesToObject(level3finishLine);
 
 	// State Objects ("sliders")
 	//todo sliders uncessary as we will call gameobjct->update of every object in world->update()
