@@ -16,6 +16,7 @@ Comments and queries to: Dawei Wang, Group 5
 #include "DW_UIImage.h"
 
 #include "DW_UIRenderer.h"
+#include <string>
 
 #include "../CSC8503Common/LanguageManager.h"
 
@@ -33,6 +34,7 @@ public:
 
 	int GetInput() { return input; }
 	void ResetInput() { input = 0; }
+	vector<std::string> GetScoreBoard();
 private:
 	DW_UIImage* m_bg;
 
@@ -42,6 +44,12 @@ private:
 
 	DW_UIImage* m_close_btn;
 	DW_UIText* GameName_text;
+	DW_UIText* ScoreBoard_text;
+	DW_UIText* ScoreBoard_text1;
+	DW_UIText* ScoreBoard_text2;
+	DW_UIText* ScoreBoard_text3;
+	DW_UIText* ScoreBoard_text4;
+	DW_UIText* ScoreBoard_text5;
 
 	DW_UIText* Solo_text;
 	DW_UIText* Duo_text;
