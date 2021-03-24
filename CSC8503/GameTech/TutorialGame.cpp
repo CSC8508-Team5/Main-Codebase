@@ -18,7 +18,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics = new PhysicsSystem(*world);
+	physics = new PhysicsSystem(*world,false);
 	//irrklang audio system
 	audio = new AudioSystem(s);
 
@@ -399,6 +399,7 @@ void TutorialGame::UpdateLevelOne() {
 		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
 		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
 	}
+	//todo: connected body
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
 		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
@@ -408,16 +409,17 @@ void TutorialGame::UpdateLevelOne() {
 			currenthight = player->GetTransform().GetPosition().y;
 		}
 		//finish
-		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
+		/*if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 			isfinish = true;
 			ispause = true;
 			//audio->StopAll();
 			//audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-		}
+		}*/
 	}
 };
 
 void TutorialGame::UpdateLevelTwo() {
+	/*
 	CollisionDetection::CollisionInfo info;
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	//finish
@@ -431,14 +433,14 @@ void TutorialGame::UpdateLevelTwo() {
 	if (CollisionDetection::ObjectIntersection(player, level2Floor, info)) {
 		isjump = false;
 		currenthight = player->GetTransform().GetPosition().y;
-	}
+	}*/
 }
 
 void TutorialGame::UpdateLevelThree(float dt) {
 	UpdateCoins();
-	CollisionDetection::CollisionInfo info;
+	//CollisionDetection::CollisionInfo info;
 	//finish
-	if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
+	/*if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
 		isfinish = true;
 		ispause = true;
 		audio->StopAll();
@@ -448,7 +450,7 @@ void TutorialGame::UpdateLevelThree(float dt) {
 	if (CollisionDetection::ObjectIntersection(player, level3Floor, info)) {
 		isjump = false;
 		currenthight = player->GetTransform().GetPosition().y;
-	}
+	}*/
 }
 
 void TutorialGame::UpdateSpinningPlatform() {
@@ -464,18 +466,21 @@ void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	for (int i = 0; i < numcoins; ++i) {
-		if (coins[i] != nullptr) {
-			if(physics->isUseBulletPhysics())
+		if (coins[i]) {
+			if (physics->isUseBulletPhysics())
+			{
+				coins[i]->GetBulletBody()->activate(true);
 				coins[i]->GetBulletBody()->setAngularVelocity(Vector3(0, 2, 0));
+			}
 			else
 				coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
-			CollisionDetection::CollisionInfo info;
+			/*CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(player, coins[i], info)) {
 				coincollected += 1;
 				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
 				coins[i]->GetTransform().SetScale(Vector3(0, 0, 0));
 				audio->PlaySFX("PP_Collect_Coin_1_2.wav");
-			}
+			}*/
 		}
 	}
 }
@@ -532,7 +537,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 void TutorialGame::UpdatePlayer(float dt) {
 	Vector3 playerposition = player->GetTransform().GetPosition();
 	Quaternion playerorientation = player->GetTransform().GetOrientation();
-	pitch -= (Window::GetMouse()->GetRelativePosition().y);
+	//pitch -= (Window::GetMouse()->GetRelativePosition().y);
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
 
 	if (yaw < 0) {
@@ -541,12 +546,12 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (yaw > 360.0f) {
 		yaw -= 360.0f;
 	}
-	if (pitch < -90.0f) {
+	/*if (pitch < -90.0f) {
 		pitch = -90.0f;
 	}
 	if (pitch > 90.0f) {
 		pitch = 90.0f;
-	}
+	}*/
 	float frameSpeed = 50 * dt;
 	//player turns head
 	Quaternion orientation = player->GetTransform().GetOrientation();
@@ -557,12 +562,12 @@ void TutorialGame::UpdatePlayer(float dt) {
 	orientation.Normalise();
 	player->GetTransform().SetOrientation(orientation);
 
-
+	/*
 	if (playerposition.y <= -1) {
 		isdead = true;
 		isjump = false;
 		timer = timer - 5;
-	}
+	}*/
 
 	Vector3 inputVector = Vector3::Zero();
 
@@ -585,11 +590,11 @@ void TutorialGame::UpdatePlayer(float dt) {
 	if (physics->isUseBulletPhysics())
 	{
 		player->GetBulletBody()->setActivationState(true);
-		//player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
+		player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
 	}
 	else
 	{
-		player->GetPhysicsObject()->SetLinearVelocity(inputVector * 15.0f);
+		player->GetPhysicsObject()->ApplyLinearImpulse(inputVector * 15.0f *dt);
 	}
 
 
@@ -919,7 +924,7 @@ void TutorialGame::InitWorld() {
 		currentLevel = 1;
 	startTime = ::GetTickCount64();
 	coincollected = 0;
-	timer = 10;
+	timer = 120;
 }
 
 /* Level Preparations */
@@ -936,6 +941,8 @@ void TutorialGame::InitLevel1() {
 
 		poses.push_back(platforms[i]->GetTransform().GetPosition());
 	}
+	AddFinishAttributesToObject(platforms[numstairs - 1]);
+
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
 	//-------------LV1 -------------------------------------
@@ -953,6 +960,7 @@ void TutorialGame::InitLevel2() {
 }
 
 void TutorialGame::InitLevel3() {
+	//InitCharaters(Vector3(-80, 5, 0));
 	InitCharaters(Vector3(-150, 5, 0));
 	InstantiateCharaters();
 	LevelThree();
@@ -1016,7 +1024,7 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
 	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
 	level2finishLine = AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
-
+	AddFinishAttributesToObject(level2finishLine);
 
 	AddWallToWorld(Vector3(-55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -1209,8 +1217,9 @@ void TutorialGame::LevelThree() {
 
 	level3finishLine = AddCubeToWorld(Vector3(260, 0, 0), Vector3(20, 2, 50), 0);
 	level3finishLine->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
-
 	level3finishLine->SetName("Finish");
+
+	AddFinishAttributesToObject(level3finishLine);
 
 	// State Objects ("sliders")
 	//todo sliders uncessary as we will call gameobjct->update of every object in world->update()
@@ -1277,10 +1286,9 @@ void TutorialGame::LevelThree() {
 
 /* Level elements and Obstacles*/
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
-	//todo ADD collision detection callback
-	//todo Add audio object
 	GameObject* coin = AddBonusToWorld(position);
-	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+	AddCoinAttributesToObject(coin);
+	//AddFinishAttributesToObject(coin);
 	return coin;
 }
 
@@ -1985,7 +1993,9 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 		//give gameobject the new rigidbody, it will automaticlly add it to bullet world for simulation later
 		apple->SetBulletPhysicsObject(new btRigidBody(rbInfo));
-		apple->SetIsKinematic(true);
+		apple->GetBulletBody()->setLinearFactor(btVector3(0, 0, 0));
+		apple->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
+		//apple->SetIsKinematic(true);
 	}
 	else
 	{

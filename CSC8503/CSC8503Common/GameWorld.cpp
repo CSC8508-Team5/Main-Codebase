@@ -43,6 +43,7 @@ void GameWorld::RemoveGameObject(GameObject* o, bool andDelete) {
 	gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), o), gameObjects.end());
 	if (andDelete) {
 		delete o;
+		o = nullptr;
 	}
 }
 
