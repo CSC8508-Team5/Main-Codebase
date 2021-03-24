@@ -22,7 +22,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//irrklang audio system
 	audio = new AudioSystem(s);
 
-
+	inDebugMode = false;
 	forceMagnitude = 10.0f;
 	useGravity = true;
 	inSelectionMode = false;
@@ -86,6 +86,18 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
+	
+	InGameUI1 = new DW_UIPanel("InGameUI");
+	Debug_text1 = new DW_UIText("Scoretext", "DEBUG_TEXT", 0.7f, NCL::Maths::Vector3{ 1000.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	InGameUI1->AddComponent(Debug_text1);
+
+
+
+	DW_UIRenderer::get_instance().AddPanel(InGameUI1);
+	InGameUI1->SetPanelIsEnable(false);
+
+
+
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
 	InGameUI->SetPanelIsEnable(true);
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
@@ -246,7 +258,15 @@ void TutorialGame::UpdateGame(float dt) {
 			Reload();
 		}*/
 		UpdateKeys();
+		if (inDebugMode) {
+			
+			InGameUI1->SetPanelIsEnable(true);
 
+		}
+		else {
+			InGameUI1->SetPanelIsEnable(false);
+
+		}
 
 
 
@@ -665,7 +685,13 @@ void TutorialGame::UpdateKeys() {
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F6)) {
 		audioAgent->GetSoundSource()->SetMinDistance(5.0f);
+	}	
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::K)) {
+		inDebugMode = !inDebugMode;
 	}
+	
+
+
 
 	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
 		PauseMenu->SetPanelActive(true);
