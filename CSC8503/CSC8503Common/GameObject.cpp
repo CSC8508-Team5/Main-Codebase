@@ -35,6 +35,7 @@ GameObject::~GameObject()	{
 	if (bulletPhysicsObject)
 	{
 		PhysicsSystem::RemoveBulletBody(GetBulletBody());
+		delete GetBulletBody()->getMotionState();
 		delete bulletPhysicsObject->getCollisionShape();
 		delete bulletPhysicsObject;
 	}
