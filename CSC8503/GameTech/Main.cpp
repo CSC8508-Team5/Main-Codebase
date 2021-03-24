@@ -121,6 +121,8 @@ class IntroScreen : public PushdownState {
 
 
 int main() {
+	HWND hWnd = GetConsoleWindow();
+	ShowWindow(hWnd, SW_HIDE);					//HIDES CONSOLE
 	SettingsManager* s = new SettingsManager();
 	GameStateManager gsm = GameStateManager();
 	LanguageManager* lang = nullptr;

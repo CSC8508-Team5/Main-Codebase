@@ -6,8 +6,19 @@
 HM_StartMenu::HM_StartMenu(NCL::LanguageManager* lm) {
 	lang = lm;
 	//1.create many ui components if you need! (they must have a name)
+	//std::cout << "\n\n\n\n\n\n\n\nSOCOREBOARD\n\n\n\n\n\n\n\n";
+	//std::cout << GetScoreBoard();
+	vector<std::string> sVector = GetScoreBoard();
+	GameName_text = new DW_UIText("GameNameText", lang->GetText("game_name"), 1.5f, NCL::Maths::Vector3{ 470.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text = new DW_UIText("Scoreboard","TOP SCORES", 1.0f, NCL::Maths::Vector3{ 350.0f,550.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text1 = new DW_UIText("Scoreboard",sVector.at(0), 0.5f, NCL::Maths::Vector3{ 350.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text2 = new DW_UIText("Scoreboard",sVector.at(1), 0.5f, NCL::Maths::Vector3{ 350.0f,450.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text3 = new DW_UIText("Scoreboard",sVector.at(2), 0.5f, NCL::Maths::Vector3{ 350.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text4 = new DW_UIText("Scoreboard",sVector.at(3), 0.5f, NCL::Maths::Vector3{ 350.0f,350.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text5 = new DW_UIText("Scoreboard",sVector.at(4), 0.5f, NCL::Maths::Vector3{ 350.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	//ScoreBoard_text = new DW_UIText("Scoreboard",GetScoreBoard(), 1.5f, NCL::Maths::Vector3{ 400.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	//ScoreBoard_text = new DW_UIText(GetScoreBoard(), lang->GetText("score_board"), 1.5f, NCL::Maths::Vector3{ 470.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
-	GameName_text = new DW_UIText("GameNameText", lang->GetText("game_name"), 1.5f, NCL::Maths::Vector3{ 470.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
 	std::string str{ NCL::Assets::TEXTUREDIR + "button1.png" };
 	Solo_btn = new DW_UIImage("SoloButton", str.c_str(), { 0.33f, 0.1f }, NCL::Maths::Vector3{ 630.0f,315.0f,0.0f });  // single player mode button
@@ -38,6 +49,12 @@ HM_StartMenu::HM_StartMenu(NCL::LanguageManager* lm) {
 	m_panel->AddComponent(Quit_text);
 
 	m_panel->AddComponent(GameName_text);
+	m_panel->AddComponent(ScoreBoard_text);
+	m_panel->AddComponent(ScoreBoard_text1);
+	m_panel->AddComponent(ScoreBoard_text2);
+	m_panel->AddComponent(ScoreBoard_text3);
+	m_panel->AddComponent(ScoreBoard_text4);
+	m_panel->AddComponent(ScoreBoard_text5);
 
 	//4.add callback to this panel, if some of its components be clicked, we can do something here! 
 	//event type is panel's name
@@ -80,4 +97,27 @@ void HM_StartMenu::ClickFunc(const std::string& str) {
 	}
 
 	std::cout << str << "\n";
+}
+
+
+vector<std::string> HM_StartMenu::GetScoreBoard() {
+
+	std::ifstream file;
+	file.open("HighScore.txt");
+
+	if (file.is_open()) {
+		std::string s;
+		std::string sFinal = "";
+		vector<std::string> sVector;
+		int counter = 1;
+		(getline(file, s)); //skips first line 
+		while ((getline(file, s))) {
+			sFinal=std::to_string(counter) + " - " + s;
+			sVector.push_back(sFinal);
+			counter++;
+		}
+		file.close();
+
+		return sVector;
+	}
 }
