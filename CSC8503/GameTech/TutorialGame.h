@@ -87,6 +87,33 @@ namespace NCL {
 			void DebugObjectMovement();
 			void LockedObjectMovement();
 
+			void AddCoinAttributesToObject(GameObject* obj) {
+				obj->SetSoundSource(new SoundSource(Assets::SFXDIR + "PP_Collect_Coin_1_2.wav", obj->GetTransform().GetPosition()));
+				obj->GetSoundSource()->SetMinDistance(50.0f);
+				obj->GetSoundSource()->SetVolume(10.0f);
+				obj->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
+					if (other->GetLayer() == GameObject::Layer::Player)
+					{
+						obj->GetSoundSource()->Play();
+						coincollected += 1;
+						obj->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
+						world->RemoveGameObject(obj, false);
+						std::cout << "Coin Triggered\n";
+					}
+					});
+			}
+			void AddFinishAttributesToObject(GameObject* obj){
+				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
+					if (other->GetLayer() == GameObject::Layer::Player)
+					{
+						GameStateManager::SetGameState(GameStateManager::State::Win);
+						world->RemoveGameObject(obj, false);
+						std::cout << "Finish Triggered\n";
+					}
+					});
+			}
+
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
