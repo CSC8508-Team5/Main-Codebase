@@ -74,23 +74,25 @@ void HM_NextLevel::ClickFunc(const std::string& str) {
 	if (str == "NextLevelButton") {
 		//not finish
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		this->SetPanelActive(false);
-		nextlevel = true;
-		restart = false;
+		//this->SetPanelActive(false);
+		//nextlevel = true;
+		//restart = false;
+		input = 1;
 	}
 	else if (str == "PlayAgainButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
-		this->SetPanelActive(false);
-		restart = true;
-		nextlevel = false;
+		//this->SetPanelActive(false);
+		//restart = true;
+		//nextlevel = false;
+		input = 2;
 	}
 	else if (str == "MenuButton") {
-		this->SetPanelActive(false);
+		//this->SetPanelActive(false);
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		//TODO: change behaviour
-		StartMenu = new HM_StartMenu(lang);
-		restart = false;
-		nextlevel = false;
+		//StartMenu = new HM_StartMenu(lang);
+		//restart = false;
+		//nextlevel = false;
+		input = 3;
 	}
 
 

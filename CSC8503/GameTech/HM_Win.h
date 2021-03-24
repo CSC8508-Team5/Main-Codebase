@@ -38,6 +38,9 @@ public:
 	}
 	bool GetPanelIsEnable() { return m_isEnable; }
 	void SetScore(int currentscore);
+
+	int GetInput() { return input; }
+	void ResetInput() { input = 0; }
 private:
 	DW_UIImage* m_bg;
 
@@ -61,5 +64,6 @@ private:
 	int score;
 
 	NCL::LanguageManager* lang;
+	int input = 0;
 };
 

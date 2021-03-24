@@ -96,7 +96,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
-	InGameUI->SetPanelIsEnable(false);
+	InGameUI->SetPanelIsEnable(true);
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 }
 
@@ -211,10 +211,10 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
 	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::State::Pause) {
-		LoseScreen->SetPanelActive(true);
+		//LoseScreen->SetPanelActive(true);
 		timer = 120;
-		NCL::CSC8503::AudioSystem::StopAll();
-		NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+		//NCL::CSC8503::AudioSystem::StopAll();
+		//NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
 		GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
 	}
 	if ((int(::GetTickCount64() - startTime)>=1000)&&(pausetime ==0) ){

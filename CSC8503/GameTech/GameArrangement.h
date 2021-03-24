@@ -130,6 +130,7 @@ namespace NCL {
 				void OnSleep() override {
 					std::cout << "Leaving OptionMenu\n";
 					AudioSystem::SetGlobalVolume(panel->volume);
+					GSM::SetGameState(GSM::State::Playing);
 					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
 					panel->ResetInput();
@@ -174,6 +175,7 @@ namespace NCL {
 				void OnSleep() override {
 					std::cout << "Leaving PauseMenu\n";
 					AudioSystem::SetGlobalVolume(volume);
+					GSM::SetGameState(GSM::State::Playing);
 					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
 					panel->ResetInput();
@@ -194,20 +196,38 @@ namespace NCL {
 
 			class NextLevelMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-
+					if (panel->GetInput() == 2)
+					{
+						//todo add next level code
+						GSM::SetGameState(GSM::State::Playing);
+						return PushdownResult::Pop;
+					}
+					if (panel->GetInput() == 2)
+					{
+						//todo add restart game code
+						GSM::SetGameState(GSM::State::Playing);
+						return PushdownResult::Pop;
+					}
+					if (panel->GetInput() == 3)
+					{
+						GSM::SetGameState(GSM::State::Stop);
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
+					std::cout << "Showing NextLevelMenu\n";
 					AudioSystem::StopAll();
-					//game->SetGameState(TutorialGame::GameState::Pause);
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
+					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
+					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
+					//todo add panel score update code
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving NextLevelMenu\n";
+					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
-					//game->SetGameState(TutorialGame::GameState::Playing);
+					panel->ResetInput();
 				}
 
 			public:
@@ -223,18 +243,32 @@ namespace NCL {
 
 			class WinMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-
+					if (panel->GetInput() == 1)
+					{
+						//todo add restart game code
+						GSM::SetGameState(GSM::State::Playing);
+						return PushdownResult::Pop;
+					}
+					if (panel->GetInput() == 2)
+					{
+						GSM::SetGameState(GSM::State::Stop);
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
+					std::cout << "Showing WinMenu\n";
 					AudioSystem::StopAll();
-					GameStateManager::SetGameState(GameStateManager::State::Pause);
+					AudioSystem::PlayAudio("FA_Win_Jingle_Loop.ogg");
+					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
+					//todo add panel score update code
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving WinMenu\n";
+					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
+					panel->ResetInput();
 				}
 
 			public:
@@ -250,18 +284,31 @@ namespace NCL {
 
 			class LoseMenu : public PushdownState {
 				PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-
+					if (panel->GetInput() == 1)
+					{
+						//todo add restart game code
+						GSM::SetGameState(GSM::State::Playing);
+						return PushdownResult::Pop;
+					}
+					if (panel->GetInput() == 2)
+					{
+						GSM::SetGameState(GSM::State::Stop);
+						return PushdownResult::Pop;
+					}
 					return PushdownResult::NoChange;
 				}
 				void OnAwake() override {
-					std::cout << "Showing Main Menu\n";
+					std::cout << "Showing LoseMenu\n";
 					AudioSystem::StopAll();
-					GameStateManager::SetGameState(GameStateManager::State::Lose);
+					AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+					window->ShowOSPointer(true);
 					panel->SetPanelActive(true);
 				}
 				void OnSleep() override {
-					std::cout << "Leaving Main Menu\n";
+					std::cout << "Leaving LoseMenu\n";
+					window->ShowOSPointer(false);
 					panel->SetPanelActive(false);
+					panel->ResetInput();
 				}
 
 			public:
@@ -285,6 +332,17 @@ namespace NCL {
 					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O))
 					{
 						*newState = new OptionMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() == GSM::State::Win)
+					{
+						//todo add next level or end win check
+						*newState = new WinMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() >= GSM::State::Lose && GSM::GetGameState() <= GSM::State::LoseTimeout)
+					{
+						*newState = new LoseMenu(game);
 						return PushdownResult::Push;
 					}
 					if (GSM::GetGameState() == GSM::State::Stop)
@@ -323,6 +381,17 @@ namespace NCL {
 					if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O))
 					{
 						*newState = new OptionMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() == GSM::State::Win)
+					{
+						//todo add next level or end win check
+						*newState = new WinMenu(game);
+						return PushdownResult::Push;
+					}
+					if (GSM::GetGameState() >= GSM::State::Lose && GSM::GetGameState() <= GSM::State::LoseTimeout)
+					{
+						*newState = new LoseMenu(game);
 						return PushdownResult::Push;
 					}
 					if (GSM::GetGameState() == GSM::State::Stop)

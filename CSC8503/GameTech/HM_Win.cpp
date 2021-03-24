@@ -67,15 +67,17 @@ void HM_Win::ClickFunc(const std::string& str) {
 	//which image is clicked, the parameter will equal which image's name, then we can do what we want!
 	if (str == "PlayAgainButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Click_Button.wav");
-		this->SetPanelActive(false);
-		restart = true;
+		input = 1;
+		//this->SetPanelActive(false);
+		//restart = true;
 	}
 	else if (str == "MenuButton") {
 		NCL::CSC8503::AudioSystem::PlaySFX("LQ_Back_Button.wav");
-		this->SetPanelActive(false);
+		input = 2;
+		//this->SetPanelActive(false);
 		//todo: change behaviour
-		StartMenu = new HM_StartMenu(lang);
-		restart = false;
+		//StartMenu = new HM_StartMenu(lang);
+		//restart = false;
 	}
 
 
