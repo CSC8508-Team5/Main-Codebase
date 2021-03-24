@@ -336,8 +336,10 @@ namespace NCL {
 					}
 					if (GSM::GetGameState() == GSM::State::Win)
 					{
-						//todo add next level or end win check
-						*newState = new WinMenu(game);
+						if (game->GetCurrentLevel() < game->GetMaxLevel())
+							*newState = new NextLevelMenu(game);
+						else
+							*newState = new WinMenu(game);
 						return PushdownResult::Push;
 					}
 					if (GSM::GetGameState() >= GSM::State::Lose && GSM::GetGameState() <= GSM::State::LoseTimeout)
@@ -385,8 +387,10 @@ namespace NCL {
 					}
 					if (GSM::GetGameState() == GSM::State::Win)
 					{
-						//todo add next level or end win check
-						*newState = new WinMenu(game);
+						if(game->GetCurrentLevel()<game->GetMaxLevel())
+							*newState = new NextLevelMenu(game);
+						else
+							*newState = new WinMenu(game);
 						return PushdownResult::Push;
 					}
 					if (GSM::GetGameState() >= GSM::State::Lose && GSM::GetGameState() <= GSM::State::LoseTimeout)

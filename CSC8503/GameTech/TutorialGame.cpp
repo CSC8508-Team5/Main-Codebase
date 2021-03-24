@@ -189,7 +189,6 @@ void TutorialGame::Reload() {
 		world->ClearAndErase();
 		physics->Clear();
 		InitWorld();
-
 	}
 	
 	audio->StopAll();
