@@ -88,16 +88,19 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI->AddComponent(Timer_text);
 	
 	InGameUI1 = new DW_UIPanel("InGameUI");
-	Debug_text1 = new DW_UIText("Scoretext", "DEBUG_TEXT", 0.7f, NCL::Maths::Vector3{ 1000.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text1 = new DW_UIText("Scoretext", "DEBUG_TEXT_FPS", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text2 = new DW_UIText("Scoretext", "DEBUG_TEXT_TIMING_COSTS", 0.5f, NCL::Maths::Vector3{ 900.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text3 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_FOOTPRINT", 0.5f, NCL::Maths::Vector3{ 900.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text4 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_COLLISIONS", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI1->AddComponent(Debug_text1);
+	InGameUI1->AddComponent(Debug_text2);
+	InGameUI1->AddComponent(Debug_text3);
+	InGameUI1->AddComponent(Debug_text4);
 
 
 
 	DW_UIRenderer::get_instance().AddPanel(InGameUI1);
 	InGameUI1->SetPanelIsEnable(false);
-
-
-
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
 	InGameUI->SetPanelIsEnable(true);
 	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
