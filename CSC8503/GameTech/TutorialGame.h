@@ -156,6 +156,7 @@ namespace NCL {
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
 			DW_UIText* Debug_text1;
+			float fps;
 			DW_UIText* Debug_text2;
 			DW_UIText* Debug_text3;
 			DW_UIText* Debug_text4;

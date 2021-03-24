@@ -26,7 +26,6 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	forceMagnitude = 10.0f;
 	useGravity = true;
 	inSelectionMode = false;
-
 	//current level
 	currentLevel = 1;
 
@@ -88,7 +87,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI->AddComponent(Timer_text);
 	
 	InGameUI1 = new DW_UIPanel("InGameUI");
-	Debug_text1 = new DW_UIText("Scoretext", "DEBUG_TEXT_FPS", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text1 = new DW_UIText("Scoretext","FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text2 = new DW_UIText("Scoretext", "DEBUG_TEXT_TIMING_COSTS", 0.5f, NCL::Maths::Vector3{ 900.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text3 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_FOOTPRINT", 0.5f, NCL::Maths::Vector3{ 900.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text4 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_COLLISIONS", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
@@ -212,8 +211,11 @@ void TutorialGame::Reload() {
 
 /* All update functions */
 void TutorialGame::UpdateGame(float dt) {
+	fps = 1.0f / dt;
+	Debug_text1->SetText("FPS: " + std::to_string((int)fps));	//updateFPS
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)
 	{
+
 		/*if (!inSelectionMode) {
 			world->GetMainCamera()->UpdateCamera(dt);
 		}*/
