@@ -46,6 +46,7 @@ namespace NCL {
 					needsCollision = false;
 				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
 					needsCollision = false;
+			
 
 				/*if (needsCollision)
 				{
@@ -129,7 +130,7 @@ namespace NCL {
 			}
 
 			void SetGravity(const Vector3& g);
-			Vector3 GetGravity()const { return gravity; }
+			static Vector3 GetGravity() { return gravity; }
 
 			//functions for add/remove [rigidbody] to/from dynamicsWorld of bullet physics engine 
 			static void AddBulletBody(btRigidBody* body, int group = (int)GameObject::Layer::Default, int mask = (int)GameObject::Layer::All) { if (dynamicsWorld && body) dynamicsWorld->addRigidBody(body, group, mask); }
@@ -204,7 +205,7 @@ namespace NCL {
 			GameWorld& gameWorld;
 
 			bool	applyGravity;
-			Vector3 gravity;
+			static Vector3 gravity;
 			float	dTOffset;
 			float	globalDamping;
 

@@ -20,7 +20,8 @@ and the forces that are added to objects to change those positions
 */
 
 btDiscreteDynamicsWorld* NCL::CSC8503::PhysicsSystem::dynamicsWorld=nullptr;
-
+bool NCL::CSC8503::PhysicsSystem::useBulletPhysics = false;
+Vector3 NCL::CSC8503::PhysicsSystem::gravity = Vector3(0, -9.8f, 0);
 /// <summary>
 /// Init physics system
 /// </summary>
@@ -259,10 +260,10 @@ void NCL::CSC8503::PhysicsSystem::UpdateBullet(float dt, int maxSteps)
 
 	dynamicsWorld->updateAabbs();
 	
-
+	std::cout << "Outter Call1\n";
 	//dynamicsWorld->stepSimulation(1.f / 60.f, 10);
 	dynamicsWorld->stepSimulation(dt, maxSteps);
-
+	std::cout << "Outter Call2\n";
 	UpdateBulletCallbacks();
 
 	IntegrateBullet();
