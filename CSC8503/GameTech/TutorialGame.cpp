@@ -210,6 +210,8 @@ void TutorialGame::UpdateGame(float dt) {
 	/*if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}*/
+	//todo change game update functionality
+	//todo change timer functionality
 	if (timer <= 0 && GameStateManager::GetGameState() < GameStateManager::State::Pause) {
 		//LoseScreen->SetPanelActive(true);
 		timer = 120;
@@ -1308,6 +1310,8 @@ void TutorialGame::LevelThree() {
 }
 
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
+	//todo ADD collision detection callback
+	//todo Add audio object
 	GameObject* coin = new GameObject();
 	coin = AddBonusToWorld(position);
 	coin->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
