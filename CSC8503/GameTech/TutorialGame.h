@@ -224,6 +224,8 @@ namespace NCL {
 			//Language Manager
 			LanguageManager* langContent;
 			SettingsManager* settings;
+
+			const double PI = 3.1415927;
 		};
 	}
 }
