@@ -61,9 +61,19 @@ namespace NCL
 			{
 				inputVector = Vector3::Zero();
 
-				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-					//inputVector += this->GetTransform().Forward().Normalised();
-					inputVector += Vector3(0, 0, -1);
+
+				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SHIFT)) {
+					if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
+						//inputVector += this->GetTransform().Forward().Normalised();
+						inputVector += Vector3(0, 0, -1)*1.5;
+					}
+				}
+				else 
+				{
+					if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
+						//inputVector += this->GetTransform().Forward().Normalised();
+						inputVector += Vector3(0, 0, -1);
+					}
 				}
 				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
 					//inputVector += this->GetTransform().Backward().Normalised();
@@ -168,6 +178,13 @@ namespace NCL
 			{
 				EvaluateCollision(other);
 				GameObject::OnCollisionBegin(other);
+				if (this->name == "player")
+				{
+					if (other->GetName() == "DestructibleDoor")
+					{
+						other->SetActive(false);
+					}
+				}
 			}
 
 			void OnCollisionStay(GameObject* other)
