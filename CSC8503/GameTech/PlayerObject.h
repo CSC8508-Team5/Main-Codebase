@@ -8,11 +8,46 @@ namespace NCL
 {
 	namespace CSC8503
 	{
+		struct KeyMapping {
+		public:
+			KeyboardKeys forward;
+			KeyboardKeys back;
+			KeyboardKeys left;
+			KeyboardKeys right;
+			KeyboardKeys jump;
+			KeyboardKeys sprint;
+			KeyboardKeys turnLeft;
+			KeyboardKeys turnRight;
+		};
+
 		class PlayerObject : public GameObject
 		{
 		public:
 			PlayerObject(bool isPlayer2 = false)  : GameObject(isPlayer2?"Player2":"Player1"){
+				jumpPhase = 0;
+				if (isPlayer2)
+				{
+					keys.forward = KeyboardKeys::UP;
+					keys.back = KeyboardKeys::DOWN;
+					keys.left = KeyboardKeys::LEFT;
+					keys.right = KeyboardKeys::RIGHT;
+					keys.sprint = KeyboardKeys::CONTROL;
+					keys.jump = KeyboardKeys::NUMPAD5;
+					keys.turnLeft = KeyboardKeys::NUMPAD4;
+					keys.turnRight = KeyboardKeys::NUMPAD6;
 
+				}
+				else
+				{
+					keys.forward = KeyboardKeys::W;
+					keys.back = KeyboardKeys::S;
+					keys.left = KeyboardKeys::A;
+					keys.right = KeyboardKeys::D;
+					keys.sprint = KeyboardKeys::SHIFT;
+					keys.jump = KeyboardKeys::SPACE;
+					keys.turnLeft = KeyboardKeys::Q;
+					keys.turnRight = KeyboardKeys::E;
+				}
 			}
 			~PlayerObject() {};
 
@@ -39,6 +74,11 @@ namespace NCL
 				Quaternion playerorientation = this->GetTransform().GetOrientation();
 				//pitch -= (Window::GetMouse()->GetRelativePosition().y);
 				yaw -= (Window::GetMouse()->GetRelativePosition().x);
+				if (Window::GetKeyboard()->KeyDown(keys.turnLeft))
+					yaw += 0.5f;
+				if (Window::GetKeyboard()->KeyDown(keys.turnRight))
+					yaw -= 0.5f;
+
 
 				if (yaw < 0) {
 					yaw += 360.0f;
@@ -62,34 +102,29 @@ namespace NCL
 				inputVector = Vector3::Zero();
 
 
-				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SHIFT)) {
-					if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
+
+				if (Window::GetKeyboard()->KeyDown(keys.forward)) {
 						//inputVector += this->GetTransform().Forward().Normalised();
-						inputVector += Vector3(0, 0, -1)*1.5;
-					}
+
+					inputVector += Vector3(0, 0, -1) * (Window::GetKeyboard()->KeyDown(keys.sprint)?1.5f:1.0f);
 				}
-				else 
-				{
-					if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-						//inputVector += this->GetTransform().Forward().Normalised();
-						inputVector += Vector3(0, 0, -1);
-					}
-				}
-				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
+				
+				if (Window::GetKeyboard()->KeyDown(keys.back)) {
 					//inputVector += this->GetTransform().Backward().Normalised();
 					inputVector += Vector3(0, 0, 1);
 				}
-				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
+				if (Window::GetKeyboard()->KeyDown(keys.right)) {
 					//inputVector += this->GetTransform().Right().Normalised();
 					inputVector += Vector3(1, 0, 0);
 				}
-				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
+				if (Window::GetKeyboard()->KeyDown(keys.left)) {
 					//inputVector += this->GetTransform().Left().Normalised();
 					inputVector += Vector3(-1, 0, 0);
 				}
 
 				//inputVector.Normalise();
 			}
+
 			void updateVelocity(float dt)
 			{
 				if (!PhysicsSystem::isUseBulletPhysics())
@@ -216,6 +251,8 @@ namespace NCL
 			}
 
 		protected:
+			bool is2P = false;
+
 			float yaw = 0;
 			Vector3 inputVector;
 			const float PI = 3.1415926f;
@@ -235,6 +272,8 @@ namespace NCL
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
 			float maxGroundAcceleration = 60.0f;
+
+			KeyMapping keys;
 		};
 	}
 }
