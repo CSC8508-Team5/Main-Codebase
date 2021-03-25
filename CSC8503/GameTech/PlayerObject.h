@@ -129,7 +129,7 @@ namespace NCL
 
 			void updateJump()
 			{
-				desiredJump |= Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE);
+				desiredJump |= Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE);
 			}
 
 			void Jump()
@@ -164,7 +164,7 @@ namespace NCL
 
 			void OnCollisionEnd(GameObject* other)
 			{
-				//onGround = false;
+				onGround = false;
 				GameObject::OnCollisionEnd(other);
 			}
 
