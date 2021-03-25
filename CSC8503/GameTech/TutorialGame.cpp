@@ -9,7 +9,8 @@
 #include <list>
 #include <algorithm>
 #include <math.h>
-
+#include "windows.h"
+#include "psapi.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -88,7 +89,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	Debug_text1 = new DW_UIText("Scoretext","FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text2 = new DW_UIText("Scoretext", "DEBUG_TEXT_TIMING_COSTS", 0.5f, NCL::Maths::Vector3{ 900.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text3 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_FOOTPRINT", 0.5f, NCL::Maths::Vector3{ 900.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Debug_text4 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_COLLISIONS", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text4 = new DW_UIText("Scoretext", "Click object for info", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI1->AddComponent(Debug_text1);
 	InGameUI1->AddComponent(Debug_text2);
 	InGameUI1->AddComponent(Debug_text3);
@@ -232,14 +233,19 @@ void TutorialGame::UpdateGame(float dt) {
 	fps = 1.0f / dt;
 	Debug_text1->SetText("FPS: " + std::to_string((int)fps));	//updateFPS
 
-	MEMORYSTATUSEX memInfo;
+	/*MEMORYSTATUSEX memInfo;
 	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
 	GlobalMemoryStatusEx(&memInfo);
 	DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
 	DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
-	DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
-	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsed/100000) + " Mb");	//vram
-	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /100000) + " Mb");	//ram
+	DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;*/
+	PROCESS_MEMORY_COUNTERS_EX pmc;
+	GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+	SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+
+
+	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe /800000) + " MB");	//vram
+	//Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /800000) + " MB");	//ram
 	
 
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
