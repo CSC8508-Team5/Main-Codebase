@@ -159,6 +159,7 @@ namespace NCL {
 			//adding for level design
 			GameObject** LevelOne();
 			GameObject* AddCannonToWorld(const Vector3& position, string orientation);
+			Vector4 prevColor;
 
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;

@@ -51,9 +51,9 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	numstairs = 14;
 	coincollected = 0;
 	//end 
-
+	
 	settings = s;
-	selectionObject = player;
+	//selectionObject = player;
 
 	if (settings)
 		langContent = new LanguageManager();
@@ -285,8 +285,9 @@ void TutorialGame::UpdateGame(float dt) {
 			InGameUI1->SetPanelIsEnable(false);
 
 		}
-		Debug_text4->SetText("Collision: " + std::to_string(selectionObject->GetWorldID()));	//non functional atm
-
+		if (selectionObject) {
+			Debug_text4->SetText("Collision: " + std::to_string(selectionObject->GetWorldID()));	//non functional atm
+		}
 
 
 
@@ -2071,11 +2072,12 @@ bool TutorialGame::SelectObject() {
 	//	}
 	//}
 	//if (inSelectionMode) {
-		//renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
+	//renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
-				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+				selectionObject->GetRenderObject()->SetColour(prevColor);
+				//prevColor = nullptr;
 				selectionObject = nullptr;
 
 			}
@@ -2090,6 +2092,7 @@ bool TutorialGame::SelectObject() {
 			if (physics->isUseBulletPhysics() && PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
 
 				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
+				prevColor =selectionObject->GetRenderObject()->GetColour();
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 			
 				return true;
@@ -2097,6 +2100,7 @@ bool TutorialGame::SelectObject() {
 			else if(!physics->isUseBulletPhysics() && world->Raycast(ray, closestCollision, true))
 			{
 				selectionObject = (GameObject*)closestCollision.node;
+				prevColor = selectionObject->GetRenderObject()->GetColour();
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 				return true;
 			}
