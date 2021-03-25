@@ -97,7 +97,8 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI1->AddComponent(Debug_text3);
 	InGameUI1->AddComponent(Debug_text4);
 
-
+	player1HUD = new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0));
+	player2HUD = new DW_UIHUD("../../Assets/Textures/HUD2.png", Vector2(1, 1), Vector3(0, 4.5, 0));
 
 	DW_UIRenderer::get_instance().AddPanel(InGameUI1);
 	InGameUI1->SetPanelIsEnable(false);
@@ -491,18 +492,23 @@ void TutorialGame::UpdateLevelOne() {
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
 		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
-			//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-			//player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
+	
+			Vector3 currentspeed = player->GetPhysicsObject()->GetLinearVelocity();
+			if (platforms[i]->GetPhysicsObject()->GetLinearVelocity().Length() > 0) {
+							//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
+			player->GetPhysicsObject()->SetLinearVelocity( platforms[i]->GetPhysicsObject()->GetLinearVelocity());
+			}
+
 			isjump = false;
 			currenthight = player->GetTransform().GetPosition().y;
 		}
 		//finish
-		/*if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
+		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
 			isfinish = true;
 			ispause = true;
 			//audio->StopAll();
 			//audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-		}*/
+		}
 	}
 };
 
@@ -541,13 +547,6 @@ void TutorialGame::UpdateLevelThree(float dt) {
 	}*/
 }
 
-void TutorialGame::UpdateSpinningPlatform() {
-	spinplat->GetPhysicsObject()->SetAngularVelocity(Vector3(0.0f, 2.0f, 0.0f));
-	CollisionDetection::CollisionInfo info;
-	if (CollisionDetection::ObjectIntersection(player, spinplat, info)) {
-		isjump = false;
-	}
-}
 
 //todo update coins behaviour
 void TutorialGame::UpdateCoins() {
@@ -1412,26 +1411,6 @@ GameObject* TutorialGame::AddCannonToWorld(const Vector3& position, string orien
 	return bullet;
 }
 
-GameObject* TutorialGame::SpinningPlatform() {
-	float radius = 30.0f;
-	float hight = 2.5f;
-	Vector3 position = Vector3(-150, 5, -80);
-	GameObject* spinplat = AddCylinderToWorld(position, radius, hight, 0.0f);
-	spinplat->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
-	return spinplat;
-}
-
-void TutorialGame::Pendulum() {
-	float sphereradius = 5.0f;
-	float cylinderhalfhight = 10.0f;
-	Vector3 cylinderposition = Vector3(10, 20, 10);
-	Vector3 sphereposition = cylinderposition - Vector3(0, 10, 0);
-	GameObject* sphere = AddSphereToWorld(sphereposition, sphereradius, 0.0f);
-	GameObject* cylinder = AddCylinderToWorld(cylinderposition, 0.5f, cylinderhalfhight, 0.0f);
-
-
-}
-
 void TutorialGame::BridgeConstraintTest() {
 	Vector3 cubeSize = Vector3(8, 8, 8);
 	float invCubeMass = 5; // how heavy the middle pieces are
@@ -1953,6 +1932,7 @@ void NCL::CSC8503::TutorialGame::InstantiateCharaters()
 	//orientation.Normalise();
 	player->GetTransform().SetOrientation(playerOrigin.GetOrientation());
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+	player->SetHUD(player1HUD);
 	//ResetCharacters();
 	//currenthight = position.y;
 }
