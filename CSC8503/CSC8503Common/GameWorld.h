@@ -31,6 +31,10 @@ namespace NCL {
 				return mainCamera;
 			}
 
+			Camera* GetSecondCamera() const {
+				return secondCamera;
+			}
+
 			GameObject* GetGameObjectByBulletBody(const btCollisionObject* body);
 
 			void ShuffleConstraints(bool state) {
@@ -60,6 +64,7 @@ namespace NCL {
 			std::vector<Constraint*> constraints;
 
 			Camera* mainCamera;
+			Camera* secondCamera;
 
 			bool	shuffleConstraints;
 			bool	shuffleObjects;

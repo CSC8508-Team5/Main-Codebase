@@ -297,6 +297,7 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 		UpdatePlayer(dt);
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
+		world->GetSecondCamera()->UpdateThirdPersonCamera(testEnemy->GetTransform(), Vector3::Up(), dt);
 		//UpdateSpinningPlatform();
 	}
 	if (isdead) {//reset player
@@ -322,7 +323,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 	audio->Update(*world->GetMainCamera());
 
-	renderer->Render();
+	//renderer->Render();
+	renderer->RenderSplitscreen(2);
 }
 
 void TutorialGame::UpdateLevelOne() {

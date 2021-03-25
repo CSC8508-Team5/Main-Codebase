@@ -49,13 +49,22 @@ namespace NCL {
 				}
 			}
 
+			void RenderSplitscreen(int screenMax) {
+				BeginFrame();
+				for (int i = 0; i < screenMax; i++) 
+					RenderFrameSplitscreen(i, screenMax);
+				EndFrame();
+				SwapBuffers();
+			}
+
 			void Update(float dt) override;
 
 			void SetIsRenderFlame(const bool flag) { m_isRenderFlame = flag; }
 
 		protected:
 			void RenderFrame()	override;
-			
+
+			void RenderFrameSplitscreen(int screenCur, int screenMax);
 
 			Matrix4 SetupDebugLineMatrix()	const override;
 			Matrix4 SetupDebugStringMatrix()const override;
@@ -68,6 +77,7 @@ namespace NCL {
 			void SortObjectList();
 			void RenderShadowMap();
 			void RenderCamera(); 
+			void RenderSecondCamera();
 			void RenderSkybox();
 			void RenderUI();
 			void RenderHUD();
@@ -126,6 +136,9 @@ namespace NCL {
 			bool m_isRenderFlame{true};
 			OGLShader* m_rainShader;
 			DW_Rain* m_rain;
+
+			bool splitscreen;
+			int splitcount;
 		};
 	}
 }
