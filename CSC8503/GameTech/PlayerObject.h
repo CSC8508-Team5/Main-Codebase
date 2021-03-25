@@ -20,7 +20,7 @@ namespace NCL
 				updateOrientation(dt);
 				updateInputVector();
 				updateJump();
-				updateVelocity(dt);
+				//updateVelocity(dt);
 				GameObject::Update(dt);
 			}
 
@@ -28,6 +28,7 @@ namespace NCL
 			{
 				/*if(PhysicsSystem::isUseBulletPhysics())
 					updateBulletVelocity(dt);*/
+				updateVelocity(dt);
 			}
 
 			//void FixedUpdate();
@@ -153,20 +154,34 @@ namespace NCL
 			}
 			void OnCollisionBegin(GameObject* other)
 			{
-				onGround = true;
+				EvaluateCollision(other);
 				GameObject::OnCollisionBegin(other);
 			}
 
 			void OnCollisionStay(GameObject* other)
 			{
-				onGround = true;
+				//EvaluateCollision(other);
 				GameObject::OnCollisionStay(other);
 			}
 
 			void OnCollisionEnd(GameObject* other)
 			{
-				onGround = false;
+				EvaluateCollision(other);
 				GameObject::OnCollisionEnd(other);
+			}
+
+			void EvaluateCollision(GameObject* other)
+			{
+				CollisionDetection::CollisionInfo info;
+				if (CollisionDetection::ObjectIntersection(this, other, info)) {
+					Vector3 normal = -info.point.normal;
+					//std::cout << "Normal::" << normal << std::endl;
+					onGround |= normal.y >= 0.9f;
+				}
+				else
+				{
+					onGround = false;
+				}
 			}
 
 		protected:
