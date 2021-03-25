@@ -47,7 +47,7 @@ namespace NCL {
 			int GetAddingScore() { return score + timer * 10 + coincollected * 50; }
 
 			void ChangeLevel() { currentLevel += 1; }
-			void ResetLevel() { inDebugMode = false; selectionObject = nullptr; InitWorld(); }
+			void ResetLevel() { inDebugMode = false; selectionObject = nullptr; player = nullptr; enemy = nullptr; InitWorld(); }
 
 			void SetMode(bool isDuoMode) { renderer->SetSplitscreen(isDuoMode); }
 
