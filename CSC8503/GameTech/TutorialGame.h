@@ -200,9 +200,7 @@ namespace NCL {
 			float		yaw;
 			float		pitch;
 			bool		isjump;
-			bool		isfinish;
 			bool		ispause;
-			bool		isdead;
 			int			currentLevel = 1;
 			int			numstairs;
 			int			numcoins;
@@ -210,7 +208,6 @@ namespace NCL {
 			int			timer;
 			int			pausetime;
 			int			score;
-			float		currenthight;
 			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;
