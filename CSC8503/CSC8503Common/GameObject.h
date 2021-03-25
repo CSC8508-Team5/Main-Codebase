@@ -177,6 +177,12 @@ namespace NCL {
 					GetBulletBody()->getBroadphaseHandle()->m_collisionFilterGroup = (unsigned int)layer;
 			}
 
+			void GetCollisionObjectIterators(vector<GameObject*>::iterator& begin, vector<GameObject*>::iterator& end)
+			{
+				begin = collisionObjects.begin();
+				end = collisionObjects.end();
+			}
+			size_t GetCollisionObjectCount() { return collisionObjects.size(); }
 			void AddCollisionObject(GameObject* object)
 			{
 				vector<GameObject*>::iterator it;
