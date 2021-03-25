@@ -19,14 +19,14 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	renderer->SetIsRenderFlame(false);
-	physics = new PhysicsSystem(*world,s->GetUseBulletEngine());
+	physics = new PhysicsSystem(*world, s->GetUseBulletEngine());
 	//irrklang audio system
 	audio = new AudioSystem(s);
 
 	inDebugMode = false;
 	forceMagnitude = 10.0f;
 	useGravity = true;
-	inSelectionMode = false; 
+	inSelectionMode = false;
 	//current level
 	currentLevel = 1;
 
@@ -49,7 +49,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	numstairs = 14;
 	coincollected = 0;
 	//end 
-	
+
 	settings = s;
 	//selectionObject = player;
 
@@ -69,9 +69,9 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
-	
+
 	InGameUI1 = new DW_UIPanel("InGameUI");
-	Debug_text1 = new DW_UIText("Scoretext","FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text1 = new DW_UIText("Scoretext", "FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text2 = new DW_UIText("Scoretext", "DEBUG_TEXT_TIMING_COSTS", 0.5f, NCL::Maths::Vector3{ 900.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text3 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_FOOTPRINT", 0.5f, NCL::Maths::Vector3{ 900.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text4 = new DW_UIText("Scoretext", "Click object for info", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
@@ -223,15 +223,15 @@ void TutorialGame::UpdateGame(float dt) {
 	SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
 	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
-	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe /100000) + " MBs");	//vram
-	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsedByMe /100000) + " MBs");	//ram
-	
+	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe / 100000) + " MBs");	//vram
+	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsedByMe / 100000) + " MBs");	//ram
 
-	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
+
+	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)
 	{
 
 		if (timer <= 0) {
-			
+
 			GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
 		}
 		if ((int(::GetTickCount64() - startTime) >= 1000) && (pausetime == 0)) {
@@ -244,10 +244,10 @@ void TutorialGame::UpdateGame(float dt) {
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::Y))
 			GameStateManager::SetGameState(GameStateManager::State::Win);
-		
+
 		UpdateKeys();
 		if (inDebugMode) {
-			
+
 			InGameUI1->SetPanelIsEnable(true);
 			SelectObject();
 		}
@@ -263,11 +263,11 @@ void TutorialGame::UpdateGame(float dt) {
 				selectionObject->GetCollisionObjectIterators(begin, end);
 				for (vector<GameObject*>::iterator i = begin; i != end; i++)
 				{
-					objectsStr += (*i)->GetWorldID()+ ":"+(*i)->GetName()+", ";
+					objectsStr += (*i)->GetWorldID() + ":" + (*i)->GetName() + ", ";
 				}
 			}
-			
-			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with "+ objectsStr  );	//non functional atm
+
+			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with " + objectsStr);	//non functional atm
 		}
 
 
@@ -321,7 +321,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 		}
 
-		
+
 
 		CollisionDetection::CollisionInfo info;
 		if (currentLevel == 1) {//Update level 1
@@ -332,11 +332,14 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 		else if (currentLevel == 3) { //Update level 3
 			UpdateLevelThree(dt);
-			
+
 		}
 
-		
+
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
+		if (testEnemy) {
+			world->GetSecondCamera()->UpdateThirdPersonCamera(testEnemy->GetTransform(), Vector3::Up(), dt);
+		}
 	}
 
 
@@ -344,7 +347,8 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	DW_UIRenderer::get_instance().Update(dt);
 	audio->Update(*world->GetMainCamera());
-	renderer->Render();
+	//renderer->Render();
+	renderer->RenderSplitscreen(2);
 }
 
 void TutorialGame::UpdateLevelOne() {
@@ -359,7 +363,7 @@ void TutorialGame::UpdateLevelOne() {
 					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 				}
 				else
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+					platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 10) {
 				if (physics->isUseBulletPhysics())
@@ -368,7 +372,7 @@ void TutorialGame::UpdateLevelOne() {
 					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 				}
 				else
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+					platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		else if (i % 3 == 0) {
@@ -379,7 +383,7 @@ void TutorialGame::UpdateLevelOne() {
 					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
 				}
 				else
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
+					platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 60) {
 				if (physics->isUseBulletPhysics())
@@ -388,7 +392,7 @@ void TutorialGame::UpdateLevelOne() {
 					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
 				}
 				else
-				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
+					platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		UpdateCoins();
@@ -401,12 +405,12 @@ void TutorialGame::UpdateLevelOne() {
 
 void TutorialGame::UpdateLevelTwo() {
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
-	
+
 }
 
 void TutorialGame::UpdateLevelThree(float dt) {
 	UpdateCoins();
-	
+
 }
 
 
@@ -423,7 +427,7 @@ void TutorialGame::UpdateCoins() {
 			}
 			else
 				coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
-			
+
 		}
 	}
 }
@@ -443,7 +447,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 				bullet->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 10));
 			else
 				bullet->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 10));
-			
+
 
 		}
 		else if (direction == "right") {
@@ -480,13 +484,13 @@ void TutorialGame::UpdatePlayer(float dt) {
 		ResetCharacters();
 		timer = timer - 5;
 	}
-	
+
 }
 
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
 		InitWorld(); //We can reset the simulation at any time with F1
-		
+
 	}
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F2)) {
@@ -521,7 +525,7 @@ void TutorialGame::UpdateKeys() {
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F6)) {
 		audioAgent->GetSoundSource()->SetMinDistance(5.0f);
-	}	
+	}
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::K)) {
 		inDebugMode = !inDebugMode;
 		if (inDebugMode) {
@@ -533,11 +537,11 @@ void TutorialGame::UpdateKeys() {
 			Window::GetWindow()->LockMouseToWindow(true);
 		}
 	}
-	
 
 
 
-	
+
+
 }
 
 /* Scoreboard functionality */
@@ -743,13 +747,13 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(-33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
-	
+
 	AddWallToWorld(Vector3(-22, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
-	
+
 	AddWallToWorld(Vector3(0, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar		
-	
+
 	AddWallToWorld(Vector3(22, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar
 	AddDoorToWorld(Vector3(39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -760,7 +764,7 @@ void TutorialGame::InitLevel2design() {
 
 	AddWallToWorld(Vector3(-44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
-	
+
 	AddWallToWorld(Vector3(-22, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-11, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-5, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -769,7 +773,7 @@ void TutorialGame::InitLevel2design() {
 
 	AddWallToWorld(Vector3(22, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
-	
+
 	AddWallToWorld(Vector3(44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 
@@ -1644,38 +1648,38 @@ letting you move the camera around.
 */
 bool TutorialGame::SelectObject() {
 
-		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
-			if (selectionObject) {	//set colour to deselected;
-				selectionObject->GetRenderObject()->SetColour(prevColor);
-				selectionObject = nullptr;
+	if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
+		if (selectionObject) {	//set colour to deselected;
+			selectionObject->GetRenderObject()->SetColour(prevColor);
+			selectionObject = nullptr;
 
-			}
-
-			//Raycasting is a bit same as before, you should build ray first
-			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
-
-
-			//you will get RayCollision for raycasting output as well as before
-			RayCollision closestCollision;
-			if (physics->isUseBulletPhysics() && PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
-
-				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
-				prevColor =selectionObject->GetRenderObject()->GetColour();
-				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
-			
-				return true;
-			}
-			else if(!physics->isUseBulletPhysics() && world->Raycast(ray, closestCollision, true))
-			{
-				selectionObject = (GameObject*)closestCollision.node;
-				prevColor = selectionObject->GetRenderObject()->GetColour();
-				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
-				return true;
-			}
-			else {
-				return false;
-			}
 		}
+
+		//Raycasting is a bit same as before, you should build ray first
+		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
+
+
+		//you will get RayCollision for raycasting output as well as before
+		RayCollision closestCollision;
+		if (physics->isUseBulletPhysics() && PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
+
+			selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
+			prevColor = selectionObject->GetRenderObject()->GetColour();
+			selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+			return true;
+		}
+		else if (!physics->isUseBulletPhysics() && world->Raycast(ray, closestCollision, true))
+		{
+			selectionObject = (GameObject*)closestCollision.node;
+			prevColor = selectionObject->GetRenderObject()->GetColour();
+			selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	return false;
 }
@@ -1721,7 +1725,7 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, co
 
 	StateGameObject* newStateObject = new StateGameObject("State Cube", switchD, perpendicular);
 
-	
+
 	newStateObject->GetTransform()
 		.SetScale(dimensions * 2)
 		.SetPosition(position);
@@ -1768,7 +1772,7 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position, co
 		newStateObject->GetPhysicsObject()->SetInverseMass(0.0f);
 	}
 
-	
+
 	newStateObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 
 	world->AddGameObject(newStateObject);
