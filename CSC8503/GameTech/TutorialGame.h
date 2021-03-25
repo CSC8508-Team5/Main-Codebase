@@ -47,7 +47,7 @@ namespace NCL {
 			int GetAddingScore() { return score + timer * 10 + coincollected * 50; }
 
 			void ChangeLevel() { currentLevel += 1; }
-			void ResetLevel() { InitWorld(); }
+			void ResetLevel() { inDebugMode = false; selectionObject = nullptr; InitWorld(); }
 
 		protected:
 			void InitialiseAssets();
