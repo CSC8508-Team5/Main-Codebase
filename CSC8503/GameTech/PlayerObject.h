@@ -188,6 +188,7 @@ namespace NCL
 					Vector3 normal = -info.point.normal;
 					//std::cout << "Normal::" << normal << std::endl;
 					onGround |= normal.y >= 0.9f;
+					relativeVelocity += other->GetPhysicsObject()->GetLinearVelocity();
 				}
 				else
 				{
@@ -210,6 +211,7 @@ namespace NCL
 			int jumpPhase;
 
 			float maxSpeed = 20.0f;
+			Vector3 relativeVelocity = Vector3::Zero();
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
 			float maxGroundAcceleration = 60.0f;
