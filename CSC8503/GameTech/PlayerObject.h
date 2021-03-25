@@ -129,7 +129,8 @@ namespace NCL
 
 			void updateJump()
 			{
-				desiredJump |= Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE);
+				//desiredJump |= Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE);
+				desiredJump = Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE);
 			}
 
 			void Jump()
