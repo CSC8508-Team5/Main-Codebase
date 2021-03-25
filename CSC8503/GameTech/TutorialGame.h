@@ -153,9 +153,9 @@ namespace NCL {
 			GameObject* CreateBulletCapsule(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 			GameObject* CreateBulletCylinder(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
-			GameObject* AddPlayerToWorld(const Vector3& position);
+			GameObject* AddPlayerToWorld(const Vector3& position, bool isPlayer2);
 			GameObject* AddEnemyToWorld(const Vector3& position);
-			GameObject* AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name = "char");
+			GameObject* AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name = "char", bool isPlayer2 = false);
 			GameObject* AddBonusToWorld(const Vector3& position);
 
 			GameObject* AddWallToWorld(const Vector3& position, int x, int y, int z, OGLTexture* tempTex, string name);

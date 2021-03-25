@@ -337,8 +337,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
-		if (testEnemy) {
-			world->GetSecondCamera()->UpdateThirdPersonCamera(testEnemy->GetTransform(), Vector3::Up(), dt);
+		if (enemy) {
+			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), dt);
 		}
 	}
 
@@ -635,6 +635,7 @@ void TutorialGame::InitLevel1() {
 
 	InitCharaters(Vector3(-150, 10, 0));
 	InstantiateCharaters();
+	//InitAiEnemy1();
 	//-------------LV1 -------------------------------------
 
 	platforms = LevelOne();
@@ -1498,19 +1499,32 @@ void TutorialGame::InitDefaultFloor(bool useBullet) {
 
 void NCL::CSC8503::TutorialGame::InstantiateCharaters()
 {
-	player = AddPlayerToWorld(playerOrigin.GetPosition());
+	player = AddPlayerToWorld(playerOrigin.GetPosition(),false);
 	player->GetTransform().SetOrientation(playerOrigin.GetOrientation());
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-	player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
+	
+	if (renderer->GetSplitscreen())
+	{
+		enemy = AddPlayerToWorld(playerOrigin.GetPosition()+Vector3(5,0,0),true);
+		enemy->GetTransform().SetOrientation(playerOrigin.GetOrientation());
+		enemy->GetRenderObject()->SetColour(Vector4(0, 0.5, 1, 1));
+	}
+	else
+	{
+		player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
+	}
 }
 
-GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
+GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position, bool isPlayer2) {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
-
-	GameObject* character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player");
+	GameObject* character = nullptr;
+	if(isPlayer2)
+		character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "player2" , isPlayer2);
+	else
+		character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player1", isPlayer2);
+	
 	character->SetLayer(GameObject::Layer::Player);
-
 
 	return character;
 }
@@ -1525,12 +1539,12 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	return character;
 }
 
-GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name)
+GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& position, OGLMesh* mesh, OGLTexture* texture, OGLShader* shader, string name,bool isPlayer2)
 {
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	GameObject* character = new PlayerObject();
+	GameObject* character = new PlayerObject(isPlayer2);
 
 	character->GetTransform()
 		.SetScale(Vector3(meshSize, meshSize, meshSize))
