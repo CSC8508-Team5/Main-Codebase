@@ -2055,9 +2055,15 @@ bool TutorialGame::SelectObject() {
 			//you will get RayCollision for raycasting output as well as before
 			RayCollision closestCollision;
 			//if (world->Raycast(ray, closestCollision, true)) {
-			if (PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
+			if (physics->isUseBulletPhysics() && PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
 
 				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
+				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+				return true;
+			}
+			else if(!physics->isUseBulletPhysics() && world->Raycast(ray, closestCollision, true))
+			{
+				selectionObject = (GameObject*)closestCollision.node;
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 				return true;
 			}
