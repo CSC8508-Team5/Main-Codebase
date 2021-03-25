@@ -955,12 +955,16 @@ GameObject* TutorialGame::AddCannonToWorld(const Vector3& position, string orien
 		sphere1 = AddSphereToWorld(position + Vector3(-2.5, 2.5, 1), 1.5f, 0);
 		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, -2.5), 1.5f, 0);
 		bullet = AddSphereToWorld(position + Vector3(6, 7, 6), 1.5f, 0);
+		bullet->GetPhysicsObject()->SetTrigger(true);
+		bullet->SetLayer(GameObject::Layer::Projectile);
 	}
 	else if (orientation == "right") {
 		cylinderturn = Quaternion(0.5, 0, 0.5, 0.5);
 		sphere1 = AddSphereToWorld(position + Vector3(-1, 2.5, -1.5), 1.5f, 0);
 		sphere2 = AddSphereToWorld(position + Vector3(1, 2.5, 1.5), 1.5f, 0);
 		bullet = AddSphereToWorld(position + Vector3(6, 7, -6), 1.5f, 0);
+		bullet->GetPhysicsObject()->SetTrigger(true);
+		bullet->SetLayer(GameObject::Layer::Projectile);
 	}
 	else {
 		cylinderturn = Quaternion(0.5, 0.5, 0, 0.5);
