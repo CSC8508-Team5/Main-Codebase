@@ -442,9 +442,9 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateLevelTwo() {
+	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	/*
 	CollisionDetection::CollisionInfo info;
-	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	//finish
 	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
 		isfinish = true;
