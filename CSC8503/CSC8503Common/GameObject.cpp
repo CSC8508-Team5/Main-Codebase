@@ -20,6 +20,8 @@ GameObject::GameObject(string objectName)	{
 	endFunc = nullptr;
 	stayFunc = nullptr;
 	updateFunc = nullptr;
+
+	collisionObjects.clear();
 }
 
 GameObject::~GameObject()	{
@@ -41,7 +43,6 @@ GameObject::~GameObject()	{
 	}
 	delete m_HUD;
 
-	collisionObjects.clear();
 }
 
 void NCL::CSC8503::GameObject::SetBulletPhysicsObject(btCollisionObject* newObject)
