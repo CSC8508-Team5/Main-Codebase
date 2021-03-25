@@ -210,6 +210,29 @@ void TutorialGame::Reload() {
 	//scoreAdded = false;
 }
 
+
+
+string enum_to_string(VolumeType type) {
+	switch (type) {
+	case VolumeType::AABB:
+		return "AABB";
+	case VolumeType::OBB:
+		return "OBB";
+	case VolumeType::Sphere:
+		return "Sphere";
+	case VolumeType::Mesh:
+		return "Mesh";
+	case VolumeType::Capsule:
+		return "Capsule";
+	case VolumeType::Compound:
+		return "Compound";
+	case VolumeType::Invalid:
+		return "Invalid";
+	}
+	return "Empty";
+}
+
+
 /* All update functions */
 void TutorialGame::UpdateGame(float dt) {
 	fps = 1.0f / dt;
@@ -285,7 +308,10 @@ void TutorialGame::UpdateGame(float dt) {
 
 		}
 		if (selectionObject) {
-			Debug_text4->SetText("Collision: " + std::to_string(selectionObject->GetWorldID()));	//non functional atm
+			//std::string s = selectionObject->GetBoundingVolume()->type;
+
+			//GameObject* temp = (GameObject*)selectionObject->OnCollisionBegin();
+			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with"  );	//non functional atm
 		}
 
 
