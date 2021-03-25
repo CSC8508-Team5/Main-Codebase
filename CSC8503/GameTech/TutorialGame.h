@@ -163,8 +163,14 @@ namespace NCL {
 
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
+			DW_UIText* Debug_text1;
+			float fps;
+			DW_UIText* Debug_text2;
+			DW_UIText* Debug_text3;
+			DW_UIText* Debug_text4;
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
+			DW_UIPanel* InGameUI1;
 			void Pendulum();
 			void UpdateLevelOne();
 			void UpdateLevelTwo();
@@ -187,7 +193,7 @@ namespace NCL {
 			AudioSystem* audio;
 			bool useGravity;
 			bool inSelectionMode;
-
+			bool inDebugMode;
 
 			float		forceMagnitude;
 			//adding for level design
