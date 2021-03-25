@@ -124,6 +124,9 @@ namespace NCL {
 			int		GetWorldID() const {
 				return worldID;
 			}
+			void SetActive(bool value) {
+				isActive = value;
+			}
 
 			void SetHUD(DW_UIHUD* hud) { m_HUD = hud; }
 			DW_UIHUD* GetHUD() { return m_HUD; }

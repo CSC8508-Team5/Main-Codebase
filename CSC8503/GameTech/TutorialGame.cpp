@@ -1090,8 +1090,8 @@ void TutorialGame::InitLevel2design() {
 	level2Floor = AddWallToWorld(Vector3(0, 0, 0), 56, 1, 350, yellowTex, "floor");  //floor	
 	AddWallToWorld(Vector3(-56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
 	AddWallToWorld(Vector3(56.5, 10, 0), 1, 11, 350, whiteTex, "sidewall");  //sidewall
-	AddWallToWorld(Vector3(0, 10, 351), 56, 11, 1, whiteTex, "frontwall");  //frontwall
-	AddWallToWorld(Vector3(0, 10, -351), 56, 11, 1, whiteTex, "backwall");  //backwall	
+	AddWallToWorld(Vector3(0, 10, 349), 56, 11, 1, whiteTex, "frontwall");  //frontwall
+	AddWallToWorld(Vector3(0, 10, -349), 56, 11, 1, whiteTex, "backwall");  //backwall	
 	level2finishLine = AddWallToWorld(Vector3(0, 0.1, 320), 56, 1, 7, finishTex, "finishline");  //finish
 	AddFinishAttributesToObject(level2finishLine);
 
