@@ -57,6 +57,8 @@ void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 of
 	pitch = std::max(pitch, -89.0f);
 
 	float cameraDistance = 15.0f;
+	cameraDistance = std::min(rayDistance, cameraDistance);
+
 	float cameraYOffset = cameraDistance * sin(-pitch * Camera::Deg2Rad);
 	float cameraXOffset = cameraDistance * cos(-pitch * Camera::Deg2Rad);
 	Vector3 camerTargetPos = target.GetPosition()

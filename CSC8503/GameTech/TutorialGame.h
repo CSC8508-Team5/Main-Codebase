@@ -66,6 +66,8 @@ namespace NCL {
 			
 			float CameraRayTest(GameObject* obj)
 			{
+				if (!obj)
+					return FLT_MAX;
 				Ray cameraTest = Ray(obj->GetTransform().GetPosition(), (world->GetMainCamera()->GetPosition() - obj->GetTransform().GetPosition()).Normalised());
 				RayCollision rc;
 				GameObject::Layer mask = GameObject::Layer::Default;
