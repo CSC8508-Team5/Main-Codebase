@@ -20,17 +20,14 @@ namespace NCL
 				updateOrientation(dt);
 				updateInputVector();
 				updateJump();
-				if (!PhysicsSystem::isUseBulletPhysics())
-				{
-					updateRawVelocity(dt);
-				}
+				updateVelocity(dt);
 				GameObject::Update(dt);
 			}
 
 			virtual void FixedUpdate(float dt)
 			{
-				if(PhysicsSystem::isUseBulletPhysics())
-					updateBulletVelocity(dt);
+				/*if(PhysicsSystem::isUseBulletPhysics())
+					updateBulletVelocity(dt);*/
 			}
 
 			//void FixedUpdate();
@@ -82,10 +79,12 @@ namespace NCL
 
 				//inputVector.Normalise();
 			}
-			void updateRawVelocity(float dt)
+			void updateVelocity(float dt)
 			{
-
-				velocity = this->GetPhysicsObject()->GetLinearVelocity() ;
+				if (!PhysicsSystem::isUseBulletPhysics())
+					velocity = this->GetPhysicsObject()->GetLinearVelocity();
+				else
+					velocity = this->GetBulletBody()->getLinearVelocity();
 
 				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
 				float maxSpeedChange = maxGroundAcceleration * dt;
@@ -117,42 +116,6 @@ namespace NCL
 					Jump();
 					//velocity.y += sqrtf(-2.0f * PhysicsSystem::GetGravity().y * jumpHeight);
 				}
-				this->GetPhysicsObject()->SetLinearVelocity(velocity);
-			}
-			void updateBulletVelocity(float dt)
-			{
-				velocity = this->GetBulletBody()->getLinearVelocity();
-
-				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
-				float maxSpeedChange = maxGroundAcceleration * dt;
-
-
-				if (velocity.x < desiredVelocity.x)
-				{
-					velocity.x = min(velocity.x + maxSpeedChange,desiredVelocity.x);
-				}
-				else if (velocity.x > desiredVelocity.x)
-				{
-					velocity.x = max(velocity.x - maxSpeedChange, desiredVelocity.x);
-				}
-				if (velocity.z < desiredVelocity.z)
-				{
-					velocity.z = min(velocity.z + maxSpeedChange, desiredVelocity.z);
-				}
-				else if (velocity.z > desiredVelocity.z)
-				{
-					velocity.z = max(velocity.z - maxSpeedChange, desiredVelocity.z);
-				}
-				//velocity.x = MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
-				//velocity.z = MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
-
-				if (desiredJump)
-				{
-					desiredJump = false;
-					Jump();
-					onGround = false;
-				}
-
 				if (PhysicsSystem::isUseBulletPhysics())
 				{
 					this->GetBulletBody()->setActivationState(true);
@@ -160,7 +123,7 @@ namespace NCL
 				}
 				else
 				{
-					 this->GetPhysicsObject()->SetLinearVelocity(velocity);
+					this->GetPhysicsObject()->SetLinearVelocity(velocity);
 				}
 			}
 
@@ -219,7 +182,7 @@ namespace NCL
 			float maxSpeed = 20.0f;
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
-			float maxGroundAcceleration = 20.0f;
+			float maxGroundAcceleration = 60.0f;
 		};
 	}
 }
