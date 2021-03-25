@@ -35,6 +35,7 @@ namespace NCL
 					keys.jump = KeyboardKeys::NUMPAD5;
 					keys.turnLeft = KeyboardKeys::NUMPAD4;
 					keys.turnRight = KeyboardKeys::NUMPAD6;
+					playerNumber = 2;
 
 				}
 				else
@@ -47,6 +48,8 @@ namespace NCL
 					keys.jump = KeyboardKeys::SPACE;
 					keys.turnLeft = KeyboardKeys::Q;
 					keys.turnRight = KeyboardKeys::E;
+					playerNumber = 1;
+
 				}
 			}
 			~PlayerObject() {};
@@ -73,7 +76,8 @@ namespace NCL
 				Vector3 playerposition = this->GetTransform().GetPosition();
 				Quaternion playerorientation = this->GetTransform().GetOrientation();
 				//pitch -= (Window::GetMouse()->GetRelativePosition().y);
-				yaw -= (Window::GetMouse()->GetRelativePosition().x);
+				if (playerNumber == 1) 
+					yaw -= (Window::GetMouse()->GetRelativePosition().x);				
 				if (Window::GetKeyboard()->KeyDown(keys.turnLeft))
 					yaw += 0.5f;
 				if (Window::GetKeyboard()->KeyDown(keys.turnRight))
@@ -265,7 +269,7 @@ namespace NCL
 			
 			int maxAirJumps = 1;
 			int jumpPhase = 0;
-
+			int playerNumber;
 			float maxSpeed = 20.0f;
 			Vector3 relativeVelocity = Vector3::Zero();
 			Vector3 platformVelocity = Vector3::Zero();
