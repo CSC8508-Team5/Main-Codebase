@@ -64,11 +64,11 @@ namespace NCL {
 			void InitLevel2design();
 			void InitLevel3();
 			
-			float CameraRayTest(GameObject* obj)
+			float CameraRayTest(GameObject* obj,Camera* camera)
 			{
 				if (!obj)
 					return FLT_MAX;
-				Ray cameraTest = Ray(obj->GetTransform().GetPosition(), (world->GetMainCamera()->GetPosition() - obj->GetTransform().GetPosition()).Normalised());
+				Ray cameraTest = Ray(obj->GetTransform().GetPosition(), (camera->GetPosition() - obj->GetTransform().GetPosition()).Normalised());
 				RayCollision rc;
 				GameObject::Layer mask = GameObject::Layer::Default;
 				world->Raycast(cameraTest, rc, true, (unsigned int)mask);

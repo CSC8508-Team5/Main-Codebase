@@ -337,9 +337,9 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 
-		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), CameraRayTest(player));
+		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), CameraRayTest(player,world->GetMainCamera()));
 		if (enemy) {
-			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), CameraRayTest(enemy));
+			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), CameraRayTest(enemy,world->GetSecondCamera()));
 		}
 
 	}
@@ -617,6 +617,14 @@ void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetPitch(-5.0f);
 	world->GetMainCamera()->SetYaw(270.0f);
 	world->GetMainCamera()->SetPosition(player->GetTransform().GetPosition() + Vector3(-15, 5, 0));
+
+	world->GetSecondCamera()->SetNearPlane(0.1f);
+	world->GetSecondCamera()->SetFarPlane(500.0f);
+	world->GetSecondCamera()->SetPitch(-5.0f);
+	world->GetSecondCamera()->SetYaw(270.0f);
+	if(enemy)
+		world->GetSecondCamera()->SetPosition(enemy->GetTransform().GetPosition() + Vector3(-15, 5, 0));
+
 	lockedObject = nullptr;
 }
 
