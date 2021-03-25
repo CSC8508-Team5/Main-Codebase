@@ -86,6 +86,10 @@ namespace NCL
 					velocity = this->GetPhysicsObject()->GetLinearVelocity();
 				else
 					velocity = this->GetBulletBody()->getLinearVelocity();
+				
+				if (onGround)
+					jumpPhase = 0;
+
 
 				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
 				float maxSpeedChange = maxGroundAcceleration * dt;
@@ -136,8 +140,15 @@ namespace NCL
 
 			void Jump()
 			{
-				if (onGround)
-					velocity.y += sqrtf(-2.0f * PhysicsSystem::GetGravity().y * jumpHeight);
+				if (onGround || jumpPhase < maxAirJumps)
+				{
+					jumpPhase += 1;
+					float jumpSpeed = sqrtf(-2.0f * PhysicsSystem::GetGravity().y * jumpHeight);
+					if (velocity.y > 0.0f)
+						jumpSpeed = max(jumpSpeed-velocity.y, 0.0f);
+					velocity.y += jumpSpeed;
+				}
+					
 				//velocity.y += sqrtf(-2.0f * -9.8f * jumpHeight);
 			}
 
@@ -160,7 +171,7 @@ namespace NCL
 
 			void OnCollisionStay(GameObject* other)
 			{
-				//EvaluateCollision(other);
+				EvaluateCollision(other);
 				GameObject::OnCollisionStay(other);
 			}
 
@@ -194,6 +205,9 @@ namespace NCL
 
 			bool desiredJump = false;
 			float jumpHeight = 10.0f;
+			
+			int maxAirJumps = 1;
+			int jumpPhase;
 
 			float maxSpeed = 20.0f;
 			Vector3 velocity = Vector3::Zero();
