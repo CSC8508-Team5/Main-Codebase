@@ -11,17 +11,26 @@ namespace NCL
 		class PlayerObject : public GameObject
 		{
 		public:
-			PlayerObject(bool isPlayer2) : GameObject(isPlayer2 ? "Player2" : "Player1") {
+			PlayerObject(bool isPlayer2 = false)  : GameObject(isPlayer2?"Player2":"Player1"){
 
 			}
 			~PlayerObject() {};
 
-			void Update(float dt) {
+			virtual void Update(float dt) {
 				updateOrientation(dt);
 				updateInputVector();
-				updateVelocity(dt);
 				updateJump();
+				if (!PhysicsSystem::isUseBulletPhysics())
+				{
+					updateRawVelocity(dt);
+				}
 				GameObject::Update(dt);
+			}
+
+			virtual void FixedUpdate(float dt)
+			{
+				if(PhysicsSystem::isUseBulletPhysics())
+					updateBulletVelocity(dt);
 			}
 
 			//void FixedUpdate();
@@ -55,36 +64,69 @@ namespace NCL
 				inputVector = Vector3::Zero();
 
 				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-					inputVector += this->GetTransform().Forward().Normalised();
+					//inputVector += this->GetTransform().Forward().Normalised();
+					inputVector += Vector3(0, 0, -1);
 				}
 				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-					inputVector += this->GetTransform().Backward().Normalised();
+					//inputVector += this->GetTransform().Backward().Normalised();
+					inputVector += Vector3(0, 0, 1);
 				}
 				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-					inputVector += this->GetTransform().Right().Normalised();
+					//inputVector += this->GetTransform().Right().Normalised();
+					inputVector += Vector3(1, 0, 0);
 				}
 				if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-					inputVector += this->GetTransform().Left().Normalised();
+					//inputVector += this->GetTransform().Left().Normalised();
+					inputVector += Vector3(-1, 0, 0);
 				}
 
-
-				inputVector.Normalise();
+				//inputVector.Normalise();
 			}
-
-			void updateVelocity(float dt)
+			void updateRawVelocity(float dt)
 			{
 
-				if (PhysicsSystem::isUseBulletPhysics)
+				velocity = this->GetPhysicsObject()->GetLinearVelocity() ;
+
+				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
+				float maxSpeedChange = maxGroundAcceleration * dt;
+
+
+				if (velocity.x < desiredVelocity.x)
 				{
-					velocity = this->GetBulletBody()->getLinearVelocity();
+					velocity.x = min(velocity.x + maxSpeedChange, desiredVelocity.x);
 				}
-				else
+				else if (velocity.x > desiredVelocity.x)
 				{
-					velocity = this->GetPhysicsObject()->GetLinearVelocity();
+					velocity.x = max(velocity.x - maxSpeedChange, desiredVelocity.x);
 				}
 
-				desiredVelocity = inputVector * maxSpeed;
+				if (velocity.z < desiredVelocity.z)
+				{
+					velocity.z = min(velocity.z + maxSpeedChange, desiredVelocity.z);
+				}
+				else if (velocity.z > desiredVelocity.z)
+				{
+					velocity.z = max(velocity.z - maxSpeedChange, desiredVelocity.z);
+				}
+				//velocity.x = MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
+				//velocity.z = MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
+
+				if (desiredJump)
+				{
+					desiredJump = false;
+					Jump();
+					//velocity.y += sqrtf(-2.0f * PhysicsSystem::GetGravity().y * jumpHeight);
+				}
+				this->GetPhysicsObject()->SetLinearVelocity(velocity);
+			}
+			void updateBulletVelocity(float dt)
+			{
+				velocity = this->GetBulletBody()->getLinearVelocity();
+
+				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
 				float maxSpeedChange = maxGroundAcceleration * dt;
+
+
 				if (velocity.x < desiredVelocity.x)
 				{
 					velocity.x = min(velocity.x + maxSpeedChange,desiredVelocity.x);
@@ -93,18 +135,27 @@ namespace NCL
 				{
 					velocity.x = max(velocity.x - maxSpeedChange, desiredVelocity.x);
 				}
-
-				velocity.x = MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
-				velocity.z = MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
+				if (velocity.z < desiredVelocity.z)
+				{
+					velocity.z = min(velocity.z + maxSpeedChange, desiredVelocity.z);
+				}
+				else if (velocity.z > desiredVelocity.z)
+				{
+					velocity.z = max(velocity.z - maxSpeedChange, desiredVelocity.z);
+				}
+				//velocity.x = MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
+				//velocity.z = MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
 
 				if (desiredJump)
 				{
 					desiredJump = false;
 					Jump();
+					onGround = false;
 				}
 
-				if (PhysicsSystem::isUseBulletPhysics)
+				if (PhysicsSystem::isUseBulletPhysics())
 				{
+					this->GetBulletBody()->setActivationState(true);
 					this->GetBulletBody()->setLinearVelocity(velocity);
 				}
 				else
@@ -115,7 +166,7 @@ namespace NCL
 
 			void updateJump()
 			{
-				desiredJump |= Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE);
+				desiredJump |= Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE);
 			}
 
 			void Jump()
@@ -126,7 +177,7 @@ namespace NCL
 			}
 
 			template <typename T>
-			T MoveTowards(T current,T target,T delta ) {
+			T MoveTowards(T current, T target, T delta) {
 				if (current < target)
 				{
 					return min(current + delta, target);
@@ -135,6 +186,11 @@ namespace NCL
 				{
 					current = max(current - delta, target);
 				}
+			}
+			void OnCollisionBegin(GameObject* other)
+			{
+				onGround = true;
+				GameObject::OnCollisionBegin(other);
 			}
 
 			void OnCollisionStay(GameObject* other)
@@ -145,7 +201,7 @@ namespace NCL
 
 			void OnCollisionEnd(GameObject* other)
 			{
-				onGround = false;
+				//onGround = false;
 				GameObject::OnCollisionEnd(other);
 			}
 
@@ -155,15 +211,15 @@ namespace NCL
 			const float PI = 3.1415926f;
 			const float HalfPI = PI / 2.0f;
 
-			bool onGround;
+			bool onGround = false;
 
-			bool desiredJump;
-			float jumpHeight = 3.0f;
+			bool desiredJump = false;
+			float jumpHeight = 10.0f;
 
 			float maxSpeed = 20.0f;
-			Vector3 velocity;
-			Vector3 desiredVelocity;
-			float maxGroundAcceleration;
+			Vector3 velocity = Vector3::Zero();
+			Vector3 desiredVelocity = Vector3::Zero();
+			float maxGroundAcceleration = 20.0f;
 		};
 	}
 }

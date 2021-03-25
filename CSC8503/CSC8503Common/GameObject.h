@@ -240,6 +240,8 @@ namespace NCL {
 					updateFunc(dt);
 			}
 
+			virtual void FixedUpdate(float dt) {};
+
 		protected:
 			Transform			transform;
 

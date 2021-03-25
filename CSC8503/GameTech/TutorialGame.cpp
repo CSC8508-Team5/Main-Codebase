@@ -306,6 +306,7 @@ void TutorialGame::UpdateGame(float dt) {
 			}
 		}
 		*/
+		UpdatePlayer(dt);
 		world->UpdateWorld(dt);
 		physics->Update(dt);
 
@@ -349,9 +350,7 @@ void TutorialGame::UpdateGame(float dt) {
 			}*/
 		}
 
-		//}
-
-		UpdatePlayer(dt);
+		
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 	}
 
@@ -403,8 +402,8 @@ void TutorialGame::UpdateLevelOne() {
 	CollisionDetection::CollisionInfo info;
 	for (int i = 0; i < numstairs; ++i) {
 		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
-			player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-			player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
+			//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
+			//player->GetPhysicsObject()->SetLinearVelocity(platforms[i]->GetPhysicsObject()->GetLinearVelocity());
 			isjump = false;
 			currenthight = player->GetTransform().GetPosition().y;
 		}
@@ -535,57 +534,20 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 }
 
 void TutorialGame::UpdatePlayer(float dt) {
-	Vector3 playerposition = player->GetTransform().GetPosition();
-	Quaternion playerorientation = player->GetTransform().GetOrientation();
-	//pitch -= (Window::GetMouse()->GetRelativePosition().y);
-	yaw -= (Window::GetMouse()->GetRelativePosition().x);
-
-	if (yaw < 0) {
-		yaw += 360.0f;
-	}
-	if (yaw > 360.0f) {
-		yaw -= 360.0f;
-	}
-	/*if (pitch < -90.0f) {
-		pitch = -90.0f;
-	}
-	if (pitch > 90.0f) {
-		pitch = 90.0f;
-	}*/
-	float frameSpeed = 50 * dt;
-	//player turns head
-	Quaternion orientation = player->GetTransform().GetOrientation();
-	double turnsin, turncos;
-	turnsin = sin((PI / 2) * ((yaw / 9 - 45) / 2));
-	turncos = cos((PI / 2) * ((yaw / 9 - 45) / 2));
-	orientation = Quaternion(0, turnsin, 0, turncos);
-	orientation.Normalise();
-	player->GetTransform().SetOrientation(orientation);
-
+	if (player->GetTransform().GetPosition().y < -5)
+		ResetCharacters();
+	/*updatePlayerOrientation(dt);
+	updateInputVector();
+	updateJump();
+	updateVelocity(dt);*/
 	/*
 	if (playerposition.y <= -1) {
 		isdead = true;
 		isjump = false;
 		timer = timer - 5;
 	}*/
-
-	Vector3 inputVector = Vector3::Zero();
-
-	//player movement
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		inputVector += player->GetTransform().Forward().Normalised();
-
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		inputVector += player->GetTransform().Backward().Normalised();
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		inputVector += player->GetTransform().Right().Normalised();
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		inputVector += player->GetTransform().Left().Normalised();
-
-	}
+	/*
+	Vector3 playerposition = player->GetTransform().GetPosition();
 	
 	if (physics->isUseBulletPhysics())
 	{
@@ -624,7 +586,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 			player->GetBulletBody()->applyCentralForce(Vector3(0, -150, 0));
 		else
 			player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
-	}
+	}*/
 }
 
 void TutorialGame::UpdateKeys() {
@@ -1901,7 +1863,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 
-	GameObject* character = new GameObject(name);
+	GameObject* character = new PlayerObject();
 
 	character->GetTransform()
 		.SetScale(Vector3(meshSize, meshSize, meshSize))
@@ -1936,7 +1898,7 @@ GameObject* NCL::CSC8503::TutorialGame::AddCharacterToWorld(const Vector3& posit
 		character->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 
 		//limit character angular motion
-		character->GetBulletBody()->setAngularFactor(btVector3(0, 1, 0));
+		character->GetBulletBody()->setAngularFactor(btVector3(0, 0, 0));
 
 	}
 	else

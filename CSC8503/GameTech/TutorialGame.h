@@ -2,6 +2,7 @@
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "../CSC8503Common/AudioSystem.h"
+#include "../GameTech/PlayerObject.h"
 #include "StateGameObject.h"
 #include "StateAi.h"
 #include "../../Common/Vector3.h"
@@ -88,14 +89,15 @@ namespace NCL {
 			void LockedObjectMovement();
 
 			void AddCoinAttributesToObject(GameObject* obj) {
-				obj->SetSoundSource(new SoundSource(Assets::SFXDIR + "PP_Collect_Coin_1_2.wav", obj->GetTransform().GetPosition()));
+				/*obj->SetSoundSource(new SoundSource(Assets::SFXDIR + "PP_Collect_Coin_1_2.wav", obj->GetTransform().GetPosition()));
 				obj->GetSoundSource()->SetMinDistance(50.0f);
-				obj->GetSoundSource()->SetVolume(10.0f);
+				obj->GetSoundSource()->SetVolume(1.0f);*/
 				obj->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
 				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
 					if (other->GetLayer() == GameObject::Layer::Player)
 					{
-						obj->GetSoundSource()->Play();
+						AudioSystem::PlaySFX("PP_Collect_Coin_1_2.wav");
+						//obj->GetSoundSource()->Play();
 						coincollected += 1;
 						obj->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
 						world->RemoveGameObject(obj, false);
@@ -104,10 +106,16 @@ namespace NCL {
 					});
 			}
 			void AddPlayerhAttributesToObject(GameObject* obj){
-				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
+				obj->SetOnCollisionStayFunction([=](GameObject* other) {
 					if (other->GetLayer() == GameObject::Layer::Default)
 					{
-						//(PlayerObject*)obj->SetOnGround(true);
+						//onGround = true;
+					}
+					});
+				obj->SetOnCollisionEndFunction([=](GameObject* other) {
+					if (other->GetLayer() == GameObject::Layer::Default)
+					{
+						//onGround = false;
 					}
 					});
 			}
@@ -163,7 +171,9 @@ namespace NCL {
 			void UpdateCoins();
 			void UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction);
 			void UpdateSpinningPlatform();
+
 			void UpdatePlayer(float dt);
+
 			void Reload();
 			//end
 
@@ -195,7 +205,7 @@ namespace NCL {
 			int			timer;
 			int			pausetime;
 			int			score;
-			float			currenthight;
+			float		currenthight;
 			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;

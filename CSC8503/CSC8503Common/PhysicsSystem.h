@@ -14,66 +14,6 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class TriggerCollisionDispatcher : public btCollisionDispatcher
-		{
-		public:
-			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration)
-				: btCollisionDispatcher(collisionConfiguration) {}
-
-
-			virtual bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
-			{
-				btAssert(body0);
-				btAssert(body1);
-
-				bool needsCollision = true;
-
-#ifdef BT_DEBUG
-				if (!(m_dispatcherFlags & btCollisionDispatcher::CD_STATIC_STATIC_REPORTED))
-				{
-					//broadphase filtering already deals with this
-					if (body0->isStaticOrKinematicObject() && body1->isStaticOrKinematicObject())
-					{
-						m_dispatcherFlags |= btCollisionDispatcher::CD_STATIC_STATIC_REPORTED;
-						printf("warning btCollisionDispatcher::needsCollision: static-static collision!\n");
-					}
-				}
-#endif  //BT_DEBUG
-				GameObject* obj0 = (GameObject*)body0->getUserPointer();
-				GameObject* obj1 = (GameObject*)body1->getUserPointer();
-
-				if ((!body0->isActive()) && (!body1->isActive()))
-					needsCollision = false;
-				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
-					needsCollision = false;
-			
-
-				/*if (needsCollision)
-				{
-					obj0->AddCollisionObject(obj1);
-					obj1->AddCollisionObject(obj0);
-				}
-				else
-				{
-					obj0->RemoveCollisionObject(obj1);
-					obj1->RemoveCollisionObject(obj0);
-				}*/
-
-				return needsCollision;
-			}
-
-			bool needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
-			{
-				//here you can do filtering
-				bool hasResponse =
-					(body0->hasContactResponse() && body1->hasContactResponse());
-				//no response between two static/kinematic bodies:
-				hasResponse = hasResponse &&
-					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
-				return hasResponse;
-			}
-		};
-
 		struct TriggerFilterCallback : public btOverlapFilterCallback
 		{
 			// return true when pairs need collision
@@ -174,6 +114,7 @@ namespace NCL {
 			}
 
 			static bool isUseBulletPhysics() { return useBulletPhysics; }
+			static btScalar fixedTime;
 		protected:
 			void TriggerNearCallback(btBroadphasePair& collisionPair,
 				btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo) {
@@ -217,6 +158,7 @@ namespace NCL {
 			int numCollisionFrames	= 1;
 
 
+
 			//bullet3 physics
 			static bool useBulletPhysics;
 			///collision configuration contains default setup for memory, collision setup.
@@ -236,6 +178,67 @@ namespace NCL {
 			btOverlapFilterCallback* broadphaseFilterCallback;
 
 		};
+
+		class TriggerCollisionDispatcher : public btCollisionDispatcher
+		{
+		public:
+			TriggerCollisionDispatcher(btCollisionConfiguration* collisionConfiguration)
+				: btCollisionDispatcher(collisionConfiguration) {}
+
+
+			virtual bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
+			{
+				btAssert(body0);
+				btAssert(body1);
+
+				bool needsCollision = true;
+
+#ifdef BT_DEBUG
+				if (!(m_dispatcherFlags & btCollisionDispatcher::CD_STATIC_STATIC_REPORTED))
+				{
+					//broadphase filtering already deals with this
+					if (body0->isStaticOrKinematicObject() && body1->isStaticOrKinematicObject())
+					{
+						m_dispatcherFlags |= btCollisionDispatcher::CD_STATIC_STATIC_REPORTED;
+						printf("warning btCollisionDispatcher::needsCollision: static-static collision!\n");
+					}
+				}
+#endif  //BT_DEBUG
+				GameObject* obj0 = (GameObject*)body0->getUserPointer();
+				GameObject* obj1 = (GameObject*)body1->getUserPointer();
+
+				if ((!body0->isActive()) && (!body1->isActive()))
+					needsCollision = false;
+				else if ((!body0->checkCollideWith(body1)) || (!body1->checkCollideWith(body0)))
+					needsCollision = false;
+
+				obj0->FixedUpdate(float(NCL::CSC8503::PhysicsSystem::fixedTime));
+				/*if (needsCollision)
+				{
+					obj0->AddCollisionObject(obj1);
+					obj1->AddCollisionObject(obj0);
+				}
+				else
+				{
+					obj0->RemoveCollisionObject(obj1);
+					obj1->RemoveCollisionObject(obj0);
+				}*/
+
+				return needsCollision;
+			}
+
+			bool needsResponse(const btCollisionObject* body0, const btCollisionObject* body1) override
+			{
+				//here you can do filtering
+				bool hasResponse =
+					(body0->hasContactResponse() && body1->hasContactResponse());
+				//no response between two static/kinematic bodies:
+				hasResponse = hasResponse &&
+					((!body0->isStaticOrKinematicObject()) || (!body1->isStaticOrKinematicObject()));
+				return hasResponse;
+			}
+		};
+
 	}
 }
 
