@@ -158,8 +158,8 @@ namespace NCL {
 			GameObject* AddDoorToWorld(const Vector3& position, Vector3 dimensions, OGLTexture* tempTex, string name, float inverseMass = 0.1f);
 			//adding for level design
 			GameObject** LevelOne();
-			GameObject* SpinningPlatform();
 			GameObject* AddCannonToWorld(const Vector3& position, string orientation);
+			Vector4 prevColor;
 
 			GameObject* AddCoins(const Vector3& position);
 			DW_UIText* Score_text;
@@ -171,12 +171,12 @@ namespace NCL {
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			DW_UIPanel* InGameUI1;
-			void Pendulum();
+			DW_UIHUD* player1HUD;
+			DW_UIHUD* player2HUD;
 			void UpdateLevelOne();
 			void UpdateLevelTwo();
 			void UpdateCoins();
 			void UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction);
-			void UpdateSpinningPlatform();
 
 			void UpdatePlayer(float dt);
 

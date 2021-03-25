@@ -1,4 +1,5 @@
 #pragma once
+
 namespace NCL {
 	enum class VolumeType {
 		AABB	= 1,
@@ -13,11 +14,13 @@ namespace NCL {
 	class CollisionVolume
 	{
 	public:
+		
 		CollisionVolume() {
 			type = VolumeType::Invalid;
 		}
 		~CollisionVolume() {}
 
 		VolumeType type;
+
 	};
 }
