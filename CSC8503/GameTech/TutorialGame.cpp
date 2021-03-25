@@ -242,10 +242,10 @@ void TutorialGame::UpdateGame(float dt) {
 	PROCESS_MEMORY_COUNTERS_EX pmc;
 	GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
 	SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
-
-	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe /800000) + " MB");	//vram
-	//Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /800000) + " MB");	//ram
+	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe /100000) + " MB");	//vram
+	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsedByMe /100000) + " MB");	//ram
 	
 
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
