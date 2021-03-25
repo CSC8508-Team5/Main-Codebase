@@ -73,7 +73,7 @@ namespace NCL {
 			//void InitCharaters(Vector3 position) { playerOrigin = Transform().SetPosition(position); };
 			void InitCharaters(Vector3 position, Quaternion orientation = Quaternion(0, -1, 0, 1)) { orientation.Normalise(); playerOrigin = Transform().SetPosition(position).SetOrientation(orientation); };
 			void InstantiateCharaters();
-			void ResetCharacters() { if (player) player->GetTransform().SetPosition(playerOrigin.GetPosition()).SetOrientation(playerOrigin.GetOrientation()); };
+			void ResetCharacters() { if (player) player->GetTransform().SetPosition(playerOrigin.GetPosition()).SetOrientation(playerOrigin.GetOrientation()); player->GetPhysicsObject()->SetLinearVelocity(Vector3::Zero()); };
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, bool useBullet = false);
