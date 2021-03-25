@@ -378,17 +378,41 @@ void TutorialGame::UpdateLevelOne() {
 		Vector3 position = platforms[i]->GetTransform().GetPosition();
 		if (i % 3 == 1) {
 			if (position.z <= -60) {
+				if (physics->isUseBulletPhysics())
+				{
+					platforms[i]->GetBulletBody()->setActivationState(true);
+					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
+				}
+				else
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 10) {
+				if (physics->isUseBulletPhysics())
+				{
+					platforms[i]->GetBulletBody()->setActivationState(true);
+					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
+				}
+				else
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
 		else if (i % 3 == 0) {
 			if (position.z <= -10) {
+				if (physics->isUseBulletPhysics())
+				{
+					platforms[i]->GetBulletBody()->setActivationState(true);
+					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, speed));
+				}
+				else
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, speed));
 			}
 			else if (position.z >= 60) {
+				if (physics->isUseBulletPhysics())
+				{
+					platforms[i]->GetBulletBody()->setActivationState(true);
+					platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -speed));
+				}
+				else
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -speed));
 			}
 		}
@@ -935,7 +959,7 @@ GameObject** TutorialGame::LevelOne() {
 	Vector3 cubeSize = Vector3(10, 4, 10);
 	Vector3 middlecubeSize = Vector3(10, 4, 20);
 
-	float invCubeMass = 0; // how heavy the middle pieces are
+	float invCubeMass = 0.1f; // how heavy the middle pieces are
 	float cubeDistance = 20; // distance between links
 
 	Vector3 startPos = Vector3(-150, 5, 0);
@@ -953,22 +977,39 @@ GameObject** TutorialGame::LevelOne() {
 		if (i % 3 == 1) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
 			if (physics->isUseBulletPhysics())
+			{
+
+				platforms[i]->GetBulletBody()->setActivationState(true);
 				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 30));
+				platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+				platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			}
 			else
+			{
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 30));
+				platforms[i]->GetPhysicsObject()->SetInverseMass(0);
+			}
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
 		}
 		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, invCubeMass);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, 0);
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if (i % 3 == 0) {
 			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
 			if (physics->isUseBulletPhysics())
+			{
+				platforms[i]->GetBulletBody()->setActivationState(true);
 				platforms[i]->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -30));
+				platforms[i]->GetBulletBody()->setLinearFactor(Vector3::Zero());
+				platforms[i]->GetBulletBody()->setAngularFactor(Vector3::Zero());
+			}
 			else
+			{
 				platforms[i]->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -30));
+				platforms[i]->GetPhysicsObject()->SetInverseMass(0);
+			}
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
 		}
