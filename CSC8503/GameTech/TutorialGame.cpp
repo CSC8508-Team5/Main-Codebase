@@ -483,7 +483,11 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 
 void TutorialGame::UpdatePlayer(float dt) {
 	if (player->GetTransform().GetPosition().y < -5) {
-		ResetCharacters();
+		ResetCharacter(player);
+		timer = timer - 5;
+	}
+	if (enemy->GetTransform().GetPosition().y < -5) {
+		ResetCharacter(enemy,Vector3(5,0,0));
 		timer = timer - 5;
 	}
 
@@ -633,8 +637,8 @@ void TutorialGame::InitWorld() {
 /* Level Preparations */
 void TutorialGame::InitLevel1() {
 
-	InitCharaters(Vector3(-150, 10, 0));
-	InstantiateCharaters();
+	InitCharacters(Vector3(-150, 10, 0));
+	InstantiateCharacters();
 	//InitAiEnemy1();
 	//-------------LV1 -------------------------------------
 
@@ -657,15 +661,15 @@ void TutorialGame::InitLevel1() {
 
 void TutorialGame::InitLevel2() {
 
-	InitCharaters(Vector3(0, 0, -320));
-	InstantiateCharaters();
+	InitCharacters(Vector3(0, 0, -320));
+	InstantiateCharacters();
 	InitLevel2design();
 }
 
 void TutorialGame::InitLevel3() {
 	//InitCharaters(Vector3(-80, 5, 0));
-	InitCharaters(Vector3(-150, 5, 0));
-	InstantiateCharaters();
+	InitCharacters(Vector3(-150, 5, 0));
+	InstantiateCharacters();
 	LevelThree();
 }
 
@@ -1497,7 +1501,7 @@ void TutorialGame::InitDefaultFloor(bool useBullet) {
 	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
-void NCL::CSC8503::TutorialGame::InstantiateCharaters()
+void NCL::CSC8503::TutorialGame::InstantiateCharacters()
 {
 	player = AddPlayerToWorld(playerOrigin.GetPosition(),false);
 	player->GetTransform().SetOrientation(playerOrigin.GetOrientation());
