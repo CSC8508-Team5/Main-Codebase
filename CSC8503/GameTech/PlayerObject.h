@@ -83,9 +83,9 @@ namespace NCL
 			void updateVelocity(float dt)
 			{
 				if (!PhysicsSystem::isUseBulletPhysics())
-					velocity = this->GetPhysicsObject()->GetLinearVelocity();
+					velocity = this->GetPhysicsObject()->GetLinearVelocity() - platformVelocity;
 				else
-					velocity = this->GetBulletBody()->getLinearVelocity();
+					velocity = this->GetBulletBody()->getLinearVelocity() - platformVelocity;
 				
 				if (onGround)
 					jumpPhase = 0;
@@ -124,11 +124,11 @@ namespace NCL
 				if (PhysicsSystem::isUseBulletPhysics())
 				{
 					this->GetBulletBody()->setActivationState(true);
-					this->GetBulletBody()->setLinearVelocity(velocity);
+					this->GetBulletBody()->setLinearVelocity(velocity + platformVelocity);
 				}
 				else
 				{
-					this->GetPhysicsObject()->SetLinearVelocity(velocity);
+					this->GetPhysicsObject()->SetLinearVelocity(velocity + platformVelocity);
 				}
 			}
 
@@ -147,6 +147,7 @@ namespace NCL
 					if (velocity.y > 0.0f)
 						jumpSpeed = max(jumpSpeed-velocity.y, 0.0f);
 					velocity.y += jumpSpeed;
+					platformVelocity = Vector3(0, 0, 0);
 				}
 					
 				//velocity.y += sqrtf(-2.0f * -9.8f * jumpHeight);
@@ -189,6 +190,7 @@ namespace NCL
 					//std::cout << "Normal::" << normal << std::endl;
 					onGround |= normal.y >= 0.9f;
 					relativeVelocity += other->GetPhysicsObject()->GetLinearVelocity();
+					platformVelocity = other->GetPhysicsObject()->GetLinearVelocity();
 				}
 				else
 				{
@@ -212,6 +214,7 @@ namespace NCL
 
 			float maxSpeed = 20.0f;
 			Vector3 relativeVelocity = Vector3::Zero();
+			Vector3 platformVelocity = Vector3::Zero();
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
 			float maxGroundAcceleration = 60.0f;

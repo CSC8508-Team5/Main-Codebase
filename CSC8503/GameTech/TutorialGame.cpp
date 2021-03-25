@@ -41,12 +41,9 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	pitch = 0.0f;
 	isjump = false;
 	pausetime = 0;
-	currenthight = 0;
 	score = 0;
 	//gamestate
-	isfinish = false;
 	ispause = false;
-	isdead = false;
 	//gamestate
 	numstairs = 14;
 	coincollected = 0;
@@ -178,7 +175,6 @@ TutorialGame::~TutorialGame() {
 
 void TutorialGame::Reload() {
 	timer = 120;
-	isdead = false;
 
 	if (currentLevel == 3) {
 
@@ -490,32 +486,10 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 		UpdateCoins();
-		UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6), "left");
+		/*UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6), "left");
 		UpdateCannonBullet(cannonBullet[1], Vector3(-100, 25, 80) + Vector3(6, 7, -6), "right");
 		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
-		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
-	}
-	//todo: connected body
-	CollisionDetection::CollisionInfo info;
-	for (int i = 0; i < numstairs; ++i) {
-		if (CollisionDetection::ObjectIntersection(player, platforms[i], info)) {
-	
-			Vector3 currentspeed = player->GetPhysicsObject()->GetLinearVelocity();
-			if (platforms[i]->GetPhysicsObject()->GetLinearVelocity().Length() > 0) {
-							//player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-			player->GetPhysicsObject()->SetLinearVelocity( platforms[i]->GetPhysicsObject()->GetLinearVelocity());
-			}
-
-			isjump = false;
-			currenthight = player->GetTransform().GetPosition().y;
-		}
-		//finish
-		if (CollisionDetection::ObjectIntersection(player, platforms[numstairs - 1], info)) {
-			isfinish = true;
-			ispause = true;
-			//audio->StopAll();
-			//audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-		}
+		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");*/
 	}
 };
 
@@ -629,17 +603,17 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 }
 
 void TutorialGame::UpdatePlayer(float dt) {
-	if (player->GetTransform().GetPosition().y < -5)
+	if (player->GetTransform().GetPosition().y < -5) {
 		ResetCharacters();
+		timer = timer - 5;
+	}
 	/*updatePlayerOrientation(dt);
 	updateInputVector();
 	updateJump();
 	updateVelocity(dt);*/
 	/*
 	if (playerposition.y <= -1) {
-		isdead = true;
-		isjump = false;
-		timer = timer - 5;
+		
 	}*/
 	/*
 	Vector3 playerposition = player->GetTransform().GetPosition();
