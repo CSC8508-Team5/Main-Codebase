@@ -37,6 +37,8 @@ namespace NCL {
 			virtual void UpdateGame(float dt);
 
 			std::string GetScoreBoard();//returns a formatted string of top 5 scores
+			void AddBoardScore(int score);//adds score to high score file
+
 			//int GetScore() { return score + timer * 10 + coincollected * 50;}
 			void UpdateScore() { AddScore(timer * 10 + coincollected * 50); }
 			void AddScore(int s) { score += s; }
@@ -59,7 +61,7 @@ namespace NCL {
 			void InitLevel2();
 			void InitLevel2design();
 			void InitLevel3();
-			void AddBoardScore(int score);//adds score to high score file
+			
 
 
 			//AI

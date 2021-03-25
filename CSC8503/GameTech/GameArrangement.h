@@ -91,6 +91,7 @@ namespace NCL {
 					NCL::CSC8503::AudioSystem::PlayAudio("keyboardcat.mp3", true);
 					GameStateManager::SetGameState(GSM::State::Pause);
 					panel->SetPanelActive(true);
+					panel->UpdateScoreBoard();
 				}
 				void OnSleep() override {
 					std::cout << "Leaving MainMenu\n";
@@ -278,7 +279,7 @@ namespace NCL {
 					window->ShowOSPointer(true);
 					panel->SetScore(game->GetAddingScore());
 					panel->SetPanelActive(true);
-					//todo add panel score update code
+					game->AddBoardScore(game->GetAddingScore());
 				}
 				void OnSleep() override {
 					std::cout << "Leaving WinMenu\n";
