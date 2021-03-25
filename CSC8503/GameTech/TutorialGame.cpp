@@ -266,7 +266,7 @@ void TutorialGame::UpdateGame(float dt) {
 					objectsStr += (*i)->GetWorldID()+ ":"+(*i)->GetName()+", ";
 				}
 			}
-			/
+			
 			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with "+ objectsStr  );	//non functional atm
 		}
 
