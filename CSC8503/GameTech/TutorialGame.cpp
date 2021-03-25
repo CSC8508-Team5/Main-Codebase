@@ -9,7 +9,8 @@
 #include <list>
 #include <algorithm>
 #include <math.h>
-
+#include "windows.h"
+#include "psapi.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -60,22 +61,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
-	//-----------------------------------------------------Ui-----------------------------------------------------------------------//
 
-	/*
-	StartMenu = new HM_StartMenu(langContent); // main menu
-	PauseMenu = new HM_PauseMenu(langContent); // Pause menu
-	WinScreen = new HM_Win(langContent); // wining screen
-	LoseScreen = new HM_Lose(langContent); // lose screen
-	NextLevel = new HM_NextLevel(langContent); // next level
-	OptionMenu = new HM_Option(langContent); // option menu
-
-	StartMenu->SetPanelActive(true);
-	PauseMenu->SetPanelActive(false);
-	WinScreen->SetPanelActive(false);
-	LoseScreen->SetPanelActive(false);
-	NextLevel->SetPanelActive(false);
-	OptionMenu->SetPanelActive(false);*/
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
 
@@ -88,7 +74,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	Debug_text1 = new DW_UIText("Scoretext","FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text2 = new DW_UIText("Scoretext", "DEBUG_TEXT_TIMING_COSTS", 0.5f, NCL::Maths::Vector3{ 900.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Debug_text3 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_FOOTPRINT", 0.5f, NCL::Maths::Vector3{ 900.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
-	Debug_text4 = new DW_UIText("Scoretext", "DEBUG_TEXT_MEMORY_COLLISIONS", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Debug_text4 = new DW_UIText("Scoretext", "Click object for info", 0.5f, NCL::Maths::Vector3{ 900.0f,150.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	InGameUI1->AddComponent(Debug_text1);
 	InGameUI1->AddComponent(Debug_text2);
 	InGameUI1->AddComponent(Debug_text3);
@@ -198,10 +184,9 @@ void TutorialGame::Reload() {
 		InitWorld();
 	}
 
-	//audio->StopAll();
-	//audio->PlayAudio("Casual Theme #1 (Looped).ogg", true);
+
 	startTime = ::GetTickCount64();
-	//scoreAdded = false;
+
 }
 
 
@@ -232,29 +217,21 @@ void TutorialGame::UpdateGame(float dt) {
 	fps = 1.0f / dt;
 	Debug_text1->SetText("FPS: " + std::to_string((int)fps));	//updateFPS
 
-	MEMORYSTATUSEX memInfo;
-	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
-	GlobalMemoryStatusEx(&memInfo);
-	DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
-	DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
-	DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
-	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsed/100000) + " Mb");	//vram
-	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsed /100000) + " Mb");	//ram
+
+	PROCESS_MEMORY_COUNTERS_EX pmc;
+	GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+	SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+
+	Debug_text2->SetText("Virtual Memory used: " + std::to_string(virtualMemUsedByMe /100000) + " MBs");	//vram
+	Debug_text3->SetText("RAM used: " + std::to_string(physMemUsedByMe /100000) + " MBs");	//ram
 	
 
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)		
 	{
 
-		/*if (!inSelectionMode) {
-			world->GetMainCamera()->UpdateCamera(dt);
-		}*/
-		//todo change game update functionality
-		//todo change timer functionality
 		if (timer <= 0) {
-			//LoseScreen->SetPanelActive(true);
-			//timer = 121;
-			//NCL::CSC8503::AudioSystem::StopAll();
-			//NCL::CSC8503::AudioSystem::PlayAudio("FA_Lose_Jingle_Loop.ogg");
+			
 			GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
 		}
 		if ((int(::GetTickCount64() - startTime) >= 1000) && (pausetime == 0)) {
@@ -267,30 +244,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::Y))
 			GameStateManager::SetGameState(GameStateManager::State::Win);
-		/*
-
-		if (NextLevel->IfNextLevel()) {
-			isfinish = false;
-			NextLevel->SetNextLevel(false);
-			if (currentLevel == 2) {
-				world->ClearAndErase();
-				physics->Clear();
-				currentLevel += 1;
-				InitWorld();
-			}
-			else {
-				currentLevel += 1;
-			}
-			score += int(timer * 10 + coincollected * 50);
-			Reload();
-		}
-		else if (WinScreen->IfRestart()||LoseScreen->IfRestart()||NextLevel->IfRestart()) {
-			isfinish = false;
-			WinScreen->SetRestart(false);
-			LoseScreen->SetRestart(false);
-			NextLevel->SetRestart(false);
-			Reload();
-		}*/
+		
 		UpdateKeys();
 		if (inDebugMode) {
 			
@@ -312,9 +266,7 @@ void TutorialGame::UpdateGame(float dt) {
 					objectsStr += (*i)->GetWorldID()+ ":"+(*i)->GetName()+", ";
 				}
 			}
-			//std::string s = selectionObject->GetBoundingVolume()->type;
-
-			//GameObject* temp = (GameObject*)selectionObject->OnCollisionBegin();
+			
 			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with "+ objectsStr  );	//non functional atm
 		}
 
@@ -342,39 +294,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 
 		}*/
-		/*
-		if (StartMenu->GetPanelIsEnable() || PauseMenu->GetPanelIsEnable() || WinScreen->GetPanelIsEnable() || LoseScreen->GetPanelIsEnable() || OptionMenu->GetPanelIsEnable() || NextLevel->GetPanelIsEnable()) {
-			pauseStart = ::GetTickCount64();
-			pausetime = int(pauseStart);
-			ispause = true;
-			Window::GetWindow()->ShowOSPointer(true);
-			Window::GetWindow()->LockMouseToWindow(false);
-			InGameUI->SetPanelIsEnable(false);
-		}
-		else {
-			pausetime = 0;
-			ispause = false;
-			Window::GetWindow()->ShowOSPointer(false);
-			Window::GetWindow()->LockMouseToWindow(true);
-			InGameUI->SetPanelIsEnable(true);
-		}
-		if (isfinish && !WinScreen->GetPanelIsEnable()&&!NextLevel->GetPanelIsEnable()) {
-			if (currentLevel == 1 || currentLevel == 2)
-			{
-				NextLevel->SetScore(score + timer * 10 + coincollected * 50);
-				NextLevel->SetPanelActive(true);
-			}
-			else
-			{
-				WinScreen->SetScore(score + timer * 10 + coincollected * 50);
-				WinScreen->SetPanelActive(true);
-				if (scoreAdded == false) {
-					AddScore(score + timer * 10 + coincollected * 50);
-					scoreAdded = true;
-				}
-			}
-		}
-		*/
+
+
 		UpdatePlayer(dt);
 		world->UpdateWorld(dt);
 		physics->Update(dt);
@@ -403,7 +324,6 @@ void TutorialGame::UpdateGame(float dt) {
 		
 
 		CollisionDetection::CollisionInfo info;
-		//if ((!ispause) && (!isfinish) && (!isdead)) {
 		if (currentLevel == 1) {//Update level 1
 			UpdateLevelOne();
 		}
@@ -412,27 +332,13 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 		else if (currentLevel == 3) { //Update level 3
 			UpdateLevelThree(dt);
-			/*if (sliderVector.size() > 0) {
-				for (auto i = 0; i < sliderVector.size(); ++i) {
-					sliderVector.at(i)->Update(dt);
-				}
-			}*/
+			
 		}
 
 		
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
 	}
 
-	//todo reset player
-	/*if (isdead) {//reset player
-
-		//add player initial transform for each level
-		ResetCharacters();
-		//InstantiateCharaters();
-
-		isdead = false;
-		isjump = false;
-	}*/
 
 	renderer->Update(dt);
 	Debug::FlushRenderables(dt);
@@ -486,46 +392,21 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 		UpdateCoins();
-		/*UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6), "left");
+		UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6), "left");
 		UpdateCannonBullet(cannonBullet[1], Vector3(-100, 25, 80) + Vector3(6, 7, -6), "right");
 		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
-		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");*/
+		UpdateCannonBullet(cannonBullet[3], Vector3(50, 55, 80) + Vector3(6, 7, -6), "right");
 	}
 };
 
 void TutorialGame::UpdateLevelTwo() {
 	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
-	/*
-	CollisionDetection::CollisionInfo info;
-	//finish
-	if (CollisionDetection::ObjectIntersection(player, level2finishLine, info) && !isfinish) {
-		isfinish = true;
-		ispause = true;
-		audio->StopAll();
-		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-	}
-	//Collision with floor
-	if (CollisionDetection::ObjectIntersection(player, level2Floor, info)) {
-		isjump = false;
-		currenthight = player->GetTransform().GetPosition().y;
-	}*/
+	
 }
 
 void TutorialGame::UpdateLevelThree(float dt) {
 	UpdateCoins();
-	//CollisionDetection::CollisionInfo info;
-	//finish
-	/*if (CollisionDetection::ObjectIntersection(player, level3finishLine, info) && !isfinish) {
-		isfinish = true;
-		ispause = true;
-		audio->StopAll();
-		audio->PlayAudio("FA_Win_Jingle_Loop.ogg", true);
-	}
-	//Collision with floor
-	if (CollisionDetection::ObjectIntersection(player, level3Floor, info)) {
-		isjump = false;
-		currenthight = player->GetTransform().GetPosition().y;
-	}*/
+	
 }
 
 
@@ -542,13 +423,7 @@ void TutorialGame::UpdateCoins() {
 			}
 			else
 				coins[i]->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 2, 0));
-			/*CollisionDetection::CollisionInfo info;
-			if (CollisionDetection::ObjectIntersection(player, coins[i], info)) {
-				coincollected += 1;
-				coins[i]->SetBoundingVolume((CollisionVolume*)volume);
-				coins[i]->GetTransform().SetScale(Vector3(0, 0, 0));
-				audio->PlaySFX("PP_Collect_Coin_1_2.wav");
-			}*/
+			
 		}
 	}
 }
@@ -568,8 +443,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 				bullet->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 10));
 			else
 				bullet->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 10));
-			//PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
-			//bulletPhys->SetLinearVelocity(Vector3(0, 0, 10));
+			
 
 		}
 		else if (direction == "right") {
@@ -577,8 +451,7 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 				bullet->GetBulletBody()->setLinearVelocity(Vector3(0, 0, -10));
 			else
 				bullet->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, -10));
-			//PhysicsObject* bulletPhys = bullet->GetPhysicsObject();
-			//bulletPhys->SetLinearVelocity(Vector3(0, 0, -10));
+
 		}
 	}
 	else if (abs(offset) > 0.0f) {
@@ -607,62 +480,13 @@ void TutorialGame::UpdatePlayer(float dt) {
 		ResetCharacters();
 		timer = timer - 5;
 	}
-	/*updatePlayerOrientation(dt);
-	updateInputVector();
-	updateJump();
-	updateVelocity(dt);*/
-	/*
-	if (playerposition.y <= -1) {
-		
-	}*/
-	/*
-	Vector3 playerposition = player->GetTransform().GetPosition();
 	
-	if (physics->isUseBulletPhysics())
-	{
-		player->GetBulletBody()->setActivationState(true);
-		player->GetBulletBody()->applyCentralImpulse(inputVector * 15.0f );
-		//player->GetBulletBody()->setLinearVelocity(inputVector * 15.0f);
-	}
-	else
-	{
-		player->GetPhysicsObject()->ApplyLinearImpulse(inputVector * 15.0f *dt);
-	}
-
-
-	//jump
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {
-		if (!isjump) {
-			if (playerposition.y - currenthight >= 0.1f) {
-				isjump = true; //Comment this if want a quick win.
-
-			}
-			else {
-				if (physics->isUseBulletPhysics())
-				{
-					player->GetBulletBody()->setLinearVelocity(Vector3(0, 20, 0));
-				}
-				else
-				{
-					player->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 20, 0));
-					player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
-				}
-			}
-		}
-	}
-	else {
-		if (physics->isUseBulletPhysics())
-			player->GetBulletBody()->applyCentralForce(Vector3(0, -150, 0));
-		else
-			player->GetPhysicsObject()->AddForce(Vector3(0, -150, 0));
-	}*/
 }
 
 void TutorialGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1)) {
 		InitWorld(); //We can reset the simulation at any time with F1
-		//selectionObject = nullptr;
-		//lockedObject = nullptr;
+		
 	}
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F2)) {
@@ -713,29 +537,7 @@ void TutorialGame::UpdateKeys() {
 
 
 
-	/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::P)) {
-		PauseMenu->SetPanelActive(true);
-		StartMenu->SetPanelActive(false);
-		WinScreen->SetPanelActive(false);
-		LoseScreen->SetPanelActive(false);
-		NextLevel->SetPanelActive(false);
-		OptionMenu->SetPanelActive(false);
-	}
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::O)) {
-		PauseMenu->SetPanelActive(false);
-		StartMenu->SetPanelActive(false);
-		WinScreen->SetPanelActive(false);
-		LoseScreen->SetPanelActive(false);
-		NextLevel->SetPanelActive(false);
-		OptionMenu->SetPanelActive(true);
-	}*/
-
-	/*if (lockedObject) {
-		LockedObjectMovement();
-	}
-	else {
-		DebugObjectMovement();
-	}*/
+	
 }
 
 /* Scoreboard functionality */
@@ -794,157 +596,6 @@ std::string NCL::CSC8503::TutorialGame::GetScoreBoard() {
 	}
 }
 
-/* Debugging (not present in game)*/
-//void TutorialGame::LockedObjectMovement() {
-//	Matrix4 view = world->GetMainCamera()->BuildViewMatrix();
-//	Matrix4 camWorld = view.Inverse();
-//
-//	Vector3 rightAxis = Vector3(camWorld.GetColumn(0)); //view is inverse of model!
-//
-//	//forward is more tricky -  camera forward is 'into' the screen...
-//	//so we can take a guess, and use the cross of straight up, and
-//	//the right axis, to hopefully get a vector that's good enough!
-//
-//	Vector3 fwdAxis = Vector3::Cross(Vector3(0, 1, 0), rightAxis);
-//	fwdAxis.y = 0.0f;
-//	fwdAxis.Normalise();
-//
-//	Vector3 charForward = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
-//	Vector3 charForward2 = lockedObject->GetTransform().GetOrientation() * Vector3(0, 0, 1);
-//
-//	float force = 1.0f;
-//
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-//		if (physics->isUseBulletPhysics())
-//		{
-//			selectionObject->GetBulletBody()->activate();
-//			selectionObject->GetBulletBody()->applyCentralImpulse(-rightAxis * force);
-//		}
-//		else
-//			lockedObject->GetPhysicsObject()->AddForce(-rightAxis * force);
-//	}
-//
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-//		if (physics->isUseBulletPhysics())
-//		{
-//			selectionObject->GetBulletBody()->activate();
-//			selectionObject->GetBulletBody()->applyCentralImpulse(rightAxis * force);
-//		}
-//		else
-//			lockedObject->GetPhysicsObject()->AddForce(rightAxis * force);
-//	}
-//
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-//		if (physics->isUseBulletPhysics())
-//		{
-//			selectionObject->GetBulletBody()->activate();
-//			//selectionObject->GetBulletBody()->applyCentralImpulse(fwdAxis * force);
-//			selectionObject->GetBulletBody()->setLinearVelocity(fwdAxis * 5);
-//		}
-//		else
-//			lockedObject->GetPhysicsObject()->AddForce(fwdAxis * force);
-//	}
-//
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-//		if (physics->isUseBulletPhysics())
-//		{
-//			selectionObject->GetBulletBody()->activate();
-//			//selectionObject->GetBulletBody()->applyCentralImpulse(-fwdAxis * force);
-//			selectionObject->GetBulletBody()->setLinearVelocity(-fwdAxis * 5);
-//		}
-//		else
-//			lockedObject->GetPhysicsObject()->AddForce(-fwdAxis * force);
-//	}
-//
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NEXT)) {
-//		if (physics->isUseBulletPhysics())
-//		{
-//			selectionObject->GetBulletBody()->activate();
-//			selectionObject->GetBulletBody()->applyCentralImpulse(Vector3(0, -10, 0));
-//		}
-//		else
-//			lockedObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-//	}
-//}
-
-//void TutorialGame::DebugObjectMovement() {
-//	//If we've selected an object, we can manipulate it with some key presses
-//	if (inSelectionMode && selectionObject) {
-//		//Twist the selected object!
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(-10, 0, 0));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(10, 0, 0));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddForce(Vector3(10, 0, 0));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM7)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyTorque(Vector3(0, 10, 0));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM8)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyTorque(Vector3(0, -10, 0));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, -10));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, 0, 10));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
-//		}
-//
-//		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM5)) {
-//			if (physics->isUseBulletPhysics())
-//			{
-//				selectionObject->GetBulletBody()->activate();
-//				selectionObject->GetBulletBody()->applyCentralForce(Vector3(0, -10, 0));
-//			}
-//			else
-//				selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-//		}
-//
-//	}
-//
-//}
-
 /* Camera, World and Player initialisation */
 void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetNearPlane(0.1f);
@@ -995,7 +646,6 @@ void TutorialGame::InitLevel1() {
 
 
 	coincollected = 0;
-	//WinScreen->SetRestart(false);
 }
 
 void TutorialGame::InitLevel2() {
@@ -1093,16 +743,13 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(-49, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(-33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	
 	AddWallToWorld(Vector3(-22, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	
 	AddWallToWorld(Vector3(0, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(11, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	
 	AddWallToWorld(Vector3(22, 9, -220), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(33, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar
 	AddDoorToWorld(Vector3(39, 10, -220), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
@@ -1110,38 +757,31 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(55, 9, -220), 1, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(-55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+
 	AddWallToWorld(Vector3(-44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+	
 	AddWallToWorld(Vector3(-22, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-11, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-5, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(5, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(11, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 	
+
 	AddWallToWorld(Vector3(22, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(33, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
-	//AddDoorToWorld(Vector3(39, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(49, 10, -160), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+	
 	AddWallToWorld(Vector3(44, 9, -160), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(55, 9, -160), 1, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+
 	AddWallToWorld(Vector3(-33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
+
 	AddWallToWorld(Vector3(-11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
+
 	AddWallToWorld(Vector3(33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
 	AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -1149,23 +789,6 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(-44, 9, -100), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-22, 9, -100), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(22, 9, -100), 10, 8, 1, redTex, "block"); //block
-
-	//AddWallToWorld(Vector3(-55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(-33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(-11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(11, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddWallToWorld(Vector3(33, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
-	//AddDoorToWorld(Vector3(39, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(49, 10, -100), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddWallToWorld(Vector3(55, 9, -100), 1, 8, 1, greenTex, "pillar");  //pillar
 
 	//---------------------------------5-------------------------------
 
@@ -1175,22 +798,14 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(-27, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-17, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(-11, 9, -40), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(11, 9, -40), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, -40), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(44, 9, -40), 12, 8, 1, greenTex, "pillar");  //pillar
 
 
 	AddWallToWorld(Vector3(-22, 9, 20), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(0, 9, 20), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(-44, 9, 20), 12, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(-11, 9, 20), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(11, 9, 20), 1, 8, 1, greenTex, "pillar");  //pillar		
 	AddDoorToWorld(Vector3(17, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddDoorToWorld(Vector3(27, 10, 20), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -1199,42 +814,15 @@ void TutorialGame::InitLevel2design() {
 	AddWallToWorld(Vector3(-22, 9, 80), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(22, 9, 80), 10, 8, 1, redTex, "block"); //block
 	AddWallToWorld(Vector3(-44, 9, 80), 12, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(-11, 9, 80), 1, 8, 1, greenTex, "pillar");  //pillar	
 	AddDoorToWorld(Vector3(-5, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(5, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(11, 9, 80), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, 80), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(44, 9, 80), 12, 8, 1, greenTex, "pillar");  //pillar
 
-	//AddWallToWorld(Vector3(-44, 9, 200), 12, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(-11, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(11, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddWallToWorld(Vector3(44, 9, 200), 12, 8, 1, greenTex, "pillar");  //pillar
-
-	//AddWallToWorld(Vector3(-44, 9, 150), 12, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-27, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-17, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(-11, 9, 150), 1, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-5, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(5, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddWallToWorld(Vector3(11, 9, 150), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(17, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(27, 10, 150), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddWallToWorld(Vector3(44, 9, 150), 12, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(-11, 9, 140), 10, 8, 1, redTex, "block"); //block	
 	AddWallToWorld(Vector3(-38.5, 9, 140), 18, 8, 1, greenTex, "pillar");  //pillar	
-	//AddDoorToWorld(Vector3(-16, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
-	//AddDoorToWorld(Vector3(-6, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(0, 9, 140), 1, 8, 1, greenTex, "pillar");  //pillar		
 	AddDoorToWorld(Vector3(6, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddDoorToWorld(Vector3(16, 10, 140), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
@@ -1245,8 +833,6 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(-16, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-6, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(0, 9, 200), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(6, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(16, 10, 200), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(38.5, 9, 200), 18, 8, 1, greenTex, "pillar");  //pillar
 
 	AddWallToWorld(Vector3(11, 9, 260), 10, 8, 1, redTex, "block"); //block	
@@ -1254,8 +840,6 @@ void TutorialGame::InitLevel2design() {
 	AddDoorToWorld(Vector3(-16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddDoorToWorld(Vector3(-6, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
 	AddWallToWorld(Vector3(0, 9, 260), 1, 8, 1, greenTex, "pillar");  //pillar		
-	//AddDoorToWorld(Vector3(6, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door
-	//AddDoorToWorld(Vector3(16, 10, 260), Vector3(5, 8, 1), redTex, "DestructibleDoor"); //door 
 	AddWallToWorld(Vector3(38.5, 9, 260), 18, 8, 1, greenTex, "pillar");  //pillar
 
 
@@ -1656,7 +1240,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletFloor(const Vector3& positio
 		.SetPosition(position);
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
-	//floor->SetIsKinematic(true);
 	btCollisionShape* shape = new btBoxShape(floorSize);
 	btTransform bulletTransform = floor->GetTransform();
 
@@ -1667,7 +1250,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletFloor(const Vector3& positio
 
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape);
 
-	//floor->DisableLayerMask(GameObject::Layer::Default);
 
 	floor->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 
@@ -1690,7 +1272,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletCube(const Vector3& position
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 
 	//Set Object to Kinematic if you want it not affect by Gravity or Force
-	//cube->SetIsKinematic(true);
 
 	//Initialize shape of the collision object
 	btCollisionShape* shape = new btBoxShape(dimensions);
@@ -1762,7 +1343,6 @@ GameObject* NCL::CSC8503::TutorialGame::CreateBulletSphere(const Vector3& positi
 
 	sphere->SetBulletPhysicsObject(new btRigidBody(rbInfo));
 
-	//sphere->SetIsKinematic(true);
 
 	world->AddGameObject(sphere);
 
@@ -1909,14 +1489,9 @@ void TutorialGame::InitDefaultFloor(bool useBullet) {
 void NCL::CSC8503::TutorialGame::InstantiateCharaters()
 {
 	player = AddPlayerToWorld(playerOrigin.GetPosition());
-	//Quaternion orientation = Quaternion(0, -1, 0, 1);
-	//orientation.Normalise();
 	player->GetTransform().SetOrientation(playerOrigin.GetOrientation());
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 	player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
-	//player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD2.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
-	//ResetCharacters();
-	//currenthight = position.y;
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
@@ -2068,24 +1643,10 @@ letting you move the camera around.
 
 */
 bool TutorialGame::SelectObject() {
-	//if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
-	//	inSelectionMode = !inSelectionMode;
-	//	if (inSelectionMode) {
-	//		Window::GetWindow()->ShowOSPointer(true);
-	//		Window::GetWindow()->LockMouseToWindow(false);
-	//	}
-	//	else {
-	//		Window::GetWindow()->ShowOSPointer(false);
-	//		Window::GetWindow()->LockMouseToWindow(true);
-	//	}
-	//}
-	//if (inSelectionMode) {
-	//renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(prevColor);
-				//prevColor = nullptr;
 				selectionObject = nullptr;
 
 			}
@@ -2096,7 +1657,6 @@ bool TutorialGame::SelectObject() {
 
 			//you will get RayCollision for raycasting output as well as before
 			RayCollision closestCollision;
-			//if (world->Raycast(ray, closestCollision, true)) {
 			if (physics->isUseBulletPhysics() && PhysicsSystem::Raycast(ray, closestCollision, true, 300)) {
 
 				selectionObject = world->GetGameObjectByBulletBody((btCollisionObject*)closestCollision.node);
@@ -2116,30 +1676,6 @@ bool TutorialGame::SelectObject() {
 				return false;
 			}
 		}
-	//}
-	//else {
-	//	renderer->DrawString("Press Q to change to select mode!", Vector2(5, 85));
-	//}
-
-	//if (lockedObject) {
-	//	renderer->DrawString("Press L to unlock object!", Vector2(5, 80));
-	//}
-
-	//else if (selectionObject) {
-	//	renderer->DrawString("Press L to lock selected object object!", Vector2(5, 80));
-	//}
-
-	//if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::L)) {
-	//	if (selectionObject) {
-	//		if (lockedObject == selectionObject) {
-	//			lockedObject = nullptr;
-	//		}
-	//		else {
-	//			lockedObject = selectionObject;
-	//		}
-	//	}
-
-	//}
 
 	return false;
 }
