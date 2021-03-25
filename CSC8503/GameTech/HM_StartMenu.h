@@ -35,6 +35,16 @@ public:
 	int GetInput() { return input; }
 	void ResetInput() { input = 0; }
 	vector<std::string> GetScoreBoard();
+
+	void UpdateScoreBoard() 
+	{
+		vector<std::string> sVector = GetScoreBoard();
+		ScoreBoard_text1->SetText(sVector.at(0));
+		ScoreBoard_text2->SetText(sVector.at(1));
+		ScoreBoard_text3->SetText(sVector.at(2));
+		ScoreBoard_text4->SetText(sVector.at(3));
+		ScoreBoard_text5->SetText(sVector.at(4));
+	}
 private:
 	DW_UIImage* m_bg;
 
