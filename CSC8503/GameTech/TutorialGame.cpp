@@ -97,9 +97,6 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	InGameUI1->AddComponent(Debug_text3);
 	InGameUI1->AddComponent(Debug_text4);
 
-	player1HUD = new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0));
-	player2HUD = new DW_UIHUD("../../Assets/Textures/HUD2.png", Vector2(1, 1), Vector3(0, 4.5, 0));
-
 	DW_UIRenderer::get_instance().AddPanel(InGameUI1);
 	InGameUI1->SetPanelIsEnable(false);
 	DW_UIRenderer::get_instance().AddPanel(InGameUI);
@@ -309,10 +306,20 @@ void TutorialGame::UpdateGame(float dt) {
 
 		}
 		if (selectionObject) {
+			string objectsStr;
+			if (selectionObject->GetCollisionObjectCount() > 0)
+			{
+				vector<GameObject*>::iterator begin, end;
+				selectionObject->GetCollisionObjectIterators(begin, end);
+				for (vector<GameObject*>::iterator i = begin; i != end; i++)
+				{
+					objectsStr += (*i)->GetWorldID()+ ":"+(*i)->GetName()+", ";
+				}
+			}
 			//std::string s = selectionObject->GetBoundingVolume()->type;
 
 			//GameObject* temp = (GameObject*)selectionObject->OnCollisionBegin();
-			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with"  );	//non functional atm
+			Debug_text4->SetText(enum_to_string(selectionObject->GetBoundingVolume()->type) + " Colliding with "+ objectsStr  );	//non functional atm
 		}
 
 
@@ -1932,7 +1939,8 @@ void NCL::CSC8503::TutorialGame::InstantiateCharaters()
 	//orientation.Normalise();
 	player->GetTransform().SetOrientation(playerOrigin.GetOrientation());
 	player->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-	player->SetHUD(player1HUD);
+	player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD1.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
+	//player->SetHUD(new DW_UIHUD("../../Assets/Textures/HUD2.png", Vector2(1, 1), Vector3(0, 4.5, 0)));
 	//ResetCharacters();
 	//currenthight = position.y;
 }

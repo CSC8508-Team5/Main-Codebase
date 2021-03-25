@@ -171,8 +171,7 @@ namespace NCL {
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			DW_UIPanel* InGameUI1;
-			DW_UIHUD* player1HUD;
-			DW_UIHUD* player2HUD;
+
 			void UpdateLevelOne();
 			void UpdateLevelTwo();
 			void UpdateCoins();
