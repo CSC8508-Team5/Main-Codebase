@@ -10,6 +10,7 @@ using namespace NCL::CSC8503;
 
 GameWorld::GameWorld()	{
 	mainCamera = new Camera();
+	secondCamera = new Camera();
 
 	shuffleConstraints	= false;
 	shuffleObjects		= false;
