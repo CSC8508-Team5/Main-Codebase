@@ -336,10 +336,12 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 
 
-		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), dt);
+
+		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), CameraRayTest(player));
 		if (enemy) {
-			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), dt);
+			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), CameraRayTest(enemy));
 		}
+
 	}
 
 
@@ -486,11 +488,13 @@ void TutorialGame::UpdatePlayer(float dt) {
 		ResetCharacter(player);
 		timer = timer - 5;
 	}
-	if (enemy->GetTransform().GetPosition().y < -5) {
-		ResetCharacter(enemy,Vector3(5,0,0));
-		timer = timer - 5;
+	if (enemy)
+	{
+		if (enemy->GetTransform().GetPosition().y < -5) {
+			ResetCharacter(enemy, Vector3(5, 0, 0));
+			timer = timer - 5;
+		}
 	}
-
 }
 
 void TutorialGame::UpdateKeys() {

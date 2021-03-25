@@ -64,7 +64,14 @@ namespace NCL {
 			void InitLevel2design();
 			void InitLevel3();
 			
-
+			float CameraRayTest(GameObject* obj)
+			{
+				Ray cameraTest = Ray(obj->GetTransform().GetPosition(), (world->GetMainCamera()->GetPosition() - obj->GetTransform().GetPosition()).Normalised());
+				RayCollision rc;
+				GameObject::Layer mask = GameObject::Layer::Default;
+				world->Raycast(cameraTest, rc, true, (unsigned int)mask);
+				return rc.rayDistance;
+			}
 
 			//AI
 			void InitAiEnemy1();

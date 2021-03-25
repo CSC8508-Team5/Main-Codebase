@@ -49,7 +49,7 @@ void Camera::UpdateCamera(float dt) {
 	}
 }
 
-void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float dt)
+void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float rayDistance)
 {
 	pitch -= (Window::GetMouse()->GetRelativePosition().y);
 
