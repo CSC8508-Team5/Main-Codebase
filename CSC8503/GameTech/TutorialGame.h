@@ -49,6 +49,8 @@ namespace NCL {
 			void ChangeLevel() { currentLevel += 1; }
 			void ResetLevel() { inDebugMode = false; selectionObject = nullptr; InitWorld(); }
 
+			void SetMode(bool isDuoMode) { renderer->SetSplitscreen(isDuoMode); }
+
 		protected:
 			void InitialiseAssets();
 

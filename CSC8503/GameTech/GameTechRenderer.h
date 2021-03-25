@@ -37,6 +37,9 @@ namespace NCL {
 			GameTechRenderer(GameWorld& world);
 			~GameTechRenderer();
 
+			void SetSplitscreen(bool s) { splitscreen = s; }
+			bool GetSplitscreen() { return splitscreen; }
+
 			void SetSphereMesh(OGLMesh* m) { m_sphereMesh = m; }
 			DW_DeferredRenderingHelper* GetDeferredRenderingHelper() { return m_deferredHelper; }
 			void SetExp(const bool flag) {

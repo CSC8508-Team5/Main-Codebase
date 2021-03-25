@@ -347,8 +347,10 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	DW_UIRenderer::get_instance().Update(dt);
 	audio->Update(*world->GetMainCamera());
-	//renderer->Render();
-	renderer->RenderSplitscreen(2);
+	if(renderer->GetSplitscreen())
+		renderer->RenderSplitscreen(2);
+	else
+		renderer->Render();
 }
 
 void TutorialGame::UpdateLevelOne() {

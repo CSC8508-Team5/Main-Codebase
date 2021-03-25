@@ -20,7 +20,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 	glEnable(GL_BLEND);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	splitscreen = true;
+	splitscreen = false;
 
 	//deferred rendering
 	m_deferredHelper = new DW_DeferredRenderingHelper(currentWidth,currentHeight);

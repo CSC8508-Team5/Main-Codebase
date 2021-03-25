@@ -67,6 +67,7 @@ namespace NCL {
 						AudioSystem::StopAll();
 						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GameStateManager::SetGameState(GameStateManager::State::Playing);
+						game->SetMode(false);
 						return PushdownResult::Push;
 					}
 					if (panel->GetInput() == 2)
@@ -75,6 +76,7 @@ namespace NCL {
 						AudioSystem::StopAll();
 						AudioSystem::PlayAudio("Casual Theme #1 (Looped).ogg", true);
 						GameStateManager::SetGameState(GameStateManager::State::Playing);
+						game->SetMode(true);
 						return PushdownResult::Push;
 					}
 					if (panel->GetInput() == 3)
