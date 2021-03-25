@@ -137,7 +137,7 @@ namespace NCL
 
 
 				desiredVelocity = this->GetTransform().GetOrientation() * inputVector * maxSpeed;
-				float maxSpeedChange = maxGroundAcceleration * dt;
+				float maxSpeedChange = (onGround?maxGroundAcceleration:maxAirAcceleration) * dt;
 
 
 				if (velocity.x < desiredVelocity.x)
@@ -264,7 +264,7 @@ namespace NCL
 			float jumpHeight = 10.0f;
 			
 			int maxAirJumps = 1;
-			int jumpPhase;
+			int jumpPhase = 0;
 
 			float maxSpeed = 20.0f;
 			Vector3 relativeVelocity = Vector3::Zero();
@@ -272,7 +272,7 @@ namespace NCL
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
 			float maxGroundAcceleration = 60.0f;
-
+			float maxAirAcceleration = 10.0f;
 			KeyMapping keys;
 		};
 	}
