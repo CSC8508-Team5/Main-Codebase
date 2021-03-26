@@ -288,7 +288,7 @@ void TutorialGame::UpdateGame(float dt) {
 				selectionObject->GetCollisionObjectIterators(begin, end);
 				for (vector<GameObject*>::iterator i = begin; i != end; i++)
 				{
-					objectsStr += (*i)->GetWorldID() + ":" + (*i)->GetName() + ", ";
+					objectsStr += to_string((*i)->GetWorldID()) + ":" + (*i)->GetName() + ", ";
 				}
 			}
 
