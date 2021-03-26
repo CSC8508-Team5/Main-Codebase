@@ -728,7 +728,7 @@ void TutorialGame::InitWorld() {
 
 /* Level Preparations */
 void TutorialGame::InitLevel1() {
-
+	renderer->SetIsRenderFlame(false);
 	InitCharacters(Vector3(-150, 10, 0));
 	InstantiateCharacters();
 	//InitAiEnemy1();
@@ -749,13 +749,14 @@ void TutorialGame::InitLevel1() {
 }
 
 void TutorialGame::InitLevel2() {
-
+	renderer->SetIsRenderFlame(false);
 	InitCharacters(Vector3(0, 0, -320));
 	InstantiateCharacters();
 	InitLevel2design();
 }
 
 void TutorialGame::InitLevel3() {
+	renderer->SetIsRenderFlame(false);
 	//InitCharaters(Vector3(-80, 5, 0));
 	InitCharacters(Vector3(-150, 5, 0));
 	InstantiateCharacters();
