@@ -49,9 +49,17 @@ void Camera::UpdateCamera(float dt) {
 	}
 }
 
-void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float rayDistance)
+void NCL::Camera::UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float rayDistance, bool player2)
 {
-	pitch -= (Window::GetMouse()->GetRelativePosition().y);
+	if (player2)
+	{
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUMPAD8))
+			pitch += 0.3f;
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUMPAD2))
+			pitch -= 0.3f;
+	}
+	else
+		pitch -= (Window::GetMouse()->GetRelativePosition().y);
 
 	pitch = std::min(pitch, 89.0f);
 	pitch = std::max(pitch, -89.0f);

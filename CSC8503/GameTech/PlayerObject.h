@@ -79,9 +79,9 @@ namespace NCL
 				if (playerNumber == 1) 
 					yaw -= (Window::GetMouse()->GetRelativePosition().x);				
 				if (Window::GetKeyboard()->KeyDown(keys.turnLeft))
-					yaw += 0.5f;
+					yaw += 0.4f;
 				if (Window::GetKeyboard()->KeyDown(keys.turnRight))
-					yaw -= 0.5f;
+					yaw -= 0.4f;
 
 
 				if (yaw < 0) {

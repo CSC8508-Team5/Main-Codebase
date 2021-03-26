@@ -44,7 +44,7 @@ namespace NCL {
 
 		void UpdateCamera(float dt);
 
-		void UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float rayDistance);
+		void UpdateThirdPersonCamera(CSC8503::Transform& target, Vector3 offset, float rayDistance, bool player2 = false);
 
 		float GetFieldOfVision() const {
 			return fov;

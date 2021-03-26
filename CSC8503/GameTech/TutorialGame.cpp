@@ -364,7 +364,7 @@ void TutorialGame::UpdateGame(float dt) {
 
 		world->GetMainCamera()->UpdateThirdPersonCamera(player->GetTransform(), Vector3::Up(), CameraRayTest(player,world->GetMainCamera()));
 		if (enemy) {
-			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), CameraRayTest(enemy,world->GetSecondCamera()));
+			world->GetSecondCamera()->UpdateThirdPersonCamera(enemy->GetTransform(), Vector3::Up(), CameraRayTest(enemy,world->GetSecondCamera()), true);
 		}
 
 	}
