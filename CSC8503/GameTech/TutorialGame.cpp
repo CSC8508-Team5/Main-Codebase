@@ -36,7 +36,6 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	numcoins = 25; // Upper limit of coins
 	coins = new GameObject * [numcoins]; //No more than 25 coins
 	cannonBullet = new GameObject * [10]; //No more than 10 cannon
-	spinplat = new GameObject;
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
@@ -48,6 +47,7 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//gamestate
 	numstairs = 14;
 	coincollected = 0;
+	coincollected2 = 0;
 	//end 
 
 	settings = s;
@@ -65,10 +65,15 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	//--------------------------------------------------In Game UI------------------------------------------//
 	InGameUI = new DW_UIPanel("InGameUI");
 
-	Score_text = new DW_UIText("Scoretext", langContent->GetText("score") + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Score_text = new DW_UIText("Scoretext", langContent->GetText("score") + std::to_string((int)(coincollected)), 0.7f, NCL::Maths::Vector3{ 400.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
 	Timer_text = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 30.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Score_text2 = new DW_UIText("Scoretext2", langContent->GetText("score") + std::to_string((int)(coincollected2)), 0.7f, NCL::Maths::Vector3{ 1000.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+	Timer_text2 = new DW_UIText("Timertext", langContent->GetText("time"), 0.7f, NCL::Maths::Vector3{ 700.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
+
 	InGameUI->AddComponent(Score_text);
 	InGameUI->AddComponent(Timer_text);
+	InGameUI->AddComponent(Score_text2);
+	InGameUI->AddComponent(Timer_text2);
 
 	InGameUI1 = new DW_UIPanel("InGameUI");
 	Debug_text1 = new DW_UIText("Scoretext", "FPS: ", 0.5f, NCL::Maths::Vector3{ 900.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f });
@@ -146,10 +151,8 @@ TutorialGame::~TutorialGame() {
 	delete[] platforms; // Gameobject** is an array -> this may not be correct but needs cleaning up -Conor
 	delete[] coins;
 	delete[] cannonBullet;
-	delete spinplat;
 	delete player;
 	delete InGameUI;
-	delete Score_text;
 
 	delete physics;
 	delete renderer;
@@ -161,7 +164,7 @@ TutorialGame::~TutorialGame() {
 
 void TutorialGame::Reload() {
 	timer = 120;
-
+	timer2 = 120;
 	if (currentLevel == 3) {
 
 		player->GetTransform().SetPosition(Vector3(-150, 10, 0));
@@ -175,7 +178,8 @@ void TutorialGame::Reload() {
 				coins[i]->GetTransform().SetScale(Vector3(0.25, 0.25, 0.25));
 			}
 		}
-		coincollected = 0;
+		coincollected = 0; 
+		coincollected2 = 0;
 
 	}
 	else {
@@ -229,17 +233,42 @@ void TutorialGame::UpdateGame(float dt) {
 
 	if (GameStateManager::GetGameState() == GameStateManager::State::Playing)
 	{
-
-		if (timer <= 0) {
-
-			GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
+		if (!renderer->GetSplitscreen()) {
+			if (timer <= 0) {
+				GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
+			}
+		}
+		else {
+			if ((timer <= 0) && (timer2 <= 0)) {
+				GameStateManager::SetGameState(GameStateManager::State::LoseTimeout);
+			}
 		}
 		if ((int(::GetTickCount64() - startTime) >= 1000) && (pausetime == 0)) {
 			timer -= 1;
+			timer2 -= 1;
 			startTime = ::GetTickCount64();
 			pausetime = 0;
 		}
-		Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
+		if (!renderer->GetSplitscreen()) {
+			Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
+			Timer_text2->SetText("");
+		}
+		else {
+			if (timer <= 0) {
+				Timer_text->SetText("You Lose! Wait for Player2!");
+			}
+			else{
+				Timer_text->SetText(langContent->GetText("time") + std::to_string(timer) + " s");
+			}
+
+			if (timer2 <= 0) {
+				Timer_text2->SetText("You Lose! Wait for Player1!");
+			}
+			else {
+				Timer_text2->SetText(langContent->GetText("time") + std::to_string(timer2) + " s");
+			}
+		}
+
 
 
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::Y))
@@ -400,6 +429,27 @@ void TutorialGame::UpdateLevelOne() {
 			}
 		}
 		UpdateCoins();
+		if (!renderer->GetSplitscreen()) {
+			Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+			Score_text->SetText("");
+		}
+		else {
+			if (timer <= 0) {
+				Score_text->SetText(" ");
+			}
+			else {
+				Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+			}
+
+			if (timer2 <= 0) {
+				Score_text2->SetText(" ");
+			}
+			else {
+				Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer2 * 10 + coincollected2 * 50)));
+			}
+			
+
+		}
 		UpdateCannonBullet(cannonBullet[0], Vector3(-100, 5, -80) + Vector3(6, 7, 6), "left");
 		UpdateCannonBullet(cannonBullet[1], Vector3(-100, 25, 80) + Vector3(6, 7, -6), "right");
 		UpdateCannonBullet(cannonBullet[2], Vector3(50, 45, -80) + Vector3(6, 7, 6), "left");
@@ -408,11 +458,26 @@ void TutorialGame::UpdateLevelOne() {
 };
 
 void TutorialGame::UpdateLevelTwo() {
-	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+	if (!renderer->GetSplitscreen()) {
+		Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+		Score_text->SetText("");
+	}
+	else {
+		Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+		Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer2 * 10 + coincollected2 * 50)));
+	}
 
 }
 
 void TutorialGame::UpdateLevelThree(float dt) {
+	if (!renderer->GetSplitscreen()) {
+		Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+		Score_text->SetText("");
+	}
+	else {
+		Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
+		Score_text2->SetText(langContent->GetText("score") + std::to_string((int)(score + timer2 * 10 + coincollected2 * 50)));
+	}
 	UpdateCoins();
 
 }
@@ -421,7 +486,6 @@ void TutorialGame::UpdateLevelThree(float dt) {
 //todo update coins behaviour
 void TutorialGame::UpdateCoins() {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Score_text->SetText(langContent->GetText("score") + std::to_string((int)(score + timer * 10 + coincollected * 50)));
 	for (int i = 0; i < numcoins; ++i) {
 		if (coins[i]) {
 			if (physics->isUseBulletPhysics())
@@ -438,14 +502,26 @@ void TutorialGame::UpdateCoins() {
 
 void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPosition, string direction) {
 	SphereVolume* volume = new SphereVolume(0.0f);
-	Vector3 relativePos = player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+	Vector3 relativePos = Vector3(0,0,0);
+	if (!renderer->GetSplitscreen()) {
+		relativePos = player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+	}
+	else {
+		float player1Dis, player2Dis;
+		player1Dis = (player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition()).Length();
+		player2Dis = (enemy->GetTransform().GetPosition() - bullet->GetTransform().GetPosition()).Length();
+		if (abs(player1Dis) < abs(player2Dis)) 
+			relativePos = player->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+		else
+			relativePos = enemy->GetTransform().GetPosition() - bullet->GetTransform().GetPosition();
+	}
 	float currentDistance = relativePos.Length();
 	float offset = currentDistance;
 	float startDistance = (bullet->GetTransform().GetPosition() - startPosition).Length();
-	if (startDistance >= 150) {
+	if (startDistance >= 80) {
 		bullet->GetTransform().SetPosition(startPosition);
 	}
-	else	if (abs(offset) > 100.0f) {
+	else	if (abs(offset) > 50.0f) {
 		if (direction == "left") {
 			if (physics->isUseBulletPhysics())
 				bullet->GetBulletBody()->setLinearVelocity(Vector3(0, 0, 10));
@@ -473,8 +549,14 @@ void TutorialGame::UpdateCannonBullet(GameObject* bullet, const Vector3& startPo
 	}
 	CollisionDetection::CollisionInfo info;
 	if (CollisionDetection::ObjectIntersection(player, bullet, info)) {
-		timer = timer - 5;
+		timer = timer - 2;
 		bullet->GetTransform().SetPosition(startPosition);
+	}
+	if (renderer->GetSplitscreen()) {
+		if (CollisionDetection::ObjectIntersection(enemy, bullet, info)) {
+			timer2 = timer2 - 2;
+			bullet->GetTransform().SetPosition(startPosition);
+		}
 	}
 	for (int i = 0; i < numstairs; ++i) {
 		if (CollisionDetection::ObjectIntersection(bullet, platforms[i], info)) {
@@ -492,7 +574,7 @@ void TutorialGame::UpdatePlayer(float dt) {
 	{
 		if (enemy->GetTransform().GetPosition().y < -5) {
 			ResetCharacter(enemy, Vector3(5, 0, 0));
-			timer = timer - 5;
+			timer2 = timer2 - 5;
 		}
 	}
 }
@@ -643,7 +725,9 @@ void TutorialGame::InitWorld() {
 		currentLevel = 1;
 	startTime = ::GetTickCount64();
 	coincollected = 0;
+	coincollected2 = 0;
 	timer = 120;
+	timer2 = 120;
 }
 
 /* Level Preparations */
@@ -666,9 +750,6 @@ void TutorialGame::InitLevel1() {
 	renderer->GetDeferredRenderingHelper()->SetPointLights(poses);
 	renderer->GetDeferredRenderingHelper()->SetDirectionalLight(NCL::Maths::Vector3(-180.0f, 100.0f, 70.0f));
 	//-------------LV1 -------------------------------------
-
-
-	coincollected = 0;
 }
 
 void TutorialGame::InitLevel2() {
@@ -687,17 +768,17 @@ void TutorialGame::InitLevel3() {
 
 /* Game Levels */
 GameObject** TutorialGame::LevelOne() {
-	Vector3 PlatformSize = Vector3(10, 4, 50);
-	Vector3 cubeSize = Vector3(10, 4, 10);
-	Vector3 middlecubeSize = Vector3(10, 4, 20);
+	Vector3 PlatformSize = Vector3(10, 3, 50);
+	Vector3 cubeSize = Vector3(10, 3, 15);
+	Vector3 middlecubeSize = Vector3(10, 3, 20);
 
-	float invCubeMass = 0.1f; // how heavy the middle pieces are
-	float cubeDistance = 20; // distance between links
+	float invCubeMass = 0.1f;
+	float cubeDistance = 20; 
 
 	Vector3 startPos = Vector3(-150, 5, 0);
 
 	platforms[0] = AddCubeToWorld(startPos + Vector3(0, 0, 0), PlatformSize, 0);
-	platforms[numstairs - 1] = AddCubeToWorld(startPos + Vector3((numstairs - 1) * cubeDistance, (numstairs - 1) * 5.0f, 0), PlatformSize, 0);
+	platforms[numstairs - 1] = AddCubeToWorld(startPos + Vector3((numstairs - 1) * cubeDistance, (numstairs - 1) * 3.0f, 0), PlatformSize, 0);
 	platforms[0]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
 	platforms[numstairs - 1]->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 	//initial coins
@@ -707,7 +788,7 @@ GameObject** TutorialGame::LevelOne() {
 
 	for (int i = 1; i < numstairs - 1; ++i) {
 		if (i % 3 == 1) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, -40), cubeSize, invCubeMass);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 3.0f, -40), cubeSize, invCubeMass);
 			if (physics->isUseBulletPhysics())
 			{
 
@@ -722,14 +803,14 @@ GameObject** TutorialGame::LevelOne() {
 				platforms[i]->GetPhysicsObject()->SetInverseMass(0);
 			}
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, -20));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 3.0f + 3, -20));
 		}
 		else if (i % 3 == 2) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 0), middlecubeSize, 0);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 3.0f, 0), middlecubeSize, 0);
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
 		}
 		else if (i % 3 == 0) {
-			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 5.0f, 40), cubeSize, invCubeMass);
+			platforms[i] = AddCubeToWorld(startPos + Vector3(i * cubeDistance, i * 3.0f, 40), cubeSize, invCubeMass);
 			if (physics->isUseBulletPhysics())
 			{
 				platforms[i]->GetBulletBody()->setActivationState(true);
@@ -743,13 +824,13 @@ GameObject** TutorialGame::LevelOne() {
 				platforms[i]->GetPhysicsObject()->SetInverseMass(0);
 			}
 			platforms[i]->GetRenderObject()->SetColour(Vector4(0, 1, 1, 1));
-			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 5.0f + 3, 20));
+			coins[i] = AddCoins(startPos + Vector3(i * cubeDistance, (i + 1) * 3.0f + 3, 20));
 		}
 	}
 	cannonBullet[0] = AddCannonToWorld(Vector3(-100, 5, -80), "left");
-	cannonBullet[1] = AddCannonToWorld(Vector3(-100, 25, 80), "right");
-	cannonBullet[2] = AddCannonToWorld(Vector3(50, 45, -80), "left");
-	cannonBullet[3] = AddCannonToWorld(Vector3(50, 55, 80), "right");
+	cannonBullet[1] = AddCannonToWorld(Vector3(-100,25, 80), "right");
+	cannonBullet[2] = AddCannonToWorld(Vector3(0, 35, -80), "left");
+	cannonBullet[3] = AddCannonToWorld(Vector3(0, 55, 80), "right");
 	return platforms;
 }
 
@@ -1535,13 +1616,16 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position, bool isPlaye
 	float meshSize = 3.0f;
 	float inverseMass = 0.5f;
 	GameObject* character = nullptr;
-	if(isPlayer2)
-		character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "player2" , isPlayer2);
-	else
+	if (isPlayer2) {
+		character = AddCharacterToWorld(position, enemyMesh, nullptr, basicShader, "player2", isPlayer2);
+		character->SetName("player2");
+	}
+	else {
 		character = AddCharacterToWorld(position, charMeshB, nullptr, basicShader, "player1", isPlayer2);
-	
-	character->SetLayer(GameObject::Layer::Player);
+		character->SetName("player1");
 
+	}
+	character->SetLayer(GameObject::Layer::Player);
 	return character;
 }
 

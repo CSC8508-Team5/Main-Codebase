@@ -9,6 +9,7 @@ namespace NCL
 			Playing,
 			Pause,
 			Win,
+			WinPlayer2,
 			Lose,
 			LoseLifezero,
 			LoseTimeout,

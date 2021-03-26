@@ -44,12 +44,18 @@ namespace NCL {
 			void AddScore(int s) { score += s; }
 			void SetScore(int s) { score = s; }
 			int GetScore() { return score; }
-			int GetAddingScore() { return score + timer * 10 + coincollected * 50; }
+			int GetAddingScore() { 
+				if((timer * 10 + coincollected * 50)>=(timer2 * 10 + coincollected2 * 50))
+					return score + timer * 10 + coincollected * 50; 
+				else
+					return score + timer2 * 10 + coincollected2 * 50;
+			}
 
 			void ChangeLevel() { currentLevel += 1; }
 			void ResetLevel() { inDebugMode = false; selectionObject = nullptr; player = nullptr; enemy = nullptr; InitWorld(); }
 
 			void SetMode(bool isDuoMode) { renderer->SetSplitscreen(isDuoMode); }
+			bool GetMode() { return renderer->GetSplitscreen(); }
 
 		protected:
 			void InitialiseAssets();
@@ -118,9 +124,12 @@ namespace NCL {
 					{
 						AudioSystem::PlaySFX("PP_Collect_Coin_1_2.wav");
 						//obj->GetSoundSource()->Play();
-						coincollected += 1;
 						obj->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
 						world->RemoveGameObject(obj, false);
+						if(other->GetName() == "player1")
+							coincollected += 1;
+						if (other->GetName() == "player2")
+							coincollected2 += 1;
 						std::cout << "Coin Triggered\n";
 					}
 					});
@@ -144,6 +153,10 @@ namespace NCL {
 				obj->SetOnCollisionBeginFunction([=](GameObject* other) {
 					if (other->GetLayer() == GameObject::Layer::Player)
 					{
+						if (other->GetName() == "player1")
+							coincollected += 20;
+						if (other->GetName() == "player2")
+							coincollected2 += 20;
 						GameStateManager::SetGameState(GameStateManager::State::Win);
 						world->RemoveGameObject(obj, false);
 						std::cout << "Finish Triggered\n";
@@ -191,6 +204,8 @@ namespace NCL {
 			DW_UIText* Timer_text;
 			DW_UIPanel* InGameUI;
 			DW_UIPanel* InGameUI1;
+			DW_UIText* Timer_text2;
+			DW_UIText* Score_text2;
 
 			void UpdateLevelOne();
 			void UpdateLevelTwo();
@@ -225,16 +240,18 @@ namespace NCL {
 			int			numstairs;
 			int			numcoins;
 			int			coincollected;
+			int			coincollected2;
 			int			timer;
+			int			timer2;
 			int			pausetime;
 			int			score;
+			int			socre2;
 			bool		scoreAdded;
 			DWORD startTime;
 			DWORD pauseStart;
 			GameObject** platforms;
 			GameObject** coins;
 			GameObject** cannonBullet;
-			GameObject* spinplat;
 			GameObject* player;
 			GameObject* level3finishLine;
 			GameObject* level3Floor;

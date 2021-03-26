@@ -15,6 +15,7 @@
 #include "HM_StartMenu.h"
 #include "HM_Win.h"
 
+
 namespace NCL {
 	namespace CSC8503 {
 		typedef GameStateManager GSM;
@@ -205,7 +206,9 @@ namespace NCL {
 					if (panel->GetInput() == 1)
 					{
 						//todo add next level code
-						game->UpdateScore();
+						if (!game->GetMode()) {
+							game->UpdateScore();
+						}
 						game->ChangeLevel();
 						game->ResetLevel();
 						AudioSystem::StopAll();
