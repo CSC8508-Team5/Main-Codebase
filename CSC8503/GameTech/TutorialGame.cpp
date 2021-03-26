@@ -728,7 +728,7 @@ void TutorialGame::InitWorld() {
 
 /* Level Preparations */
 void TutorialGame::InitLevel1() {
-	renderer->SetIsRenderFlame(true);
+	renderer->SetIsRenderFlame(false);
 	InitCharacters(Vector3(-150, 10, 0));
 	InstantiateCharacters();
 	//InitAiEnemy1();
