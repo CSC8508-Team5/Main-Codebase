@@ -234,8 +234,6 @@ namespace NCL {
 			float		platformtimer;
 			float		yaw;
 			float		pitch;
-			bool		isjump;
-			bool		ispause;
 			int			currentLevel = 1;
 			int			numstairs;
 			int			numcoins;

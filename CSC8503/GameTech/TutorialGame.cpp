@@ -39,12 +39,8 @@ TutorialGame::TutorialGame(SettingsManager* s) {
 	player = new GameObject;
 	yaw = 0.0f;
 	pitch = 0.0f;
-	isjump = false;
 	pausetime = 0;
 	score = 0;
-	//gamestate
-	ispause = false;
-	//gamestate
 	numstairs = 14;
 	coincollected = 0;
 	coincollected2 = 0;
