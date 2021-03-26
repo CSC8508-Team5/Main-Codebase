@@ -276,7 +276,7 @@ namespace NCL
 			Vector3 velocity = Vector3::Zero();
 			Vector3 desiredVelocity = Vector3::Zero();
 			float maxGroundAcceleration = 60.0f;
-			float maxAirAcceleration = 30.0f;
+			float maxAirAcceleration = 20.0f;
 			KeyMapping keys;
 		};
 	}
