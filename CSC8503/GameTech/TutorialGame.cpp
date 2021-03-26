@@ -1034,6 +1034,7 @@ void TutorialGame::LevelThree() {
 /* Level elements and Obstacles*/
 GameObject* TutorialGame::AddCoins(const Vector3& position) {//No more than 25 coins
 	GameObject* coin = AddBonusToWorld(position);
+	coin->SetLayer(GameObject::Layer::Projectile);
 	AddCoinAttributesToObject(coin);
 	//AddFinishAttributesToObject(coin);
 	return coin;
