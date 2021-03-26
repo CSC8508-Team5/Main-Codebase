@@ -9,13 +9,14 @@ HM_StartMenu::HM_StartMenu(NCL::LanguageManager* lm) {
 	//std::cout << "\n\n\n\n\n\n\n\nSOCOREBOARD\n\n\n\n\n\n\n\n";
 	//std::cout << GetScoreBoard();
 	vector<std::string> sVector = GetScoreBoard();
-	GameName_text = new DW_UIText("GameNameText", lang->GetText("game_name"), 1.5f, NCL::Maths::Vector3{ 470.0f,650.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text = new DW_UIText("Scoreboard","TOP SCORES", 1.0f, NCL::Maths::Vector3{ 350.0f,550.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text1 = new DW_UIText("Scoreboard",sVector.at(0), 0.5f, NCL::Maths::Vector3{ 350.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text2 = new DW_UIText("Scoreboard",sVector.at(1), 0.5f, NCL::Maths::Vector3{ 350.0f,450.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text3 = new DW_UIText("Scoreboard",sVector.at(2), 0.5f, NCL::Maths::Vector3{ 350.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text4 = new DW_UIText("Scoreboard",sVector.at(3), 0.5f, NCL::Maths::Vector3{ 350.0f,350.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
-	ScoreBoard_text5 = new DW_UIText("Scoreboard",sVector.at(4), 0.5f, NCL::Maths::Vector3{ 350.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	
+	GameName_text = new DW_UIText("GameNameText","Gall Fuys", 1.5f, NCL::Maths::Vector3{ 500.0f,600.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text = new DW_UIText("Scoreboard","TOP SCORES", 1.0f, NCL::Maths::Vector3{ 200.0f,450.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text1 = new DW_UIText("Scoreboard",sVector.at(0), 0.5f, NCL::Maths::Vector3{ 200.0f,400.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text2 = new DW_UIText("Scoreboard",sVector.at(1), 0.5f, NCL::Maths::Vector3{ 200.0f,350.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text3 = new DW_UIText("Scoreboard",sVector.at(2), 0.5f, NCL::Maths::Vector3{ 200.0f,300.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text4 = new DW_UIText("Scoreboard",sVector.at(3), 0.5f, NCL::Maths::Vector3{ 200.0f,250.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
+	ScoreBoard_text5 = new DW_UIText("Scoreboard",sVector.at(4), 0.5f, NCL::Maths::Vector3{ 200.0f,200.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 	//ScoreBoard_text = new DW_UIText("Scoreboard",GetScoreBoard(), 1.5f, NCL::Maths::Vector3{ 400.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 	//ScoreBoard_text = new DW_UIText(GetScoreBoard(), lang->GetText("score_board"), 1.5f, NCL::Maths::Vector3{ 470.0f,500.0f,0.0f }, NCL::Maths::Vector3{ 1.0f,1.0f,1.0f }); // Game name
 
